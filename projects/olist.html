@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Analyse Olist — Lucas Fouquet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'Segoe UI', system-ui, sans-serif; background: #02020e; color: #dde4f0; min-height: 100vh; line-height: 1.6; }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .page { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
+    .page-text { max-width: 960px; margin: 0 auto; }
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; line-height: 1.1; margin-bottom: .4rem; }
+    .project-title span { background: linear-gradient(120deg,rgba(255,255,255,.9),rgba(255,255,255,.35)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
+    .project-sub { color: #6a7590; font-size: .95rem; max-width: 580px; margin-bottom: 1.5rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 2rem; }
+    .tag { padding: .2rem .65rem; border-radius: 999px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
+    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.1rem; border-radius: .35rem; font-size: .8rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.04); color: rgba(255,255,255,.55); transition: color .2s, border-color .2s, background .2s; }
+    .btn:hover { color: white; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.08); }
+    .preview-block { border: 1px solid rgba(255,255,255,.08); border-radius: .5rem; overflow: hidden; margin-bottom: 3.5rem; background: rgba(255,255,255,.015); }
+    .preview-bar { display: flex; align-items: center; gap: .5rem; padding: .65rem 1rem; border-bottom: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.02); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; }
+    .preview-bar span { font-size: .7rem; color: rgba(255,255,255,.25); margin-left: .4rem; letter-spacing: .04em; }
+    .tableau-wrap { width: 100%; padding: 1.5rem 1.5rem 0; min-height: 1060px; }
+    .section { margin-bottom: 3rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+    .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
+    .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
+    .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 140px 1fr; gap: 1rem; align-items: start; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
+    hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<a href="../index.html" class="nav-back">← Portfolio</a>
+<div class="page">
+  <div class="page-text">
+    <div class="eyebrow">Projet · Tableau · Data Viz</div>
+    <h1 class="project-title"><span>Analyse Olist — Brésil 2016–2018</span></h1>
+    <div class="rule"></div>
+    <p class="project-sub">Analyse stratégique de la performance e-commerce de Olist au Brésil. Ventes, logistique et satisfaction client via Tableau Public.</p>
+    <div class="tags">
+      <span class="tag">Tableau</span><span class="tag">Data Viz</span><span class="tag">E-commerce</span><span class="tag">Kaggle</span>
+    </div>
+    <div class="btn-row">
+      <a href="https://public.tableau.com/shared/2SQ35RWYY" target="_blank" rel="noopener" class="btn">📊 Tableau Public</a>
+    </div>
+  </div>
+
+  <div class="preview-block">
+    <div class="preview-bar">
+      <div class="dot" style="background:rgba(255,255,255,.15)"></div>
+      <div class="dot" style="background:rgba(255,255,255,.1)"></div>
+      <div class="dot" style="background:rgba(255,255,255,.07)"></div>
+      <span>Dashboard — Analyse Olist Brésil</span>
+    </div>
+    <div class="tableau-wrap">
+      <div class="tableauPlaceholder" id="viz1775655192307" style="position:relative">
+        <noscript><a href="#"><img alt="Analyse Olist — Brésil 2016-2018" src="https://public.tableau.com/static/images/2S/2SQ35RWYY/1_rss.png" style="border:none"/></a></noscript>
+        <object class="tableauViz" style="display:none;">
+          <param name="host_url" value="https%3A%2F%2Fpublic.tableau.com%2F"/>
+          <param name="embed_code_version" value="3"/>
+          <param name="path" value="shared/2SQ35RWYY"/>
+          <param name="toolbar" value="yes"/>
+          <param name="static_image" value="https://public.tableau.com/static/images/2S/2SQ35RWYY/1.png"/>
+          <param name="animate_transition" value="yes"/>
+          <param name="display_static_image" value="yes"/>
+          <param name="display_spinner" value="yes"/>
+          <param name="display_overlay" value="yes"/>
+          <param name="display_count" value="yes"/>
+          <param name="language" value="fr-FR"/>
+        </object>
+      </div>
+      <script type="text/javascript">
+        var d = document.getElementById('viz1775655192307');
+        var v = d.getElementsByTagName('object')[0];
+        v.style.width = '100%';
+        v.style.height = (d.offsetWidth < 500) ? '1627px' : '1027px';
+        var s = document.createElement('script');
+        s.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+        v.parentNode.insertBefore(s, v);
+      </script>
+    </div>
+  </div>
+
+  <div class="page-text">
+    <div class="section">
+      <div class="section-eyebrow">Description</div>
+      <div class="section-title">À propos du projet</div>
+      <p class="section-text">Ce dashboard analyse la performance commerciale de Olist, la plus grande marketplace e-commerce du Brésil, sur la période 2016–2018. Il s'appuie sur le dataset public Kaggle "Brazilian E-Commerce Public Dataset by Olist".</p>
+      <p class="section-text">L'analyse couvre les ventes par catégorie, la performance logistique (délais réels vs estimés), la satisfaction client par NPS et la répartition géographique des acheteurs et vendeurs.</p>
+    </div>
+    <hr class="divider"/>
+    <div class="section">
+      <div class="section-eyebrow">Contenu</div>
+      <div class="section-title">KPIs analysés</div>
+      <div class="info-block">
+        <div class="info-row"><div class="info-label">Ventes</div><div class="info-val">Volume de commandes et chiffre d'affaires par période · Top catégories de produits</div></div>
+        <div class="info-row"><div class="info-label">Logistique</div><div class="info-val">Délais de livraison réels vs estimés · Taux de retard par région</div></div>
+        <div class="info-row"><div class="info-label">Satisfaction</div><div class="info-val">Score NPS · Répartition des avis clients (1–5 étoiles)</div></div>
+        <div class="info-row"><div class="info-label">Géographie</div><div class="info-val">Carte de chaleur des acheteurs et vendeurs par état brésilien</div></div>
+        <div class="info-row"><div class="info-label">Source</div><div class="info-val"><code>Brazilian E-Commerce Public Dataset by Olist</code> — Kaggle · Outil : <code>Tableau Public</code></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="../space.js"></script>
+</body>
+</html>

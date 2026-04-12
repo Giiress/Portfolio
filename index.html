@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lucas Fouquet — Portfolio Data & IA</title>
+  <meta name="description" content="Portfolio de Lucas Fouquet — Data & IA. Projets de data science, machine learning, RAG, visualisation et développement web."/>
+  <meta property="og:title" content="Lucas Fouquet — Portfolio Data & IA"/>
+  <meta property="og:description" content="Portfolio interactif à thème spatial. Projets de data science, RAG, visualisation et développement."/>
+  <meta property="og:type" content="website"/>
+  <meta name="author" content="Lucas Fouquet"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🚀</text></svg>"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #02020e;
+      font-family: 'Segoe UI', system-ui, sans-serif; color: #dde4f0; }
+
+    canvas { position: fixed; inset: 0; display: block; }
+    #starfield { z-index: 0; pointer-events: none; }
+
+    /* ── Rocket cursor (div JS — fiable tous navigateurs) ── */
+    * { cursor: none !important; }
+    #universe { z-index: 1; }
+    #rocket-cursor {
+      position: fixed; z-index: 9999; pointer-events: none;
+      top: 0; left: 0; will-change: left, top;
+      transform: translate(-3px, -2px); /* hotspot au bout de la fusée */
+    }
+
+    /* ── UI chrome ──────────────────────────────────── */
+    .ui-btn {
+      position: fixed; z-index: 100;
+      background: rgba(2,2,14,.88); backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: .35rem;
+      color: rgba(255,255,255,.4); font-size: .73rem; font-weight: 700;
+      padding: .38rem .9rem; cursor: pointer; letter-spacing: .08em;
+      transition: color .2s, border-color .2s; font-family: inherit;
+      display: flex; align-items: center; gap: .4rem; text-decoration: none;
+    }
+    .ui-btn:hover { color: white; border-color: rgba(255,255,255,.3); }
+    #langBtn  { top: 1.5rem; right: 1.75rem; }
+    #backBtn  { top: 1.5rem; left: 1.75rem; display: none; }
+
+    /* ── Panel (About) ──────────────────────────────── */
+    #panel {
+      position: fixed; inset: 0; z-index: 50; background: #02020e;
+      opacity: 0; pointer-events: none; overflow-y: auto;
+      transition: opacity .38s ease;
+    }
+    #panel.visible { opacity: 1; pointer-events: all; }
+    #panel-close { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 60; }
+    .panel-inner { max-width: 860px; margin: 0 auto; padding: 6rem 2rem 5rem; }
+
+    .s-eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .s-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white;
+      margin-bottom: .4rem; line-height: 1.1; }
+    .s-title span { background: linear-gradient(120deg,rgba(255,255,255,.9),rgba(255,255,255,.35));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .s-rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 2.5rem; }
+
+    .about-wrap { display: grid; grid-template-columns: 130px 1fr; gap: 2.5rem;
+      align-items: start; margin-bottom: 2.5rem; }
+    @media(max-width:560px){.about-wrap{grid-template-columns:1fr}.about-photo{display:none}}
+    .about-photo img { width: 120px; height: 120px; border-radius: 50%; object-fit: cover;
+      border: 1px solid rgba(255,255,255,.12); }
+    .about-text p { color: #6a7590; line-height: 1.75; font-size: .92rem; margin-bottom: .85rem; }
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px;
+      border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
+    @media(max-width:500px){.stats-row{grid-template-columns:repeat(2,1fr)}}
+    .stat { padding: 1.25rem; text-align: center; background: rgba(255,255,255,.02); }
+    .stat-v { font-size: 1.9rem; font-weight: 800; color: white; display: block; }
+    .stat-l { font-size: .7rem; color: #6a7590; margin-top: .3rem; letter-spacing: .04em; }
+
+    /* ── Transmission overlay (Contact) ──────────────── */
+    #transmission {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(2,2,14,.96);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.8rem; opacity: 0; pointer-events: none; transition: opacity .35s ease;
+    }
+    #transmission.visible { opacity: 1; pointer-events: all; }
+    #tx-status {
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: .72rem; letter-spacing: .22em; color: rgba(100,200,255,.45);
+      text-transform: uppercase;
+    }
+    #tx-content {
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: clamp(.9rem,2vw,1.1rem);
+      line-height: 2.2; text-align: center; color: rgba(100,200,255,.88);
+      letter-spacing: .04em; min-height: 7em;
+    }
+    .tx-row { display: block; }
+    #tx-links {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      opacity: 0; transition: opacity .6s ease;
+    }
+    #tx-links.visible { opacity: 1; }
+    .tx-link {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .45rem .95rem; border-radius: .35rem;
+      background: rgba(100,200,255,.05); border: 1px solid rgba(100,200,255,.15);
+      color: rgba(100,200,255,.7); text-decoration: none;
+      font-size: .82rem; font-weight: 500;
+      transition: color .2s, border-color .2s;
+    }
+    .tx-link:hover { color: rgba(100,200,255,1); border-color: rgba(100,200,255,.4); }
+    #tx-close {
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: .7rem; color: rgba(255,255,255,.22); cursor: pointer;
+      letter-spacing: .12em; border: 1px solid rgba(255,255,255,.08);
+      padding: .3rem .9rem; border-radius: .25rem; transition: color .2s, border-color .2s, opacity .4s;
+    }
+    #tx-close:hover { color: rgba(255,255,255,.55); border-color: rgba(255,255,255,.25); }
+
+    /* ── Transmission About section ─────────────────── */
+    #tx-about {
+      position: absolute; inset: 0; overflow-y: auto;
+      display: none; opacity: 0; transition: opacity .5s ease;
+    }
+    #tx-about.visible { opacity: 1; }
+    #tx-about-inner {
+      max-width: 860px; margin: 0 auto; padding: 5rem 2rem 5rem;
+    }
+    #tx-about-close {
+      position: fixed; top: 1.5rem; left: 1.75rem; z-index: 210;
+      display: none; align-items: center; gap: .45rem;
+      background: rgba(2,2,14,.8); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,.1); border-radius: .35rem;
+      color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700;
+      padding: .38rem .9rem; cursor: pointer; letter-spacing: .05em;
+      transition: color .2s, border-color .2s;
+    }
+    #tx-about-close:hover { color: white; border-color: rgba(255,255,255,.3); }
+    #tx-about-close.visible { display: flex; }
+
+    /* ── Intro overlay ───────────────────────────────── */
+    #intro {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(2,2,14,.98);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1.8rem; transition: opacity .7s ease;
+    }
+    #intro.hidden { opacity: 0; pointer-events: none; }
+    #intro-status {
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: .72rem; letter-spacing: .22em; color: rgba(100,200,255,.45);
+      text-transform: uppercase;
+    }
+    #intro-content {
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: clamp(.88rem,2vw,1.05rem);
+      line-height: 2.2; text-align: center; color: rgba(100,200,255,.88);
+      letter-spacing: .04em; min-height: 10em;
+    }
+    #intro-close {
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: .7rem; color: rgba(255,255,255,.22); cursor: pointer;
+      letter-spacing: .12em; border: 1px solid rgba(255,255,255,.08);
+      padding: .3rem .9rem; border-radius: .25rem;
+      transition: color .2s, border-color .2s, opacity .6s;
+    }
+    #intro-close:hover { color: rgba(255,255,255,.55); border-color: rgba(255,255,255,.25); }
+
+    /* ── Skill detail panel ─────────────────────────── */
+    #skill-panel {
+      position: fixed; inset: 0; z-index: 150;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(2,2,14,.88);
+      opacity: 0; pointer-events: none; transition: opacity .32s ease;
+    }
+    #skill-panel.visible { opacity: 1; pointer-events: all; }
+    .sk-card {
+      width: min(520px, calc(100vw - 3rem));
+      background: rgba(8,6,32,.92);
+      border: 1px solid rgba(140,160,255,.14);
+      border-radius: .7rem; padding: 2.2rem 2.4rem 2rem;
+      position: relative; max-height: 90vh; overflow-y: auto;
+    }
+    .sk-card::-webkit-scrollbar { width: 3px; }
+    .sk-card::-webkit-scrollbar-thumb { background: rgba(140,160,255,.2); border-radius: 2px; }
+    .sk-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .2em;
+      text-transform: uppercase; color: rgba(140,160,255,.38); margin-bottom: .5rem; }
+    .sk-name { font-size: clamp(1.6rem,4vw,2.1rem); font-weight: 800; color: white;
+      margin-bottom: .25rem; line-height: 1.1; }
+    .sk-name span { background: linear-gradient(120deg,#a0b4ff,rgba(200,210,255,.45));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .sk-rule { width: 36px; height: 1px; background: rgba(140,160,255,.22); margin: .75rem 0 1.2rem; }
+    .sk-desc { font-size: .9rem; color: rgba(160,172,210,.72); line-height: 1.7; margin-bottom: 1.6rem; }
+    .sk-projects-title { font-size: .62rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: rgba(140,160,255,.32); margin-bottom: .8rem; }
+    .sk-project-list { display: flex; flex-direction: column; gap: .65rem; }
+    .sk-project {
+      display: grid; grid-template-columns: auto 1fr auto; gap: 0 1rem; align-items: center;
+      padding: .85rem 1rem; border-radius: .45rem;
+      background: rgba(140,160,255,.04); border: 1px solid rgba(140,160,255,.09);
+      transition: border-color .2s, background .2s;
+      text-decoration: none; color: inherit;
+    }
+    .sk-project[href] { cursor: pointer; }
+    .sk-project:hover { background: rgba(140,160,255,.08); border-color: rgba(140,160,255,.18); }
+    .sk-project-arrow {
+      font-size: .75rem; color: rgba(140,160,255,.35);
+      transition: color .2s, transform .2s;
+    }
+    .sk-project[href]:hover .sk-project-arrow { color: rgba(140,160,255,.8); transform: translateX(3px); }
+    .sk-project-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: .35rem;
+      background: rgba(140,160,255,.55); flex-shrink: 0; }
+    .sk-project-name { font-size: .82rem; font-weight: 700; color: rgba(210,218,255,.88);
+      margin-bottom: .22rem; }
+    .sk-project-detail { font-size: .79rem; color: rgba(140,160,200,.58); line-height: 1.55; }
+    .sk-close-btn {
+      position: absolute; top: 1.1rem; right: 1.2rem;
+      font-family: 'Consolas','Courier New',monospace;
+      font-size: .65rem; color: rgba(255,255,255,.2); cursor: pointer;
+      border: 1px solid rgba(255,255,255,.08); padding: .2rem .6rem; border-radius: .2rem;
+      transition: color .2s, border-color .2s; background: transparent;
+      letter-spacing: .1em;
+    }
+    .sk-close-btn:hover { color: rgba(255,255,255,.55); border-color: rgba(255,255,255,.25); }
+
+    /* ── Easter Egg Game overlay ─────────────────────── */
+    #egg-game {
+      position: fixed; inset: 0; z-index: 400;
+      display: none; background: #020a06;
+    }
+    #game-canvas { display: block; width: 100% !important; height: 100% !important; }
+    #game-close-btn {
+      position: absolute; bottom: 1.4rem; left: 50%; transform: translateX(-50%);
+      font-family: 'Consolas','Courier New',monospace; background: transparent;
+      font-size: .68rem; color: rgba(80,255,120,.32); letter-spacing: .12em;
+      border: 1px solid rgba(80,255,120,.12); padding: .28rem .85rem;
+      border-radius: .25rem; transition: color .2s, border-color .2s; z-index: 1;
+    }
+    #game-close-btn:hover { color: rgba(80,255,120,.7); border-color: rgba(80,255,120,.38); }
+
+    /* hint text at bottom */
+    #hint {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      font-size: .68rem; letter-spacing: .12em; color: rgba(255,255,255,.15);
+      text-transform: uppercase; pointer-events: none; z-index: 10;
+      transition: opacity .5s;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="starfield"></canvas>
+<canvas id="universe"></canvas>
+
+<!-- Curseur fusée (JS-driven, garantit l'affichage dans tous les navigateurs) -->
+<div id="rocket-cursor">
+  <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+    <g transform="translate(16,16) rotate(45)">
+      <polygon points="0,-17 -4,-9 4,-9" fill="white" opacity=".95"/>
+      <rect x="-4" y="-9" width="8" height="13" rx="3" fill="white" opacity=".92"/>
+      <polygon points="-4,4 -9,10 -4,7" fill="#aac4ff"/>
+      <polygon points="4,4 9,10 4,7" fill="#aac4ff"/>
+      <ellipse cx="0" cy="8" rx="3" ry="5" fill="#ff8c44" opacity=".85"/>
+      <ellipse cx="0" cy="7" rx="1.5" ry="2.5" fill="#ffdd55" opacity=".92"/>
+    </g>
+  </svg>
+</div>
+
+<button class="ui-btn" id="langBtn" onclick="toggleLang()">EN</button>
+<button class="ui-btn" id="backBtn" onclick="goHome()">
+  ← <span id="backLabel">Retour</span>
+</button>
+
+<div id="hint" data-fr="Cliquer sur un objet · Maintenir pour naviguer"
+                data-en="Click an object · Hold to navigate">
+  Cliquer sur un objet · Maintenir pour naviguer
+</div>
+
+<!-- About panel -->
+<div id="panel">
+  <button class="ui-btn" id="panel-close" onclick="closePanel()">
+    ← <span data-fr="Retour" data-en="Back">Retour</span>
+  </button>
+  <div class="panel-inner" id="panelContent"></div>
+</div>
+
+<!-- Transmission overlay (Contact + About) -->
+<div id="transmission">
+  <div id="tx-status">Signal reçu — Décodage en cours</div>
+  <div id="tx-content"></div>
+  <div id="tx-close" onclick="closeTransmission()"
+       data-fr="[ FERMER LA TRANSMISSION ]" data-en="[ CLOSE TRANSMISSION ]">[ FERMER LA TRANSMISSION ]</div>
+
+  <!-- About section — apparaît après le typewriter -->
+  <div id="tx-about">
+    <div id="tx-about-inner">
+      <div class="s-eyebrow" data-fr="Qui suis-je" data-en="Who am I">Qui suis-je</div>
+      <h2 class="s-title"><span data-fr="À Propos" data-en="About Me">À Propos</span></h2>
+      <div class="s-rule"></div>
+      <div class="about-wrap">
+        <div class="about-photo">
+          <img src="assets/img/moi.jpg" alt="Lucas Fouquet"/>
+        </div>
+        <div class="about-text">
+          <p data-fr="Étudiant en Data & IA, je suis passionné par la transformation des données en insights actionnables et la construction de solutions intelligentes."
+             data-en="Data & AI student, passionate about turning data into actionable insights and building intelligent solutions.">
+            Étudiant en Data & IA, je suis passionné par la transformation des données en insights actionnables et la construction de solutions intelligentes.
+          </p>
+          <p data-fr="J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs."
+             data-en="I have worked on projects ranging from web scraping to large-scale data analysis, RAG chatbots and interactive dashboards.">
+            J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs.
+          </p>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><span class="stat-v">6</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
+        <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
+        <div class="stat"><span class="stat-v">1</span><span class="stat-l" data-fr="Hackathon gagné" data-en="Hackathon won">Hackathon gagné</span></div>
+        <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
+      </div>
+      <div style="margin-top:2rem;padding:1.25rem;border:1px solid rgba(255,200,80,.18);border-radius:.5rem;background:rgba(255,200,80,.04)">
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem">🏆 Prix & Certifications</div>
+        <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
+             data-fr="Vainqueur — Hackathon « Build the Future »" data-en="Winner — Hackathon « Build the Future »">Vainqueur — Hackathon « Build the Future »</div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:.85rem"
+             data-fr="Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien."
+             data-en="November 2025 · Project ASET — inclusive AI platform connecting isolated seniors and students for everyday mutual aid missions.">
+          Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien.
+        </div>
+        <a href="assets/downloads/hackathon-build-the-future.pdf" target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:rgba(255,200,80,.7);text-decoration:none;border:1px solid rgba(255,200,80,.22);padding:.3rem .85rem;border-radius:.3rem;transition:color .2s,border-color .2s"
+           onmouseover="this.style.color='rgba(255,200,80,1)';this.style.borderColor='rgba(255,200,80,.5)'"
+           onmouseout="this.style.color='rgba(255,200,80,.7)';this.style.borderColor='rgba(255,200,80,.22)'">
+          ↗ <span data-fr="Voir le certificat" data-en="View certificate">Voir le certificat</span>
+        </a>
+      </div>
+      <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.85rem"
+             data-fr="Contact" data-en="Contact">Contact</div>
+        <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem">
+          <a href="mailto:fouquet.lucas@gmail.com" class="tx-link">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            fouquet.lucas@gmail.com
+          </a>
+          <a href="https://www.linkedin.com/in/lucas-fouquet-677786178/" target="_blank" rel="noopener" class="tx-link">
+            <svg width="13" height="13" fill="currentColor" viewbox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            LinkedIn
+          </a>
+          <a href="https://github.com/Lucas-F-93" target="_blank" rel="noopener" class="tx-link">
+            <svg width="13" height="13" fill="currentColor" viewbox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub
+          </a>
+          <a href="assets/downloads/cv-lucas-fouquet.pdf" target="_blank" rel="noopener" class="tx-link">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9,15 12,18 15,15"/></svg>
+            CV PDF
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bouton fermer le profil (affiché sur #tx-about) -->
+<button id="tx-about-close" onclick="closeTransmission()"
+        data-fr="← Fermer" data-en="← Close">← Fermer</button>
+
+<!-- Intro overlay -->
+<div id="intro">
+  <div id="intro-status"
+       data-fr="MISSION BRIEFING — TRANSMISSION SÉCURISÉE"
+       data-en="MISSION BRIEFING — SECURE TRANSMISSION">MISSION BRIEFING — TRANSMISSION SÉCURISÉE</div>
+  <div id="intro-content"></div>
+  <div id="intro-close" style="opacity:0" onclick="dismissIntro()"
+       data-fr="[ COMMENCER LA MISSION ]" data-en="[ BEGIN MISSION ]">[ COMMENCER LA MISSION ]</div>
+</div>
+
+<!-- About template -->
+<template id="tpl-about">
+  <div class="s-eyebrow" data-fr="Qui suis-je" data-en="Who am I">Qui suis-je</div>
+  <h2 class="s-title"><span data-fr="À Propos" data-en="About Me">À Propos</span></h2>
+  <div class="s-rule"></div>
+  <div class="about-wrap">
+    <div class="about-photo">
+      <img src="assets/img/moi.jpg" alt="Lucas Fouquet" onerror="this.style.display='none'"/>
+    </div>
+    <div class="about-text">
+      <p data-fr="Étudiant en Data & IA, je suis passionné par la transformation des données en insights actionnables et la construction de solutions intelligentes."
+         data-en="Data & AI student, passionate about turning data into actionable insights and building intelligent solutions.">
+        Étudiant en Data & IA, je suis passionné par la transformation des données en insights actionnables et la construction de solutions intelligentes.
+      </p>
+      <p data-fr="J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs."
+         data-en="I have worked on projects ranging from web scraping to large-scale data analysis, RAG chatbots and interactive dashboards.">
+        J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs.
+      </p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-v">6</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
+    <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
+    <div class="stat"><span class="stat-v">1</span><span class="stat-l" data-fr="Hackathon gagné" data-en="Hackathon won">Hackathon gagné</span></div>
+    <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
+  </div>
+  <div style="margin-top:2rem;padding:1.25rem;border:1px solid rgba(255,200,80,.18);border-radius:.5rem;background:rgba(255,200,80,.04)">
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem">🏆 Prix & Certifications</div>
+    <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
+         data-fr="Vainqueur — Hackathon « Build the Future »" data-en="Winner — Hackathon « Build the Future »">Vainqueur — Hackathon « Build the Future »</div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:.85rem"
+         data-fr="Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien."
+         data-en="November 2025 · Project ASET — inclusive AI platform connecting isolated seniors and students for everyday mutual aid missions.">
+      Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien.
+    </div>
+    <a href="assets/downloads/hackathon-build-the-future.pdf" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:rgba(255,200,80,.7);text-decoration:none;border:1px solid rgba(255,200,80,.22);padding:.3rem .85rem;border-radius:.3rem;transition:color .2s,border-color .2s"
+       onmouseover="this.style.color='rgba(255,200,80,1)';this.style.borderColor='rgba(255,200,80,.5)'"
+       onmouseout="this.style.color='rgba(255,200,80,.7)';this.style.borderColor='rgba(255,200,80,.22)'">
+      ↗ <span data-fr="Voir le certificat" data-en="View certificate">Voir le certificat</span>
+    </a>
+  </div>
+  <div style="margin-top:1.2rem">
+    <a href="assets/downloads/cv-lucas-fouquet.pdf" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.55);text-decoration:none;border:1px solid rgba(255,255,255,.14);padding:.4rem 1rem;border-radius:.35rem;transition:color .2s,border-color .2s"
+       onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,.4)'"
+       onmouseout="this.style.color='rgba(255,255,255,.55)';this.style.borderColor='rgba(255,255,255,.14)'">
+      ⬇ <span data-fr="Télécharger mon CV" data-en="Download my CV">Télécharger mon CV</span>
+    </a>
+  </div>
+  <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.85rem"
+         data-fr="Contact" data-en="Contact">Contact</div>
+    <div style="display:flex;flex-wrap:wrap;gap:.6rem">
+      <a href="mailto:fouquet.lucas@gmail.com" class="tx-link">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" viewbox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        fouquet.lucas@gmail.com
+      </a>
+      <a href="https://www.linkedin.com/in/lucas-fouquet-677786178/" target="_blank" rel="noopener" class="tx-link">
+        <svg width="13" height="13" fill="currentColor" viewbox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://github.com/Lucas-F-93" target="_blank" rel="noopener" class="tx-link">
+        <svg width="13" height="13" fill="currentColor" viewbox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</template>
+
+<!-- Skill detail panel -->
+<div id="skill-panel" onclick="if(event.target===this)closeSkillPanel()">
+  <div class="sk-card" id="skill-card">
+    <button class="sk-close-btn" onclick="closeSkillPanel()"
+            data-fr="[ FERMER ]" data-en="[ CLOSE ]">[ FERMER ]</button>
+    <div class="sk-eyebrow" id="sk-eyebrow"></div>
+    <div class="sk-name"><span id="sk-name"></span></div>
+    <div class="sk-rule"></div>
+    <div class="sk-desc" id="sk-desc"></div>
+    <div class="sk-projects-title" id="sk-proj-title"></div>
+    <div class="sk-project-list" id="sk-proj-list"></div>
+  </div>
+</div>
+
+<!-- Easter Egg — Jeu spatial -->
+<div id="egg-game">
+  <canvas id="game-canvas"></canvas>
+  <button id="game-close-btn"
+          data-fr="[ ESC — QUITTER ]" data-en="[ ESC — QUIT ]">[ ESC — QUITTER ]</button>
+</div>
+
+<!-- Starboy — The Weeknd -->
+<audio id="starboy-audio" loop preload="none">
+  <source src="assets/audio/StarboyV2.mp3" type="audio/mpeg">
+</audio>
+
+<script src="space.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+//  UNIVERSE ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+;(function () {
+
+const UC  = document.getElementById('universe');
+const ctx = UC.getContext('2d');
+let W, H;
+
+// ── Camera ─────────────────────────────────────────────────────────────────
+let cam  = { x: 0, y: 0, zoom: 1.5 };
+let camT = { x: 0, y: 0, zoom: 1.5 };
+let vel  = { x: 0, y: 0 };
+let drag = { on: false, sx: 0, sy: 0, cx: 0, cy: 0 };
+let didDrag = false;
+let mouseX = 0, mouseY = 0;
+let lastFrameT = 0;
+
+// ── State ───────────────────────────────────────────────────────────────────
+let view    = 'home';   // 'home' | 'projects' | 'skills'
+let lang    = 'fr';
+let hovered = null;     // id of hovered body in home view
+
+// ── World positions ─────────────────────────────────────────────────────────
+const POS = {
+  galaxy:  { x:  210, y: -124 },   // Projets  (galaxie spirale)
+  cluster: { x: -202, y: -115 },   // Compétences (amas globulaire)
+  pulsar:  { x: -179, y:  162 },   // À Propos · Contact (pulsar)
+  egg:     { x: -425, y: -316 },   // Easter egg (caché)
+};
+
+const LABELS = {
+  galaxy:  { fr: 'Projets',            en: 'Projects',        subfr: '6 réalisations', suben: '6 projects'   },
+  cluster: { fr: 'Compétences',        en: 'Skills',          subfr: '9 savoir-faire', suben: '9 skills'     },
+  pulsar:  { fr: 'À Propos · Contact', en: 'About · Contact', subfr: 'Signal reçu',    suben: 'Signal recv.' },
+  egg:     { fr: '???',                en: '???',             subfr: 'Signal inconnu', suben: 'Unknown signal'},
+};
+
+// World-space hit radii (scaled by cam.zoom at test time)
+const HIT_WR = { galaxy: 115, cluster: 74, pulsar: 22, egg: 18 };
+
+// ── Coordinate helpers ──────────────────────────────────────────────────────
+function w2s(wx, wy) {
+  return { x: W / 2 + (wx - cam.x) * cam.zoom, y: H / 2 + (wy - cam.y) * cam.zoom };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PRE-GENERATED GEOMETRY
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── Galaxy (spiral) ─────────────────────────────────────────────────────────
+const GAL_PTS = (() => {
+  const p = [];
+  const CORE = 440, ARMS = 2, PER_ARM = 1380, CR = 30, MR = 112;
+
+  // Dense warm core
+  for (let i = 0; i < CORE; i++) {
+    const r = Math.pow(Math.random(), 1.8) * CR;
+    const a = Math.random() * Math.PI * 2;
+    const warm = Math.random() > .44;
+    p.push({
+      lx: Math.cos(a) * r + (Math.random() - .5) * 5,
+      ly: Math.sin(a) * r + (Math.random() - .5) * 5,
+      sz: .3 + Math.random() * (r < 10 ? 1.5 : .75),
+      al: .38 + Math.random() * .62,
+      cr: warm
+        ? [255, 185 + Math.floor(Math.random() * 68), 82 + Math.floor(Math.random() * 72)]
+        : [222 + Math.floor(Math.random() * 33), 216 + Math.floor(Math.random() * 39), 255],
+    });
+  }
+
+  // Spiral arms (blue-white young stars + white)
+  for (let arm = 0; arm < ARMS; arm++) {
+    const base = (arm / ARMS) * Math.PI * 2;
+    for (let i = 0; i < PER_ARM; i++) {
+      const t  = Math.pow(Math.random(), .65);
+      const r  = CR + t * (MR - CR);
+      const twist  = t * 2.95;
+      const spread = (.8 - t * .4) * .43;
+      const a = base + twist + (Math.random() - .5) * spread * 2;
+      const blue = Math.random() < .52;
+      p.push({
+        lx: Math.cos(a) * r + (Math.random() - .5) * r * .12,
+        ly: Math.sin(a) * r + (Math.random() - .5) * r * .12,
+        sz: .15 + Math.random() * .5,
+        al: (.15 + Math.random() * .52) * (1 - t * .34),
+        cr: blue
+          ? [142 + Math.floor(Math.random() * 98), 182 + Math.floor(Math.random() * 73), 255]
+          : [208 + Math.floor(Math.random() * 47), 213 + Math.floor(Math.random() * 42), 220 + Math.floor(Math.random() * 35)],
+      });
+    }
+  }
+  return p;
+})();
+
+// ── Globular cluster (skills) ────────────────────────────────────────────────
+const CL_PTS = (() => {
+  const p = [], N = 820, R = 72;
+  for (let i = 0; i < N; i++) {
+    const r = Math.pow(Math.random(), .44) * R;
+    const a = Math.random() * Math.PI * 2;
+    const b = Math.random() * Math.PI;
+    p.push({
+      lx: Math.cos(a) * Math.sin(b) * r,
+      ly: Math.cos(b) * r * .6,           // slight vertical flatten
+      sz: .14 + Math.random() * .66,
+      al: .12 + Math.random() * (1 - r / R * .62) * .88,
+      cr: [200 + Math.floor(Math.random() * 55), 218 + Math.floor(Math.random() * 37), 255],
+    });
+  }
+  return p;
+})();
+
+// ── Pulsar rings (spawned at runtime) ─────────────────────────────────────────
+let PRINGS   = [];
+let lastPulse = 0;
+const PULSE_INT = 1100;   // ms between rings
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PLANET DEFINITIONS
+// ═══════════════════════════════════════════════════════════════════════════
+// oR = orbit radius (world units from galaxy center)
+// sp = angular speed (rad/ms)
+// ph = phase offset (rad)
+// rad = planet radius (world units)
+
+function drawSphere(x, y, r, c0, c1, c2, c3) {
+  const g = ctx.createRadialGradient(x - r * .28, y - r * .3, r * .04, x, y, r);
+  g.addColorStop(0, c0); g.addColorStop(.3, c1); g.addColorStop(.65, c2); g.addColorStop(1, c3);
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+  // Limb darkening
+  const ld = ctx.createRadialGradient(x, y, r * .52, x, y, r);
+  ld.addColorStop(0, 'transparent'); ld.addColorStop(1, 'rgba(0,0,0,.52)');
+  ctx.fillStyle = ld;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+}
+
+function drawBands(x, y, r, n, col) {
+  ctx.save(); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+  for (let i = 0; i < n; i++) {
+    const by = y + (i - (n - 1) / 2) * r * (2.0 / n);
+    ctx.fillStyle = col; ctx.fillRect(x - r, by - r * .12, r * 2, r * .25);
+  }
+  ctx.restore();
+}
+
+function drawPolarCap(x, y, r) {
+  ctx.save(); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+  ctx.fillStyle = 'rgba(255,255,255,.21)';
+  ctx.beginPath(); ctx.ellipse(x, y - r * .68, r * .38, r * .18, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+
+function drawAtmoGlow(x, y, r, col) {
+  const g = ctx.createRadialGradient(x, y, r * .88, x, y, r * 1.65);
+  g.addColorStop(0, col); g.addColorStop(1, 'transparent');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.arc(x, y, r * 1.65, 0, Math.PI * 2); ctx.fill();
+}
+
+const PLANETS = [
+  {
+    id: 'discogs', fr: 'Discogs Scraper', en: 'Discogs Scraper',
+    subfr: 'Python · Scraping', suben: 'Python · Scraping',
+    href: 'projects/discogs.html',
+    oR: 62, sp: .000195, ph: .3, rad: 10, atmo: 'rgba(55,95,175,.18)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(155,188,255,1)', 'rgba(75,115,195,1)', 'rgba(22,52,138,1)', 'rgba(7,16,64,1)');
+      drawBands(x, y, r, 3, 'rgba(180,210,255,.07)');
+    },
+  },
+  {
+    id: 'synapse', fr: 'Synapse', en: 'Synapse',
+    subfr: 'RAG · LangChain', suben: 'RAG · LangChain',
+    href: 'projects/synapse.html',
+    oR: 93, sp: .00013, ph: 1.8, rad: 14, atmo: 'rgba(125,65,195,.22)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(218,178,255,1)', 'rgba(148,75,218,1)', 'rgba(72,22,158,1)', 'rgba(22,7,72,1)');
+      drawBands(x, y, r, 4, 'rgba(188,128,255,.09)');
+    },
+  },
+  {
+    id: 'accidents', fr: 'Accidents Route', en: 'Road Accidents',
+    subfr: 'Python · Plotly', suben: 'Python · Plotly',
+    href: 'projects/accidents.html',
+    oR: 128, sp: .000085, ph: 3.7, rad: 10, atmo: 'rgba(195,72,32,.16)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(238,178,128,1)', 'rgba(198,92,52,1)', 'rgba(142,42,22,1)', 'rgba(58,12,6,1)');
+      drawPolarCap(x, y, r);
+    },
+  },
+  {
+    id: 'olist', fr: 'Analyse Olist', en: 'Olist Analysis',
+    subfr: 'Tableau · Data Viz', suben: 'Tableau · Data Viz',
+    href: 'projects/olist.html',
+    oR: 158, sp: .000052, ph: .9, rad: 13, atmo: 'rgba(48,168,178,.22)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(178,255,255,1)', 'rgba(48,170,188,1)', 'rgba(15,90,115,1)', 'rgba(3,32,55,1)');
+    },
+  },
+  {
+    id: 'paris', fr: 'Paris Sportifs', en: 'Sports Betting',
+    subfr: 'Excel · Analyse', suben: 'Excel · Analysis',
+    href: 'projects/paris-sportifs.html',
+    oR: 170, sp: .000042, ph: 2.5, rad: 11, atmo: 'rgba(50,200,120,.16)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(168,255,210,1)', 'rgba(48,188,118,1)', 'rgba(16,108,62,1)', 'rgba(3,38,20,1)');
+      drawBands(x, y, r, 2, 'rgba(120,255,180,.08)');
+    },
+  },
+  {
+    id: 'together', fr: 'Together', en: 'Together',
+    subfr: 'Next.js · Supabase', suben: 'Next.js · Supabase',
+    href: 'projects/together.html',
+    oR: 220, sp: .000022, ph: 5.2, rad: 16, atmo: 'rgba(210,150,50,.2)',
+    hasRings: true,
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(255,236,172,1)', 'rgba(218,162,72,1)', 'rgba(152,102,32,1)', 'rgba(62,32,7,1)');
+      drawBands(x, y, r, 5, 'rgba(255,195,95,.09)');
+    },
+  },
+  {
+    id: 'payfit', fr: 'Payfit SEO', en: 'Payfit SEO',
+    subfr: 'Make · Dust · IA', suben: 'Make · Dust · AI',
+    href: 'projects/payfit-seo.html',
+    oR: 195, sp: .000032, ph: 0.9, rad: 10, atmo: 'rgba(249,115,22,.2)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, 'rgba(255,200,140,1)', 'rgba(249,115,22,1)', 'rgba(180,60,10,1)', 'rgba(60,15,2,1)');
+    },
+  },
+];
+
+// ── Couleur unique par skill (ordre = ordre du tableau SKILLS) ──────────────
+const SKILL_COL = [
+  '#4db8ff', // Python     — bleu
+  '#fbbf24', // SQL        — ambre
+  '#818cf8', // Tableau    — indigo
+  '#a78bfa', // pandas     — violet
+  '#f472b6', // Vibe Coding — rose
+  '#34d399', // Dataiku    — vert
+  '#4ade80', // Excel      — lime
+  '#fb923c', // Make       — orange
+  '#22d3ee', // Dust       — cyan
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SKILL DEFINITIONS
+// ═══════════════════════════════════════════════════════════════════════════
+const SKILLS = [
+  {
+    fr: 'Python', en: 'Python', subfr: 'Data · ML · Script', suben: 'Data · ML',
+    a: 5.93, d: 68,
+    descfr: 'Langage central de ma pratique. Je l\'utilise pour automatiser, analyser, modéliser et construire des pipelines de données end-to-end.',
+    descen: 'Core language of my practice. I use it to automate, analyse, model and build end-to-end data pipelines.',
+    projects: [
+      { name: 'Discogs Scraper', href: 'projects/discogs.html',
+        fr: 'Extraction de milliers de vinyles via requests + BeautifulSoup, nettoyage et structuration des données avec pandas.',
+        en: 'Scraped thousands of vinyl records using requests + BeautifulSoup, cleaned and structured data with pandas.' },
+      { name: 'Accidents Route', href: 'projects/accidents.html',
+        fr: 'Analyse exploratoire complète d\'un dataset national, détection de patterns et visualisations dynamiques avec Plotly.',
+        en: 'Full exploratory analysis of a national dataset, pattern detection and dynamic visualisations with Plotly.' },
+      { name: 'Synapse', href: 'projects/synapse.html',
+        fr: 'Pipeline RAG : ingestion de documents PDF, génération d\'embeddings, orchestration LangChain et interface de questions-réponses.',
+        en: 'RAG pipeline: PDF ingestion, embedding generation, LangChain orchestration and Q&A interface.' },
+    ],
+  },
+  {
+    fr: 'SQL', en: 'SQL', subfr: 'Bases de données', suben: 'Databases',
+    a: 0.35, d: 60,
+    descfr: 'Indispensable pour interroger et manipuler des données structurées. Je l\'utilise aussi bien pour l\'exploration rapide que pour des requêtes analytiques complexes.',
+    descen: 'Essential for querying and manipulating structured data. I use it for quick exploration as well as complex analytical queries.',
+    projects: [
+      { name: 'Analyse Olist', href: 'projects/olist.html',
+        fr: 'Jointures multi-tables sur le dataset e-commerce brésilien pour reconstruire les parcours clients et calculer des KPIs business.',
+        en: 'Multi-table joins on the Brazilian e-commerce dataset to reconstruct customer journeys and compute business KPIs.' },
+      { name: 'Together', href: 'projects/together.html',
+        fr: 'Requêtes et mutations Supabase (PostgreSQL) pour la gestion des utilisateurs, événements et participations en temps réel.',
+        en: 'Supabase (PostgreSQL) queries and mutations for managing users, events and real-time participation.' },
+    ],
+  },
+  {
+    fr: 'Tableau', en: 'Tableau', subfr: 'Data Viz', suben: 'Data Viz',
+    a: 1.05, d: 65,
+    descfr: 'Outil de référence pour la visualisation de données décisionnelles. Je l\'utilise pour créer des dashboards interactifs lisibles par des profils non-techniques.',
+    descen: 'Reference tool for business intelligence visualisation. I use it to build interactive dashboards readable by non-technical profiles.',
+    projects: [
+      { name: 'Analyse Olist', href: 'projects/olist.html',
+        fr: 'Tableau de bord complet sur les performances vendeurs, délais de livraison, satisfaction client et géographie des ventes.',
+        en: 'Full dashboard on seller performance, delivery times, customer satisfaction and sales geography.' },
+    ],
+  },
+  {
+    fr: 'pandas', en: 'pandas', subfr: 'Data Wrangling', suben: 'Data Wrangling',
+    a: 1.75, d: 58,
+    descfr: 'La bibliothèque que j\'utilise systématiquement dès qu\'il y a des données tabulaires. Nettoyage, transformation, agrégation : pandas est mon couteau suisse.',
+    descen: 'The library I use systematically whenever there is tabular data. Cleaning, transforming, aggregating: pandas is my Swiss army knife.',
+    projects: [
+      { name: 'Discogs Scraper', href: 'projects/discogs.html',
+        fr: 'Dédoublonnage, normalisation des formats (prix, dates, labels) et export CSV propre depuis les données brutes scrapées.',
+        en: 'Deduplication, format normalisation (prices, dates, labels) and clean CSV export from raw scraped data.' },
+      { name: 'Accidents Route', href: 'projects/accidents.html',
+        fr: 'Fusion de plusieurs fichiers CSV annuels, recodage des variables catégorielles et création de features pour l\'analyse.',
+        en: 'Merging multiple annual CSV files, recoding categorical variables and creating features for analysis.' },
+      { name: 'Analyse Olist', href: 'projects/olist.html',
+        fr: 'Préparation et agrégation d\'un dataset de 100 000+ commandes avant intégration Tableau.',
+        en: 'Preparation and aggregation of a 100,000+ orders dataset before Tableau integration.' },
+    ],
+  },
+  {
+    fr: 'Vibe Coding', en: 'Vibe Coding', subfr: 'Dev IA-assisté', suben: 'AI-assisted dev',
+    a: 2.44, d: 66,
+    descfr: 'Ma façon de développer des interfaces et des outils web complexes en m\'appuyant sur l\'IA comme co-pilote. Plus de vitesse, plus d\'ambition, sans sacrifier la qualité.',
+    descen: 'My approach to building complex web interfaces and tools using AI as a co-pilot. More speed, more ambition, without sacrificing quality.',
+    projects: [
+      { name: 'Together', href: 'projects/together.html',
+        fr: 'Application Next.js / Supabase complète — authentification, pages événements, RSVP et UI responsive construite avec assistance IA.',
+        en: 'Full Next.js / Supabase app — authentication, event pages, RSVP and responsive UI built with AI assistance.' },
+      { name: 'Paris Sportifs', href: 'projects/paris-sportifs.html',
+        fr: 'Mise en forme du fichier Excel et structuration des tableaux de synthèse avec assistance IA.',
+        en: 'Excel file formatting and synthesis table structuring with AI assistance.' },
+    ],
+  },
+  {
+    fr: 'Dataiku', en: 'Dataiku', subfr: 'Data Science', suben: 'Data Science',
+    a: 3.14, d: 62,
+    descfr: 'Plateforme MLOps que j\'ai utilisée pour industrialiser des pipelines de données et automatiser des flux de traitement sans écrire chaque étape à la main.',
+    descen: 'MLOps platform I used to industrialise data pipelines and automate processing flows without writing every step manually.',
+    projects: [
+      { name: 'Synapse', href: 'projects/synapse.html',
+        fr: 'Orchestration du pipeline de préparation documentaire et versioning des recettes de transformation avant déploiement du chatbot.',
+        en: 'Orchestration of the document preparation pipeline and versioning of transformation recipes before chatbot deployment.' },
+    ],
+  },
+  {
+    fr: 'Excel', en: 'Excel', subfr: 'Analyse / Sheets', suben: 'Analysis',
+    a: 3.84, d: 56,
+    descfr: 'Toujours présent pour l\'exploration initiale, les quick-wins et la communication de résultats à des interlocuteurs non-techniques.',
+    descen: 'Always present for initial exploration, quick wins and communicating results to non-technical stakeholders.',
+    projects: [
+      { name: 'Analyse Olist', href: 'projects/olist.html',
+        fr: 'Exploration préliminaire du dataset, validation des agrégations et présentation des résultats sous forme de tableau croisé dynamique.',
+        en: 'Preliminary dataset exploration, aggregation validation and results presentation via pivot tables.' },
+      { name: 'Paris Sportifs', href: 'projects/paris-sportifs.html',
+        fr: 'Collecte, nettoyage et agrégation des résultats des 5 grands championnats pour identifier les patterns de paris rentables.',
+        en: 'Collection, cleaning and aggregation of results from 5 major leagues to identify profitable betting patterns.' },
+    ],
+  },
+  {
+    fr: 'Make', en: 'Make', subfr: 'Automatisation', suben: 'Automation',
+    a: 4.54, d: 62,
+    descfr: 'Plateforme no-code d\'automatisation de workflows. Je l\'utilise pour connecter des APIs, déclencher des traitements automatiques et orchestrer des flux entre différents services.',
+    descen: 'No-code workflow automation platform. I use it to connect APIs, trigger automated processing and orchestrate flows between services.',
+    projects: [
+      { name: 'Payfit SEO', href: 'projects/payfit-seo.html',
+        fr: '3 scénarios Make orchestrant la collecte RSS, l\'extraction IA de mots-clés et l\'injection dans Google Sheets.',
+        en: '3 Make scenarios orchestrating RSS collection, AI keyword extraction and injection into Google Sheets.' },
+    ],
+  },
+  {
+    fr: 'Dust', en: 'Dust', subfr: 'IA · Workflows', suben: 'AI · Workflows',
+    a: 5.24, d: 58,
+    descfr: 'Plateforme d\'agents IA et d\'automatisation assistée par LLM. Je l\'utilise pour construire des workflows intelligents combinant modèles de langage et sources de données.',
+    descen: 'AI agent and LLM-assisted automation platform. I use it to build intelligent workflows combining language models and data sources.',
+    projects: [
+      { name: 'Payfit SEO', href: 'projects/payfit-seo.html',
+        fr: 'Agents Dust pour l\'analyse sémantique des mots-clés RH et la priorisation des opportunités SEO.',
+        en: 'Dust agents for semantic analysis of HR keywords and SEO opportunity prioritisation.' },
+    ],
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — CENTRAL STAR
+// ═══════════════════════════════════════════════════════════════════════════
+function drawCentralStar(t) {
+  const s = w2s(0, 0), r = 36 * cam.zoom;
+
+  // Far atmosphere
+  const atmo = ctx.createRadialGradient(s.x, s.y, r * .4, s.x, s.y, r * 8);
+  atmo.addColorStop(0,  'rgba(255,200,80,.055)');
+  atmo.addColorStop(.45,'rgba(255,155,35,.022)');
+  atmo.addColorStop(1,  'transparent');
+  ctx.fillStyle = atmo;
+  ctx.beginPath(); ctx.arc(s.x, s.y, r * 8, 0, Math.PI * 2); ctx.fill();
+
+  // Corona rays
+  for (let i = 0; i < 20; i++) {
+    const ang   = (Math.PI * 2 / 20) * i + .04 * Math.sin(t * .0007 + i * 1.4);
+    const inner = r * 1.1;
+    const outer = r * (1.95 + .5 * Math.sin(t * .0006 + i * .8));
+    const al    = (.06 + .04 * Math.sin(t * .001 + i * .9)).toFixed(3);
+    const rg    = ctx.createLinearGradient(
+      s.x + Math.cos(ang) * inner, s.y + Math.sin(ang) * inner,
+      s.x + Math.cos(ang) * outer, s.y + Math.sin(ang) * outer
+    );
+    rg.addColorStop(0, `rgba(255,210,100,${al})`);
+    rg.addColorStop(1, 'transparent');
+    ctx.strokeStyle = rg;
+    ctx.lineWidth   = 1.5 + 2.5 * Math.sin(t * .0005 + i);
+    ctx.lineCap     = 'round';
+    ctx.beginPath();
+    ctx.moveTo(s.x + Math.cos(ang) * inner, s.y + Math.sin(ang) * inner);
+    ctx.lineTo(s.x + Math.cos(ang) * outer, s.y + Math.sin(ang) * outer);
+    ctx.stroke();
+  }
+
+  // Mid glow
+  const mg = ctx.createRadialGradient(s.x, s.y, r * .2, s.x, s.y, r * 2.2);
+  mg.addColorStop(0,   'rgba(255,228,138,.24)');
+  mg.addColorStop(.45, 'rgba(255,172,52,.09)');
+  mg.addColorStop(1,   'transparent');
+  ctx.fillStyle = mg;
+  ctx.beginPath(); ctx.arc(s.x, s.y, r * 2.2, 0, Math.PI * 2); ctx.fill();
+
+  // Solar disk
+  const dk = ctx.createRadialGradient(s.x - r * .25, s.y - r * .25, r * .05, s.x, s.y, r);
+  dk.addColorStop(0,   'rgba(255,255,218,1)');
+  dk.addColorStop(.35, 'rgba(255,228,118,1)');
+  dk.addColorStop(.7,  'rgba(255,175,36,1)');
+  dk.addColorStop(1,   'rgba(215,95,16,.92)');
+  ctx.fillStyle  = dk;
+  ctx.shadowBlur = 48; ctx.shadowColor = 'rgba(255,172,55,.72)';
+  ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Limb darkening
+  const lb = ctx.createRadialGradient(s.x, s.y, r * .55, s.x, s.y, r);
+  lb.addColorStop(0, 'transparent'); lb.addColorStop(1, 'rgba(145,46,0,.42)');
+  ctx.fillStyle = lb;
+  ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fill();
+
+  // Name label (home view only)
+  if (view === 'home') {
+    const fz = Math.max(11, 16 * cam.zoom);
+    ctx.save();
+    ctx.textAlign  = 'center';
+    ctx.font       = `800 ${fz}px 'Segoe UI',system-ui,sans-serif`;
+    ctx.fillStyle  = 'rgba(255,255,255,.88)';
+    ctx.shadowBlur = 16; ctx.shadowColor = 'rgba(255,255,255,.25)';
+    ctx.fillText('Lucas Fouquet', s.x, s.y + r * 1.95 + 17 * cam.zoom);
+    ctx.shadowBlur = 0;
+    ctx.font      = `600 ${Math.max(7, 9 * cam.zoom)}px 'Segoe UI',system-ui,sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,.28)';
+    ctx.fillText(lang === 'fr' ? 'ÉTUDIANT DATA & IA' : 'DATA & AI STUDENT',
+                 s.x, s.y + r * 1.95 + 31 * cam.zoom);
+    ctx.restore();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — GALAXY (Projets)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawGalaxy(t) {
+  const gw = POS.galaxy, gs = w2s(gw.x, gw.y), zf = cam.zoom;
+  const rot = t * .000032;
+  const maxR = 112;
+
+  // Elliptical disk glow (flattened)
+  ctx.save();
+  ctx.translate(gs.x, gs.y);
+  ctx.scale(1, .38);
+  const dg = ctx.createRadialGradient(0, 0, 0, 0, 0, maxR * zf * 1.55);
+  dg.addColorStop(0,   'rgba(255,232,172,.1)');
+  dg.addColorStop(.38, 'rgba(175,158,255,.04)');
+  dg.addColorStop(1,   'transparent');
+  ctx.fillStyle = dg;
+  ctx.beginPath(); ctx.arc(0, 0, maxR * zf * 1.55, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  // Core glow
+  const cg = ctx.createRadialGradient(gs.x, gs.y, 0, gs.x, gs.y, 40 * zf);
+  cg.addColorStop(0,   'rgba(255,222,152,.27)');
+  cg.addColorStop(.45, 'rgba(255,192,88,.09)');
+  cg.addColorStop(1,   'transparent');
+  ctx.fillStyle = cg;
+  ctx.beginPath(); ctx.arc(gs.x, gs.y, 40 * zf, 0, Math.PI * 2); ctx.fill();
+
+  // Star particles (rotated)
+  const cosR = Math.cos(rot), sinR = Math.sin(rot);
+  for (const p of GAL_PTS) {
+    const px = p.lx * cosR - p.ly * sinR;
+    const py = p.lx * sinR + p.ly * cosR;
+    const sx = gs.x + px * zf, sy = gs.y + py * zf;
+    if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+    const [r, g, b] = p.cr;
+    ctx.globalAlpha = p.al;
+    ctx.fillStyle   = `rgb(${r},${g},${b})`;
+    ctx.beginPath(); ctx.arc(sx, sy, p.sz, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Hover ring
+  if (view === 'home' && hovered === 'galaxy') {
+    ctx.strokeStyle = 'rgba(255,255,255,.13)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(gs.x, gs.y, maxR * zf * .85 + 8, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  if (view === 'home') drawBodyLabel(gs, 'galaxy', maxR * zf * .3 + 26 * zf);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — GLOBULAR CLUSTER (Compétences)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawCluster() {
+  const cw = POS.cluster, cs = w2s(cw.x, cw.y), zf = cam.zoom;
+  const maxR = 72;
+
+  // Overall spherical glow
+  const og = ctx.createRadialGradient(cs.x, cs.y, 0, cs.x, cs.y, maxR * zf * 1.45);
+  og.addColorStop(0,   'rgba(178,198,255,.2)');
+  og.addColorStop(.38, 'rgba(138,168,255,.07)');
+  og.addColorStop(1,   'transparent');
+  ctx.fillStyle = og;
+  ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * 1.45, 0, Math.PI * 2); ctx.fill();
+
+  // Star particles
+  for (const p of CL_PTS) {
+    const sx = cs.x + p.lx * zf, sy = cs.y + p.ly * zf;
+    if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+    const [r, g, b] = p.cr;
+    ctx.globalAlpha = p.al;
+    ctx.fillStyle   = `rgb(${r},${g},${b})`;
+    ctx.beginPath(); ctx.arc(sx, sy, p.sz, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Hover ring
+  if (view === 'home' && hovered === 'cluster') {
+    ctx.strokeStyle = 'rgba(255,255,255,.13)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * .9 + 8, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  if (view === 'home') drawBodyLabel(cs, 'cluster', maxR * zf * .62 + 22 * zf);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — PULSAR (À Propos · Contact)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawPulsar(t) {
+  const pw = POS.pulsar, ps = w2s(pw.x, pw.y), zf = cam.zoom;
+  const r  = 4.5 * zf;
+
+  // Spawn new ring
+  if (t - lastPulse > PULSE_INT) {
+    PRINGS.push({ birth: t, maxWR: 82 });
+    lastPulse = t;
+  }
+
+  // Draw & age rings
+  PRINGS = PRINGS.filter(ring => {
+    const age    = (t - ring.birth) / PULSE_INT;
+    if (age >= 1) return false;
+    const ringR  = Math.pow(age, .68) * ring.maxWR * zf;
+    const al     = (1 - age) * .3;
+    ctx.strokeStyle = `rgba(100,200,255,${al.toFixed(3)})`; ctx.lineWidth = .8;
+    ctx.beginPath(); ctx.arc(ps.x, ps.y, ringR, 0, Math.PI * 2); ctx.stroke();
+    return true;
+  });
+
+  // Polar jets
+  const jA = Math.PI / 2.4;
+  for (const dir of [1, -1]) {
+    const jL  = 95 * zf;
+    const jEx = ps.x + Math.cos(jA) * dir * jL;
+    const jEy = ps.y + Math.sin(jA) * dir * jL;
+    const jg  = ctx.createLinearGradient(ps.x, ps.y, jEx, jEy);
+    jg.addColorStop(0, 'rgba(130,215,255,.52)');
+    jg.addColorStop(1, 'transparent');
+    ctx.save();
+    ctx.strokeStyle = jg; ctx.lineWidth = Math.max(.8, 1.6 * zf);
+    ctx.lineCap = 'round'; ctx.globalAlpha = .7;
+    ctx.beginPath(); ctx.moveTo(ps.x, ps.y); ctx.lineTo(jEx, jEy); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Core glow
+  const cg = ctx.createRadialGradient(ps.x, ps.y, 0, ps.x, ps.y, r * 5);
+  cg.addColorStop(0,  'rgba(198,238,255,.95)');
+  cg.addColorStop(.3, 'rgba(98,198,255,.42)');
+  cg.addColorStop(1,  'transparent');
+  ctx.fillStyle = cg;
+  ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 5, 0, Math.PI * 2); ctx.fill();
+
+  // Hover ring
+  if (view === 'home' && hovered === 'pulsar') {
+    ctx.strokeStyle = 'rgba(100,200,255,.22)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 6 + 12 * zf, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  // Neutron star core
+  ctx.shadowBlur = 22 * zf; ctx.shadowColor = 'rgba(128,212,255,1)';
+  ctx.fillStyle = 'white';
+  ctx.beginPath(); ctx.arc(ps.x, ps.y, r, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  if (view === 'home') drawBodyLabel(ps, 'pulsar', r * 5 + 18 * zf);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — EASTER EGG (planète cachée)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawEasterEgg() {
+  const ew = POS.egg, es = w2s(ew.x, ew.y), zf = cam.zoom;
+  const r  = 13 * zf;
+  if (es.x < -r * 3 || es.x > W + r * 3 || es.y < -r * 3 || es.y > H + r * 3) return;
+
+  drawAtmoGlow(es.x, es.y, r, 'rgba(50,195,100,.18)');
+  drawSphere(es.x, es.y, r,
+    'rgba(168,255,188,1)', 'rgba(48,192,95,1)', 'rgba(16,118,50,1)', 'rgba(3,40,16,1)');
+  drawBands(es.x, es.y, r, 3, 'rgba(100,255,140,.1)');
+
+  if (hovered === 'egg') {
+    ctx.strokeStyle = 'rgba(80,255,120,.28)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(es.x, es.y, r * 1.9 + 4, 0, Math.PI * 2); ctx.stroke();
+    if (view === 'home') drawBodyLabel(es, 'egg', r * 2 + 14 * zf);
+  }
+}
+
+// ─── Shared label renderer ──────────────────────────────────────────────────
+function drawBodyLabel(s, id, yOffset) {
+  const L = LABELS[id], isHov = (hovered === id);
+  ctx.save();
+  ctx.textAlign = 'center';
+  const fz = Math.max(9, 12 * cam.zoom);
+  ctx.font      = `700 ${fz}px 'Segoe UI',system-ui,sans-serif`;
+  ctx.fillStyle = isHov ? 'rgba(255,255,255,.95)' : 'rgba(255,255,255,.52)';
+  if (isHov) { ctx.shadowBlur = 12; ctx.shadowColor = 'rgba(255,255,255,.28)'; }
+  ctx.fillText(L[lang === 'fr' ? 'fr' : 'en'], s.x, s.y + yOffset);
+  ctx.shadowBlur = 0;
+  ctx.font      = `500 ${Math.max(7, 9.5 * cam.zoom)}px 'Segoe UI',system-ui,sans-serif`;
+  ctx.fillStyle = isHov ? 'rgba(255,255,255,.42)' : 'rgba(255,255,255,.2)';
+  ctx.fillText(L[lang === 'fr' ? 'subfr' : 'suben'], s.x, s.y + yOffset + Math.max(11, 14 * cam.zoom));
+  ctx.restore();
+}
+
+// ─── Faint orbital paths (home view) ───────────────────────────────────────
+function drawOrbits() {
+  const s = w2s(0, 0);
+  ctx.setLineDash([3, 7]);
+  for (const pos of Object.values(POS)) {
+    const d = Math.sqrt(pos.x * pos.x + pos.y * pos.y) * cam.zoom;
+    ctx.strokeStyle = 'rgba(255,255,255,.028)'; ctx.lineWidth = .5;
+    ctx.beginPath(); ctx.arc(s.x, s.y, d, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — PLANETS (projects view)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawPlanets(t) {
+  const gc = w2s(POS.galaxy.x, POS.galaxy.y), zf = cam.zoom;
+
+  // Orbit ellipses (perspective-tilted)
+  for (const p of PLANETS) {
+    ctx.save(); ctx.translate(gc.x, gc.y); ctx.scale(1, .55);
+    ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = .5;
+    ctx.beginPath(); ctx.arc(0, 0, p.oR * zf, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  // Sort back-to-front by screen Y
+  const sorted = [...PLANETS].sort((a, b) =>
+    Math.sin(a.sp * t + a.ph) * a.oR * .55 - Math.sin(b.sp * t + b.ph) * b.oR * .55
+  );
+
+  for (const p of sorted) {
+    const angle = p.sp * t + p.ph;
+    const wx    = POS.galaxy.x + Math.cos(angle) * p.oR;
+    const wy    = POS.galaxy.y + Math.sin(angle) * p.oR * .55;
+    const ps    = w2s(wx, wy), r = p.rad * zf;
+
+    // Ring system (before sphere so sphere overlaps front rings)
+    if (p.hasRings) {
+      ctx.save(); ctx.translate(ps.x, ps.y); ctx.scale(1, .32);
+      ctx.strokeStyle = 'rgba(198,158,98,.28)'; ctx.lineWidth = r * .42;
+      ctx.beginPath(); ctx.arc(0, 0, r * 2.2, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(198,158,98,.1)';  ctx.lineWidth = r * .5;
+      ctx.beginPath(); ctx.arc(0, 0, r * 2.85, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+
+    drawAtmoGlow(ps.x, ps.y, r, p.atmo);
+    p.draw(ps.x, ps.y, r);
+
+    // Hover label
+    const dx  = mouseX - ps.x, dy = mouseY - ps.y;
+    const hit = Math.sqrt(dx * dx + dy * dy) < r * 2.8;
+    if (hit) {
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.font      = `700 ${Math.max(10, 12 * zf)}px 'Segoe UI',system-ui,sans-serif`;
+      ctx.fillStyle = 'rgba(255,255,255,.92)';
+      ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(255,255,255,.3)';
+      ctx.fillText(p[lang === 'fr' ? 'fr' : 'en'], ps.x, ps.y + r * 2.85 + 12);
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — SKILL STARS (skills view)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawSkillStars(t) {
+  const cc = POS.cluster, zf = cam.zoom;
+  const cs = w2s(cc.x, cc.y); // centre cluster en screen coords
+
+  SKILLS.forEach((sk, i) => {
+    const col = SKILL_COL[i % SKILL_COL.length];
+    const wx  = cc.x + Math.cos(sk.a) * sk.d;
+    const wy  = cc.y + Math.sin(sk.a) * sk.d;
+    const ss  = w2s(wx, wy);
+    const tw  = .62 + .38 * Math.sin(t * .0018 + sk.a * 2.1 + i * .7);
+    const r   = 4.5 * zf;
+
+    // ── Ligne de connexion cluster → nœud ──
+    ctx.save();
+    ctx.globalAlpha = .14 * tw;
+    ctx.strokeStyle = col;
+    ctx.lineWidth   = .9 * zf;
+    ctx.setLineDash([3 * zf, 5 * zf]);
+    ctx.beginPath(); ctx.moveTo(cs.x, cs.y); ctx.lineTo(ss.x, ss.y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // ── Halo extérieur ──
+    ctx.globalAlpha = .18 * tw;
+    const sg = ctx.createRadialGradient(ss.x, ss.y, 0, ss.x, ss.y, r * 5.5);
+    sg.addColorStop(0, col); sg.addColorStop(1, 'transparent');
+    ctx.fillStyle = sg;
+    ctx.beginPath(); ctx.arc(ss.x, ss.y, r * 5.5, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // ── Étoile à 4 branches (lentement animée) ──
+    const rot = t * .00035 + sk.a;
+    ctx.save();
+    ctx.globalAlpha = tw;
+    ctx.shadowBlur  = 18 * zf; ctx.shadowColor = col;
+    ctx.fillStyle   = col;
+    ctx.beginPath();
+    for (let p = 0; p < 8; p++) {
+      const ang = rot + (p * Math.PI) / 4;
+      const rad = p % 2 === 0 ? r * 1.55 : r * 0.42;
+      p === 0
+        ? ctx.moveTo(ss.x + Math.cos(ang) * rad, ss.y + Math.sin(ang) * rad)
+        : ctx.lineTo(ss.x + Math.cos(ang) * rad, ss.y + Math.sin(ang) * rad);
+    }
+    ctx.closePath(); ctx.fill();
+    // Noyau brillant central
+    ctx.shadowBlur = 6 * zf;
+    ctx.fillStyle  = 'rgba(255,255,255,.85)';
+    ctx.beginPath(); ctx.arc(ss.x, ss.y, r * .45, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    ctx.restore();
+
+    // ── Label ──
+    const labelDist = r * 4.5 + 18;
+    const lx = ss.x + Math.cos(sk.a) * labelDist;
+    const ly = ss.y + Math.sin(sk.a) * labelDist;
+    const ca = Math.cos(sk.a);
+    const tAlign = ca > 0.45 ? 'left' : ca < -0.45 ? 'right' : 'center';
+    const lineH  = Math.max(11, 14 * zf);
+    ctx.save();
+    ctx.textAlign  = tAlign;
+    ctx.font       = `700 ${Math.max(10, 12.5 * zf)}px 'Segoe UI',system-ui,sans-serif`;
+    ctx.fillStyle  = col;
+    ctx.shadowBlur = 8; ctx.shadowColor = col + 'aa';
+    ctx.fillText(sk[lang === 'fr' ? 'fr' : 'en'], lx, ly + lineH * .35);
+    ctx.shadowBlur = 0;
+    ctx.font       = `500 ${Math.max(7, 9.5 * zf)}px 'Segoe UI',system-ui,sans-serif`;
+    ctx.fillStyle  = 'rgba(255,255,255,.3)';
+    ctx.fillText(sk[lang === 'fr' ? 'subfr' : 'suben'], lx, ly + lineH * 1.35);
+    ctx.restore();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  HIT DETECTION
+// ═══════════════════════════════════════════════════════════════════════════
+function hitTest(mx, my) {
+  for (const [id, pos] of Object.entries(POS)) {
+    const s  = w2s(pos.x, pos.y);
+    const dx = mx - s.x, dy = my - s.y;
+    if (Math.sqrt(dx * dx + dy * dy) < HIT_WR[id] * cam.zoom + 18) return id;
+  }
+  return null;
+}
+
+function hitTestSkill(mx, my) {
+  const cc = POS.cluster;
+  for (const sk of SKILLS) {
+    const wx = cc.x + Math.cos(sk.a) * sk.d;
+    const wy = cc.y + Math.sin(sk.a) * sk.d;
+    const ss = w2s(wx, wy);
+    const r  = 3.5 * cam.zoom;
+    if (Math.hypot(mx - ss.x, my - ss.y) < r * 5.5) return sk;
+  }
+  return null;
+}
+
+function hitTestPlanet(mx, my, t) {
+  for (const p of PLANETS) {
+    const angle = p.sp * t + p.ph;
+    const wx    = POS.galaxy.x + Math.cos(angle) * p.oR;
+    const wy    = POS.galaxy.y + Math.sin(angle) * p.oR * .55;
+    const ps    = w2s(wx, wy), r = p.rad * cam.zoom;
+    const dx    = mx - ps.x, dy = my - ps.y;
+    if (Math.sqrt(dx * dx + dy * dy) < r * 2.8) return p;
+  }
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  INPUT HANDLING
+// ═══════════════════════════════════════════════════════════════════════════
+function getXY(e) {
+  const t = e.touches?.[0];
+  return { x: t ? t.clientX : e.clientX, y: t ? t.clientY : e.clientY };
+}
+
+UC.addEventListener('mousedown', e => {
+  const { x, y } = getXY(e);
+  drag.on = true; drag.sx = x; drag.sy = y; drag.cx = cam.x; drag.cy = cam.y;
+  vel.x = vel.y = 0; didDrag = false;
+  UC.classList.add('grabbing');
+});
+
+UC.addEventListener('mousemove', e => {
+  const { x, y } = getXY(e);
+  mouseX = x; mouseY = y;
+
+  if (drag.on) {
+    const dx = x - drag.sx, dy = y - drag.sy;
+    if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didDrag = true;
+    const prevX = cam.x, prevY = cam.y;
+    cam.x  = drag.cx - dx / cam.zoom;
+    cam.y  = drag.cy - dy / cam.zoom;
+    camT.x = cam.x; camT.y = cam.y;
+    vel.x  = cam.x - prevX; vel.y = cam.y - prevY;
+  } else if (view === 'home') {
+    hovered = hitTest(x, y);
+    UC.style.cursor = hovered ? 'pointer' : 'grab';
+  }
+});
+
+UC.addEventListener('mouseup', e => {
+  if (!drag.on) return;
+  drag.on = false; UC.classList.remove('grabbing');
+  if (!didDrag) {
+    const { x, y } = getXY(e);
+    handleClick(x, y);
+  } else {
+    camT.x = cam.x + vel.x * 11;
+    camT.y = cam.y + vel.y * 11;
+  }
+  vel.x = vel.y = 0;
+});
+
+UC.addEventListener('mouseleave', () => {
+  drag.on = false; UC.classList.remove('grabbing');
+  hovered = null; vel.x = vel.y = 0;
+});
+
+UC.addEventListener('touchstart', e => {
+  const { x, y } = getXY(e);
+  drag.on = true; drag.sx = x; drag.sy = y; drag.cx = cam.x; drag.cy = cam.y;
+  vel.x = vel.y = 0; didDrag = false;
+}, { passive: true });
+
+UC.addEventListener('touchmove', e => {
+  if (!drag.on) return;
+  const { x, y } = getXY(e);
+  const dx = x - drag.sx, dy = y - drag.sy;
+  if (Math.abs(dx) > 2 || Math.abs(dy) > 2) didDrag = true;
+  const prevX = cam.x, prevY = cam.y;
+  cam.x  = drag.cx - dx / cam.zoom;
+  cam.y  = drag.cy - dy / cam.zoom;
+  camT.x = cam.x; camT.y = cam.y;
+  vel.x  = cam.x - prevX; vel.y = cam.y - prevY;
+}, { passive: true });
+
+UC.addEventListener('touchend', e => {
+  drag.on = false;
+  if (!didDrag) {
+    const t = e.changedTouches[0];
+    handleClick(t.clientX, t.clientY);
+  } else {
+    camT.x = cam.x + vel.x * 11;
+    camT.y = cam.y + vel.y * 11;
+  }
+  vel.x = vel.y = 0;
+});
+
+// ─── Click handler ──────────────────────────────────────────────────────────
+function handleClick(mx, my) {
+  if (view === 'home') {
+    const hit = hitTest(mx, my);
+    if (hit === 'galaxy')  zoomTo('galaxy',  3.4, () => { view = 'projects'; });
+    if (hit === 'cluster') zoomTo('cluster', 3.0, () => { view = 'skills';   });
+    if (hit === 'pulsar')  triggerTransmission();
+    if (hit === 'egg')     triggerEasterEgg();
+  } else if (view === 'projects') {
+    const p = hitTestPlanet(mx, my, lastFrameT);
+    if (p) window.location.href = p.href;
+  } else if (view === 'skills') {
+    const sk = hitTestSkill(mx, my);
+    if (sk) openSkillPanel(sk);
+  }
+}
+
+function zoomTo(id, targetZoom, cb) {
+  const pos = POS[id];
+  camT.x = pos.x; camT.y = pos.y; camT.zoom = targetZoom;
+  document.getElementById('backBtn').style.display = 'flex';
+  document.getElementById('hint').style.opacity   = '0';
+  setTimeout(() => { if (cb) cb(); }, 1000);
+}
+
+window.goHome = function () {
+  view   = 'home';
+  camT.x = 0; camT.y = 0; camT.zoom = 1.5;
+  document.getElementById('backBtn').style.display = 'none';
+  document.getElementById('hint').style.opacity   = '1';
+  hovered = null;
+  window.closeSkillPanel && window.closeSkillPanel();
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  PANELS
+// ═══════════════════════════════════════════════════════════════════════════
+function openPanel(id) {
+  const tpl     = document.getElementById('tpl-' + id);
+  const panel   = document.getElementById('panel');
+  const content = document.getElementById('panelContent');
+  content.innerHTML = '';
+  content.appendChild(tpl.content.cloneNode(true));
+  applyLang(content);
+  panel.classList.add('visible');
+}
+window.closePanel = function () { document.getElementById('panel').classList.remove('visible'); };
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SKILL PANEL
+// ═══════════════════════════════════════════════════════════════════════════
+let _currentSkill = null;
+
+function openSkillPanel(sk) {
+  _currentSkill = sk;
+  _renderSkillPanel(sk, lang);
+  document.getElementById('skill-panel').classList.add('visible');
+}
+
+function _renderSkillPanel(sk, l) {
+  const isFr = l === 'fr';
+  document.getElementById('sk-eyebrow').textContent = isFr ? 'Compétence' : 'Skill';
+  document.getElementById('sk-name').textContent    = isFr ? sk.fr : sk.en;
+  document.getElementById('sk-desc').textContent    = isFr ? sk.descfr : sk.descen;
+  document.getElementById('sk-proj-title').textContent = isFr
+    ? 'Utilisé dans ces projets' : 'Used in these projects';
+
+  const list = document.getElementById('sk-proj-list');
+  list.innerHTML = '';
+  for (const p of sk.projects) {
+    const item = document.createElement(p.href ? 'a' : 'div');
+    item.className = 'sk-project';
+    if (p.href) item.href = p.href;
+    item.innerHTML = `
+      <div class="sk-project-dot"></div>
+      <div>
+        <div class="sk-project-name">${p.name}</div>
+        <div class="sk-project-detail">${isFr ? p.fr : p.en}</div>
+      </div>
+      ${p.href ? '<div class="sk-project-arrow">→</div>' : ''}`;
+    list.appendChild(item);
+  }
+  // Re-apply lang on the close button
+  applyLang(document.getElementById('skill-panel'));
+}
+
+window.closeSkillPanel = function () {
+  document.getElementById('skill-panel').classList.remove('visible');
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  SOUND EFFECTS (Web Audio API — aucun fichier externe requis)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// AudioContext partagé pour les ticks de frappe (évite la surcharge)
+let _sharedAC = null;
+function _getAC() {
+  try {
+    if (!_sharedAC || _sharedAC.state === 'closed')
+      _sharedAC = new (window.AudioContext || window.webkitAudioContext)();
+    return _sharedAC;
+  } catch(e) { return null; }
+}
+
+// ── Among Us typing sound — MP3 en boucle pendant le typage ────────────────
+let _typingAudio = null;
+
+function startTypingSound() {
+  if (_typingAudio) return; // déjà en cours
+  try {
+    const a = new Audio('assets/audio/among-us-eject-sound-effect.mp3');
+    a.loop   = true;
+    a.volume = 0.38;
+    a.play().catch(() => {});
+    _typingAudio = a;
+  } catch(e) {}
+}
+
+function stopTypingSound() {
+  if (!_typingAudio) return;
+  try {
+    // Fondu rapide sur 180ms pour éviter le coupé brutal
+    const a = _typingAudio;
+    _typingAudio = null;
+    const step = a.volume / 9;
+    const fade = setInterval(() => {
+      if (a.volume > step) { a.volume -= step; }
+      else { a.pause(); a.currentTime = 0; clearInterval(fade); }
+    }, 20);
+  } catch(e) {}
+}
+
+// Gardé comme no-op pour ne pas casser les appels existants
+function playTypingTick() {}
+
+function playTransmissionSound() {
+  try {
+    const ac = new (window.AudioContext || window.webkitAudioContext)();
+    function noise(start, dur, gain) {
+      const buf = ac.createBuffer(1, Math.ceil(ac.sampleRate * dur), ac.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ac.createBufferSource(); src.buffer = buf;
+      const filt = ac.createBiquadFilter();
+      filt.type = 'bandpass'; filt.frequency.value = 1400; filt.Q.value = 1.4;
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0, ac.currentTime + start);
+      g.gain.linearRampToValueAtTime(gain, ac.currentTime + start + 0.02);
+      g.gain.setValueAtTime(gain, ac.currentTime + start + dur - 0.03);
+      g.gain.linearRampToValueAtTime(0, ac.currentTime + start + dur);
+      src.connect(filt); filt.connect(g); g.connect(ac.destination);
+      src.start(ac.currentTime + start);
+    }
+    function beep(start, dur, freq, gain) {
+      const osc = ac.createOscillator();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0, ac.currentTime + start);
+      g.gain.linearRampToValueAtTime(gain, ac.currentTime + start + 0.01);
+      g.gain.setValueAtTime(gain, ac.currentTime + start + dur - 0.015);
+      g.gain.linearRampToValueAtTime(0, ac.currentTime + start + dur);
+      osc.connect(g); g.connect(ac.destination);
+      osc.start(ac.currentTime + start);
+      osc.stop(ac.currentTime + start + dur + 0.02);
+    }
+    // Séquence : static → bips façon morse → static (feeling radio)
+    noise(0.00, 0.14, 0.28);
+    beep (0.16, 0.06, 880,  0.14);
+    beep (0.24, 0.06, 660,  0.14);
+    beep (0.32, 0.12, 880,  0.14);
+    noise(0.48, 0.10, 0.18);
+    beep (0.60, 0.06, 1100, 0.11);
+    beep (0.68, 0.10, 880,  0.11);
+    noise(0.80, 0.16, 0.22);
+  } catch (e) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  TRANSMISSION (Contact)
+// ═══════════════════════════════════════════════════════════════════════════
+function triggerTransmission() {
+  playTransmissionSound();
+  const ov    = document.getElementById('transmission');
+  const con   = document.getElementById('tx-content');
+  const close = document.getElementById('tx-close');
+  const about = document.getElementById('tx-about');
+  const aboutClose = document.getElementById('tx-about-close');
+  ov.classList.add('visible');
+  con.innerHTML = '';
+  con.style.opacity = '1';
+  close.style.opacity = '1';
+  about.style.display = 'none'; about.style.opacity = '0'; about.classList.remove('visible');
+  aboutClose.classList.remove('visible');
+
+  document.getElementById('tx-status').textContent = lang === 'fr'
+    ? 'Signal reçu — Décodage en cours' : 'Signal received — Decoding';
+  const lines = lang === 'fr' ? [
+    { t: '— SIGNAL DÉTECTÉ — DÉCODAGE EN COURS —', col: 'rgba(100,200,255,.5)' },
+    { t: '', col: '' },
+    { t: 'Lucas Fouquet — Étudiant Data & IA', col: 'rgba(100,200,255,.92)' },
+    { t: 'Passionné par la donnée, l\'IA et le développement.', col: 'rgba(100,200,255,.7)' },
+    { t: '', col: '' },
+    { t: '— CHARGEMENT DU PROFIL —', col: 'rgba(100,200,255,.45)' },
+  ] : [
+    { t: '— SIGNAL DETECTED — DECODING —', col: 'rgba(100,200,255,.5)' },
+    { t: '', col: '' },
+    { t: 'Lucas Fouquet — Data & AI Student', col: 'rgba(100,200,255,.92)' },
+    { t: 'Passionate about data, AI and development.', col: 'rgba(100,200,255,.7)' },
+    { t: '', col: '' },
+    { t: '— LOADING PROFILE —', col: 'rgba(100,200,255,.45)' },
+  ];
+
+  let li = 0, ci = 0;
+  function type() {
+    if (li >= lines.length) {
+      stopTypingSound();
+      // Transition vers le profil complet
+      setTimeout(() => {
+        con.style.transition = 'opacity .4s';
+        con.style.opacity = '0';
+        close.style.transition = 'opacity .4s';
+        close.style.opacity = '0';
+        document.getElementById('tx-status').style.transition = 'opacity .4s';
+        document.getElementById('tx-status').style.opacity = '0';
+        setTimeout(() => {
+          about.style.display = 'block';
+          applyLang(about);
+          requestAnimationFrame(() => {
+            about.style.transition = 'opacity .5s ease';
+            about.style.opacity = '1';
+            about.classList.add('visible');
+            aboutClose.classList.add('visible');
+            applyLang(aboutClose);
+          });
+        }, 420);
+      }, 300);
+      return;
+    }
+    const line = lines[li];
+    if (ci === 0) {
+      const el = document.createElement('div');
+      el.className = 'tx-row'; el.style.color = line.col;
+      con.appendChild(el);
+    }
+    const rows = con.querySelectorAll('.tx-row');
+    const curr = rows[rows.length - 1];
+    if (ci < line.t.length) {
+      curr.textContent += line.t[ci]; ci++;
+      setTimeout(type, line.t === '' ? 0 : 46 + Math.random() * 26);
+    } else {
+      li++; ci = 0;
+      setTimeout(type, li === 1 ? 160 : 72);
+    }
+  }
+  setTimeout(() => { startTypingSound(); type(); }, 650);
+}
+window.closeTransmission = function () {
+  stopTypingSound();
+  const ov = document.getElementById('transmission');
+  ov.classList.remove('visible');
+  // Reset pour la prochaine ouverture
+  const con = document.getElementById('tx-content');
+  const close = document.getElementById('tx-close');
+  const about = document.getElementById('tx-about');
+  const aboutClose = document.getElementById('tx-about-close');
+  const status = document.getElementById('tx-status');
+  con.style.transition = ''; con.style.opacity = '1';
+  close.style.transition = ''; close.style.opacity = '1';
+  status.style.transition = ''; status.style.opacity = '1';
+  about.style.display = 'none'; about.style.opacity = '0'; about.classList.remove('visible');
+  aboutClose.classList.remove('visible');
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  EASTER EGG — JEU SPATIAL + MUSIQUE STARBOY
+// ═══════════════════════════════════════════════════════════════════════════
+function playStarboy() {
+  const a = document.getElementById('starboy-audio');
+  if (!a) return;
+  a.volume = 0.45; a.currentTime = 0;
+  a.play().catch(() => {});
+}
+function stopStarboy() {
+  const a = document.getElementById('starboy-audio');
+  if (!a) return;
+  a.pause(); a.currentTime = 0;
+}
+
+function triggerEasterEgg() {
+  playStarboy();
+  startEasterEggGame();
+}
+
+// ── Paliers de jeu ──────────────────────────────────────────────────────────
+const GAME_LEVELS = [
+  //  seuil   label  fireCd  shots spread  bSpd  shipCol                  shipGlow                  astMax  astVy
+  { t:    0, lbl:'I',   cd:220, sh:1, sp:0,  bv:12, col:'rgba(200,255,220,.95)', glow:'rgba(100,220,150,.6)',  aMax:28, vy:1.9 },
+  { t:  400, lbl:'II',  cd:175, sh:1, sp:0,  bv:13, col:'rgba(170,220,255,.95)', glow:'rgba(70,190,255,.65)',  aMax:30, vy:2.2 },
+  { t: 1000, lbl:'III', cd:158, sh:2, sp:9,  bv:14, col:'rgba(210,180,255,.95)', glow:'rgba(155,90,255,.65)',  aMax:32, vy:2.6 },
+  { t: 2200, lbl:'IV',  cd:132, sh:3, sp:10, bv:15, col:'rgba(255,222,145,.95)', glow:'rgba(255,175,45,.7)',   aMax:34, vy:3.0 },
+  { t: 4500, lbl:'V',   cd:102, sh:3, sp:13, bv:16, col:'rgba(255,148,182,.95)', glow:'rgba(255,75,120,.7)',   aMax:36, vy:3.5 },
+  { t: 8000, lbl:'VI',  cd: 78, sh:5, sp: 9, bv:17, col:'rgba(255,255,165,.95)', glow:'rgba(255,238,70,.8)',   aMax:40, vy:4.2 },
+];
+function getLvl(s) {
+  let lv = GAME_LEVELS[0];
+  for (const l of GAME_LEVELS) { if (s >= l.t) lv = l; else break; }
+  return lv;
+}
+function getLvlIdx(s) {
+  let idx = 0;
+  for (let i = 0; i < GAME_LEVELS.length; i++) { if (s >= GAME_LEVELS[i].t) idx = i; else break; }
+  return idx;
+}
+
+// Son de passage de niveau
+function playLevelUpSound() {
+  try {
+    const ac = _getAC(); if (!ac) return;
+    const now = ac.currentTime;
+    [[0,.06,440],[.08,.06,554],[.16,.1,660],[.26,.14,880]].forEach(([t,d,f]) => {
+      const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0, now+t);
+      g.gain.linearRampToValueAtTime(0.1, now+t+0.01);
+      g.gain.setValueAtTime(0.1, now+t+d-0.015);
+      g.gain.linearRampToValueAtTime(0, now+t+d);
+      o.connect(g); g.connect(ac.destination);
+      o.start(now+t); o.stop(now+t+d+0.02);
+    });
+  } catch(e) {}
+}
+
+function startEasterEggGame() {
+  const overlay = document.getElementById('egg-game');
+  overlay.style.display = 'block';
+  const canvas = document.getElementById('game-canvas');
+  const gc = canvas.getContext('2d');
+
+  // ── Plein écran ──
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function GW() { return canvas.width; }
+  function GH() { return canvas.height; }
+
+  // ── Leaderboard (localStorage, top 5) ──
+  const LB_KEY = 'eggLeaderboard';
+  function getLB() { try { return JSON.parse(localStorage.getItem(LB_KEY) || '[]'); } catch(e) { return []; } }
+  function saveLB(s) {
+    const lb = getLB();
+    lb.push({ score: Math.floor(s), date: new Date().toLocaleDateString('fr-FR') });
+    lb.sort((a, b) => b.score - a.score);
+    lb.splice(5);
+    localStorage.setItem(LB_KEY, JSON.stringify(lb));
+    return lb;
+  }
+  function bestScore() { const lb = getLB(); return lb.length ? lb[0].score : 0; }
+
+  let lives = 3, score = 0;
+  let running = false, frameId, lastT = 0;
+  let ship, bullets, asteroids, particles, keys, mouseX;
+  let spawnCd, spawnT, autoFireT;
+  let currentLvIdx = 0, lvUpAnim = null; // lvUpAnim = { text, life (0→1) }
+
+  function resetState() {
+    lives = 3; score = 0; running = false; currentLvIdx = 0; lvUpAnim = null;
+    ship = { x: GW() / 2, y: GH() - 70, r: 13, invuln: 0 };
+    bullets = []; asteroids = []; particles = [];
+    keys = {}; mouseX = GW() / 2;
+    spawnCd = 1200; spawnT = 0; autoFireT = 0;
+  }
+  resetState();
+
+  // ── Input ──
+  function onKey(e) { keys[e.code] = e.type === 'keydown'; }
+  function onMov(e) { mouseX = e.clientX; }
+  function onEsc(e) { if (e.code === 'Escape') window.closeEggGame(); }
+  window.addEventListener('keydown', onKey);
+  window.addEventListener('keyup',   onKey);
+  window.addEventListener('keydown', onEsc);
+  window.addEventListener('mousemove', onMov);
+
+  function detach() {
+    window.removeEventListener('keydown', onKey);
+    window.removeEventListener('keyup',   onKey);
+    window.removeEventListener('keydown', onEsc);
+    window.removeEventListener('mousemove', onMov);
+    window.removeEventListener('resize', resize);
+  }
+
+  window.closeEggGame = function () {
+    running = false; cancelAnimationFrame(frameId);
+    detach(); overlay.style.display = 'none'; stopStarboy();
+  };
+  document.getElementById('game-close-btn').onclick = window.closeEggGame;
+
+  // ── Helpers ──
+  function randPts(r, n) {
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2 + (Math.random() - .5) * .45;
+      pts.push([Math.cos(a) * r * (.62 + Math.random() * .72), Math.sin(a) * r * (.62 + Math.random() * .72)]);
+    }
+    return pts;
+  }
+  function emit(x, y, col, n) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 3.5;
+      particles.push({ x, y, vx: Math.cos(a)*s, vy: Math.sin(a)*s, life: 1, col });
+    }
+  }
+  function spawnAsteroid() {
+    const lv = GAME_LEVELS[currentLvIdx];
+    const r = 10 + Math.random() * lv.aMax, w = GW();
+    asteroids.push({
+      x: r + Math.random() * (w - 2*r), y: -r, r,
+      pts: randPts(r, 7 + Math.floor(Math.random() * 5)),
+      vx: (Math.random() - .5) * (2.0 + currentLvIdx * 0.28),
+      vy: (0.8 + currentLvIdx * 0.22) + Math.random() * lv.vy,
+      rot: 0, rotV: (Math.random() - .5) * (.042 + currentLvIdx * .006),
+      hp: r > 22 + currentLvIdx * 2 ? 2 : 1,
+    });
+  }
+
+  // ── Game loop ──
+  function frame(t) {
+    if (!running) return;
+    frameId = requestAnimationFrame(frame);
+    const dt = Math.min(t - lastT, 50); lastT = t;
+    const w = GW(), h = GH();
+
+    if (keys['ArrowLeft']  || keys['KeyA']) ship.x -= 5;
+    if (keys['ArrowRight'] || keys['KeyD']) ship.x += 5;
+    ship.x += (mouseX - ship.x) * 0.07;
+    ship.x = Math.max(ship.r, Math.min(w - ship.r, ship.x));
+    ship.y = h - 70;
+    if (ship.invuln > 0) ship.invuln -= dt;
+
+    // ── Détection de passage de niveau ──
+    const newLvIdx = getLvlIdx(score);
+    if (newLvIdx > currentLvIdx) {
+      currentLvIdx = newLvIdx;
+      const lbl = GAME_LEVELS[currentLvIdx].lbl;
+      lvUpAnim = { text: lang==='fr'?`NIVEAU ${lbl} — UPGRADE !`:`LEVEL ${lbl} — UPGRADE !`, life: 1 };
+      playLevelUpSound();
+      emit(ship.x, ship.y, GAME_LEVELS[currentLvIdx].col, 20);
+    }
+    if (lvUpAnim) { lvUpAnim.life -= dt * 0.0008; if (lvUpAnim.life <= 0) lvUpAnim = null; }
+
+    // ── Tir ──
+    const lv = GAME_LEVELS[currentLvIdx];
+    autoFireT -= dt;
+    if (autoFireT <= 0) {
+      const bx = ship.x, by = ship.y - ship.r - 2;
+      if (lv.sh === 1) {
+        bullets.push({ x: bx, y: by, vx: 0, vy: -lv.bv });
+      } else {
+        const half = (lv.sh - 1) / 2;
+        for (let i = 0; i < lv.sh; i++) {
+          const off = (i - half) * lv.sp;
+          bullets.push({ x: bx + off, y: by, vx: off * 0.12, vy: -lv.bv });
+        }
+      }
+      autoFireT = lv.cd;
+    }
+    bullets = bullets.filter(b => {
+      b.x += b.vx; b.y += b.vy;
+      return b.y > -8;
+    });
+
+    // ── Spawn astéroïdes ──
+    spawnT -= dt;
+    if (spawnT <= 0) {
+      spawnAsteroid();
+      if (currentLvIdx >= 1 && Math.random() < .38 + currentLvIdx * .06) spawnAsteroid();
+      if (currentLvIdx >= 3 && Math.random() < .22) spawnAsteroid();
+      spawnCd = Math.max(220 - currentLvIdx * 20, 1200 - score * .38);
+      spawnT = spawnCd;
+    }
+
+    for (const a of asteroids) { a.x += a.vx; a.y += a.vy; a.rot += a.rotV; }
+
+    outer: for (let bi = bullets.length - 1; bi >= 0; bi--) {
+      const b = bullets[bi];
+      for (let ai = asteroids.length - 1; ai >= 0; ai--) {
+        const a = asteroids[ai];
+        if (Math.hypot(b.x - a.x, b.y - a.y) < a.r) {
+          bullets.splice(bi, 1); emit(b.x, b.y, '#60ff90', 4); a.hp--;
+          if (a.hp <= 0) { score += Math.round(a.r * 2.5); emit(a.x, a.y, '#80ffaa', 14); asteroids.splice(ai, 1); }
+          continue outer;
+        }
+      }
+    }
+
+    if (ship.invuln <= 0) {
+      for (let ai = asteroids.length - 1; ai >= 0; ai--) {
+        const a = asteroids[ai];
+        if (Math.hypot(ship.x - a.x, ship.y - a.y) < a.r + ship.r * .85) {
+          lives--; emit(ship.x, ship.y, '#ff7050', 22); asteroids.splice(ai, 1);
+          ship.invuln = 2200;
+          if (lives <= 0) { endGame(); return; }
+          break;
+        }
+      }
+    }
+
+    asteroids = asteroids.filter(a => a.y < h + a.r + 10);
+    particles.forEach(p => { p.x += p.vx; p.y += p.vy; p.life -= .038; p.vx *= .93; p.vy *= .93; });
+    particles = particles.filter(p => p.life > 0);
+    score += dt * 0.022;
+    draw();
+  }
+
+  function endGame() {
+    running = false; cancelAnimationFrame(frameId);
+    const lb = saveLB(score);
+    drawGameOver(lb);
+  }
+
+  // ── Render ──
+  function draw() {
+    const w = GW(), h = GH();
+    gc.clearRect(0, 0, w, h);
+    gc.fillStyle = '#020a06'; gc.fillRect(0, 0, w, h);
+    gc.strokeStyle = 'rgba(40,120,60,.06)'; gc.lineWidth = .5;
+    for (let x = 0; x < w; x += 50) { gc.beginPath(); gc.moveTo(x,0); gc.lineTo(x,h); gc.stroke(); }
+    for (let y = 0; y < h; y += 50) { gc.beginPath(); gc.moveTo(0,y); gc.lineTo(w,y); gc.stroke(); }
+
+    for (const a of asteroids) {
+      gc.save(); gc.translate(a.x, a.y); gc.rotate(a.rot);
+      gc.beginPath(); gc.moveTo(a.pts[0][0], a.pts[0][1]);
+      for (let i = 1; i < a.pts.length; i++) gc.lineTo(a.pts[i][0], a.pts[i][1]);
+      gc.closePath();
+      gc.strokeStyle = a.hp > 1 ? 'rgba(160,255,180,.88)' : 'rgba(100,210,130,.68)';
+      gc.lineWidth = 1.5; gc.stroke();
+      if (a.hp > 1) { gc.fillStyle = 'rgba(60,180,90,.07)'; gc.fill(); }
+      gc.restore();
+    }
+
+    // ── Tirs ──
+    const lvc = GAME_LEVELS[currentLvIdx];
+    gc.shadowBlur = 8 + currentLvIdx * 2;
+    gc.shadowColor = lvc.glow;
+    gc.fillStyle = lvc.col;
+    for (const b of bullets) { gc.beginPath(); gc.arc(b.x, b.y, 2.5 + currentLvIdx * 0.3, 0, Math.PI*2); gc.fill(); }
+    gc.shadowBlur = 0;
+
+    // ── Vaisseau ──
+    const blink = ship.invuln > 0 && Math.floor(ship.invuln / 120) % 2 === 1;
+    if (!blink) {
+      gc.save(); gc.translate(ship.x, ship.y);
+      // Flamme moteur (plus grande selon niveau)
+      const flameH = 9 + currentLvIdx * 1.5;
+      gc.fillStyle = 'rgba(255,140,50,.6)';
+      gc.beginPath(); gc.ellipse(0, ship.r+6, 4+currentLvIdx*.5, flameH, 0, 0, Math.PI*2); gc.fill();
+      gc.fillStyle = 'rgba(255,220,80,.38)';
+      gc.beginPath(); gc.ellipse(0, ship.r+4, 2+currentLvIdx*.3, flameH*.55, 0, 0, Math.PI*2); gc.fill();
+      // Corps (couleur selon niveau)
+      gc.shadowBlur = 12 + currentLvIdx * 3; gc.shadowColor = lvc.glow;
+      gc.fillStyle = lvc.col;
+      gc.beginPath(); gc.moveTo(0, -ship.r);
+      gc.lineTo(-ship.r*.72, ship.r*.75); gc.lineTo(0, ship.r*.4); gc.lineTo(ship.r*.72, ship.r*.75);
+      gc.closePath(); gc.fill(); gc.shadowBlur = 0; gc.restore();
+    }
+
+    // ── Animation level-up ──
+    if (lvUpAnim) {
+      const a = Math.min(1, lvUpAnim.life * 3) * Math.min(1, (1 - lvUpAnim.life) * 8);
+      gc.save(); gc.textAlign = 'center'; gc.globalAlpha = Math.max(0, a);
+      gc.font = '800 ' + (22 + (1 - lvUpAnim.life) * 18) + 'px Consolas,monospace';
+      gc.fillStyle = lvc.col;
+      gc.shadowBlur = 22; gc.shadowColor = lvc.glow;
+      gc.fillText(lvUpAnim.text, GW()/2, GH()/2 - 20);
+      gc.shadowBlur = 0; gc.globalAlpha = 1; gc.restore();
+    }
+
+    for (const p of particles) {
+      gc.globalAlpha = p.life; gc.fillStyle = p.col;
+      gc.beginPath(); gc.arc(p.x, p.y, 2, 0, Math.PI*2); gc.fill();
+    }
+    gc.globalAlpha = 1;
+
+    // HUD
+    const hudLv = GAME_LEVELS[currentLvIdx];
+    gc.font = '700 13px Consolas,monospace'; gc.textAlign = 'left';
+    gc.fillStyle = 'rgba(80,255,120,.75)';
+    gc.fillText('SCORE  ' + Math.floor(score), 18, 28);
+    gc.textAlign = 'right';
+    gc.fillText((lang==='fr'?'MEILLEUR':'BEST') + '  ' + bestScore(), w - 18, 28);
+    // Niveau au centre haut
+    gc.textAlign = 'center';
+    gc.fillStyle = hudLv.col; gc.shadowBlur = 10; gc.shadowColor = hudLv.glow;
+    gc.fillText((lang==='fr'?'NIV.':'LVL ') + hudLv.lbl, w / 2, 28);
+    gc.shadowBlur = 0;
+    // Barre de progression vers niveau suivant
+    if (currentLvIdx < GAME_LEVELS.length - 1) {
+      const next = GAME_LEVELS[currentLvIdx + 1];
+      const progress = (score - hudLv.t) / (next.t - hudLv.t);
+      const bw = 120, bh = 4, bx = w/2 - bw/2, by2 = 36;
+      gc.fillStyle = 'rgba(255,255,255,.07)';
+      gc.fillRect(bx, by2, bw, bh);
+      gc.fillStyle = hudLv.col; gc.globalAlpha = .55;
+      gc.fillRect(bx, by2, bw * Math.min(1, progress), bh);
+      gc.globalAlpha = 1;
+    }
+    gc.textAlign = 'left'; gc.fillStyle = 'rgba(255,90,70,.88)';
+    gc.fillText('♥'.repeat(lives) + '♡'.repeat(Math.max(0, 3 - lives)), 18, 50);
+    gc.textAlign = 'center'; gc.fillStyle = 'rgba(80,255,120,.13)';
+    gc.font = '600 10px Consolas,monospace';
+    gc.fillText(lang==='fr'?'⚠  ZONE INTERDITE  ⚠':'⚠  RESTRICTED ZONE  ⚠', w / 2, h - 50);
+  }
+
+  function drawGameOver(lb) {
+    const w = GW(), h = GH();
+    draw();
+    gc.fillStyle = 'rgba(2,6,14,.82)'; gc.fillRect(0, 0, w, h);
+    gc.textAlign = 'center';
+    gc.font = '800 32px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.95)';
+    gc.fillText('GAME OVER', w/2, h/2 - 130);
+
+    gc.font = '600 14px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.7)';
+    gc.fillText((lang==='fr'?'SCORE : ':'SCORE: ') + Math.floor(score), w/2, h/2 - 94);
+    const reachedLv = GAME_LEVELS[currentLvIdx];
+    gc.font = '500 11px Consolas,monospace'; gc.fillStyle = reachedLv.col;
+    gc.shadowBlur = 8; gc.shadowColor = reachedLv.glow;
+    gc.fillText((lang==='fr'?'Niveau atteint : ':'Level reached: ') + reachedLv.lbl, w/2, h/2 - 72);
+    gc.shadowBlur = 0;
+
+    gc.strokeStyle = 'rgba(80,255,120,.18)'; gc.lineWidth = 1;
+    gc.beginPath(); gc.moveTo(w/2 - 120, h/2 - 68); gc.lineTo(w/2 + 120, h/2 - 68); gc.stroke();
+
+    gc.font = '700 11px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.45)';
+    gc.fillText(lang==='fr'?'— CLASSEMENT TOP 5 —':'— TOP 5 LEADERBOARD —', w/2, h/2 - 50);
+
+    // Entrées classement
+    lb.forEach((entry, i) => {
+      const isNew = (i === 0 && Math.floor(score) === entry.score);
+      const y = h/2 - 28 + i * 26;
+      gc.font = (isNew ? '700' : '500') + ' 13px Consolas,monospace';
+      gc.fillStyle = i === 0
+        ? 'rgba(255,230,80,' + (isNew ? '.95' : '.75') + ')'
+        : 'rgba(80,255,120,' + (.65 - i * .08) + ')';
+      const medal = ['🥇', '🥈', '🥉', '4.', '5.'][i];
+      gc.fillText(medal + '  ' + entry.score + ' pts', w/2, y);
+      gc.font = '400 10px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.25)';
+      gc.fillText(entry.date, w/2, y + 13);
+    });
+    if (lb.length === 0) {
+      gc.font = '500 12px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.3)';
+      gc.fillText('—', w/2, h/2 - 8);
+    }
+
+    gc.strokeStyle = 'rgba(80,255,120,.18)'; gc.lineWidth = 1;
+    const sepY = h/2 - 28 + lb.length * 26 + 8;
+    gc.beginPath(); gc.moveTo(w/2 - 120, sepY); gc.lineTo(w/2 + 120, sepY); gc.stroke();
+
+    gc.font = '600 12px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.38)';
+    gc.fillText(lang==='fr'?'[ cliquer pour rejouer ]':'[ click to play again ]', w/2, sepY + 30);
+
+    canvas.addEventListener('click', function restart() {
+      canvas.removeEventListener('click', restart);
+      detach(); startEasterEggGame();
+    }, { once: true });
+  }
+
+  // ── Écran titre ──
+  function drawTitle() {
+    const w = GW(), h = GH();
+    const lb = getLB();
+    gc.fillStyle = '#020a06'; gc.fillRect(0, 0, w, h);
+    gc.textAlign = 'center';
+    gc.font = '800 28px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.95)';
+    gc.shadowBlur = 20; gc.shadowColor = 'rgba(80,255,120,.3)';
+    gc.fillText(lang==='fr'?'ZONE INTERDITE':'RESTRICTED ZONE', w/2, h/2 - 100);
+    gc.shadowBlur = 0;
+    gc.font = '600 13px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.55)';
+    gc.fillText(lang==='fr'?'Survivez aux astéroïdes.':'Survive the asteroids.', w/2, h/2 - 62);
+    gc.fillText(lang==='fr'
+      ?'← → ou souris  ·  tir automatique  ·  ESC pour quitter'
+      :'← → or mouse  ·  auto-fire  ·  ESC to quit', w/2, h/2 - 40);
+    // Paliers
+    gc.font = '600 10px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.28)';
+    const palFr = GAME_LEVELS.map(l=>`NIV.${l.lbl} ${l.t}`).join('  ·  ');
+    const palEn = GAME_LEVELS.map(l=>`LVL ${l.lbl} ${l.t}`).join('  ·  ');
+    gc.fillText(lang==='fr'?palFr:palEn, w/2, h/2 - 18);
+
+    if (lb.length) {
+      gc.strokeStyle = 'rgba(80,255,120,.15)'; gc.lineWidth = 1;
+      gc.beginPath(); gc.moveTo(w/2-130, h/2-18); gc.lineTo(w/2+130, h/2-18); gc.stroke();
+      gc.font = '700 11px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.4)';
+      gc.fillText(lang==='fr'?'— CLASSEMENT TOP 5 —':'— TOP 5 LEADERBOARD —', w/2, h/2 + 2);
+      lb.forEach((e, i) => {
+        const medal = ['🥇','🥈','🥉','4.','5.'][i];
+        gc.font = '500 12px Consolas,monospace';
+        gc.fillStyle = i === 0 ? 'rgba(255,230,80,.78)' : 'rgba(80,255,120,' + (.6 - i*.08) + ')';
+        gc.fillText(medal + '  ' + e.score + ' pts  —  ' + e.date, w/2, h/2 + 24 + i*22);
+      });
+    }
+
+    gc.font = '700 13px Consolas,monospace'; gc.fillStyle = 'rgba(80,255,120,.4)';
+    const btnY = lb.length ? h/2 + 30 + lb.length * 22 + 20 : h/2 + 20;
+    gc.fillText(lang==='fr'?'[ cliquer pour commencer ]':'[ click to start ]', w/2, btnY);
+  }
+
+  drawTitle();
+  canvas.addEventListener('click', function startGame() {
+    canvas.removeEventListener('click', startGame);
+    resetState(); running = true; lastT = performance.now();
+    frameId = requestAnimationFrame(frame);
+  }, { once: true });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  INTRO TRANSMISSION
+// ═══════════════════════════════════════════════════════════════════════════
+function showIntro() {
+  // N'afficher qu'une seule fois par session de navigation
+  if (sessionStorage.getItem('introSeen')) {
+    document.getElementById('intro').classList.add('hidden');
+    return;
+  }
+  sessionStorage.setItem('introSeen', '1');
+  const con = document.getElementById('intro-content');
+  const btn = document.getElementById('intro-close');
+  con.innerHTML = '';
+
+  const lines = lang === 'fr' ? [
+    { t: '— BIENVENUE ASTRONAUTE —', col: 'rgba(100,200,255,.52)' },
+    { t: '', col: '' },
+    { t: 'Votre mission : explorer la galaxie Lucas FOUQUET.', col: 'rgba(100,200,255,.9)' },
+    { t: 'Elle regorge de planètes et nébuleuses', col: 'rgba(100,200,255,.75)' },
+    { t: 'qui méritent toute votre attention.', col: 'rgba(100,200,255,.75)' },
+    { t: '', col: '' },
+    { t: 'Prenez le temps d\'explorer chaque recoin.', col: 'rgba(100,200,255,.6)' },
+    { t: '', col: '' },
+    { t: 'Bonne chance, commandant.', col: 'rgba(100,200,255,.92)' },
+  ] : [
+    { t: '— WELCOME ASTRONAUT —', col: 'rgba(100,200,255,.52)' },
+    { t: '', col: '' },
+    { t: 'Your mission: explore the Lucas FOUQUET galaxy.', col: 'rgba(100,200,255,.9)' },
+    { t: 'It is filled with planets and nebulae', col: 'rgba(100,200,255,.75)' },
+    { t: 'that deserve your full attention.', col: 'rgba(100,200,255,.75)' },
+    { t: '', col: '' },
+    { t: 'Take the time to explore every corner.', col: 'rgba(100,200,255,.6)' },
+    { t: '', col: '' },
+    { t: 'Good luck, commander.', col: 'rgba(100,200,255,.92)' },
+  ];
+
+  let li = 0, ci = 0;
+  function type() {
+    if (li >= lines.length) {
+      stopTypingSound();
+      setTimeout(() => { btn.style.opacity = '1'; }, 500);
+      return;
+    }
+    const line = lines[li];
+    if (ci === 0) {
+      const el = document.createElement('div');
+      el.className = 'tx-row'; el.style.color = line.col;
+      con.appendChild(el);
+    }
+    const rows = con.querySelectorAll('.tx-row');
+    const curr = rows[rows.length - 1];
+    if (ci < line.t.length) {
+      curr.textContent += line.t[ci]; ci++;
+      setTimeout(type, 36 + Math.random() * 22);
+    } else { li++; ci = 0; setTimeout(type, li === 1 ? 220 : 55); }
+  }
+  // Démarre le son dès le premier clic sur l'overlay (autoplay policy)
+  document.getElementById('intro').addEventListener('pointerdown', () => startTypingSound(), { once: true });
+  setTimeout(() => { type(); }, 900);
+}
+
+window.dismissIntro = function () {
+  stopTypingSound();
+  document.getElementById('intro').classList.add('hidden');
+};
+
+// ── Rocket cursor tracking ──────────────────────────────────────────────────
+(function () {
+  const el = document.getElementById('rocket-cursor');
+  if (!el) return;
+  document.addEventListener('mousemove', e => {
+    el.style.left = e.clientX + 'px';
+    el.style.top  = e.clientY + 'px';
+  });
+  document.addEventListener('mouseleave', () => { el.style.opacity = '0'; });
+  document.addEventListener('mouseenter', () => { el.style.opacity = '1'; });
+})();
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  LANGUAGE
+// ═══════════════════════════════════════════════════════════════════════════
+window.toggleLang = function () {
+  lang = lang === 'fr' ? 'en' : 'fr';
+  document.getElementById('langBtn').textContent = lang === 'fr' ? 'EN' : 'FR';
+  document.getElementById('backLabel').textContent = lang === 'fr' ? 'Retour' : 'Back';
+  document.getElementById('tx-status').textContent = lang === 'fr'
+    ? 'Signal reçu — Décodage en cours' : 'Signal received — Decoding';
+  applyLang(document.body);
+  const panel = document.getElementById('panel');
+  if (panel.classList.contains('visible')) applyLang(document.getElementById('panelContent'));
+  if (_currentSkill && document.getElementById('skill-panel').classList.contains('visible'))
+    _renderSkillPanel(_currentSkill, lang);
+};
+
+function applyLang(root) {
+  root.querySelectorAll('[data-fr]').forEach(el => {
+    el.textContent = el.dataset[lang] || '';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  CAMERA UPDATE
+// ═══════════════════════════════════════════════════════════════════════════
+function updateCamera() {
+  if (!drag.on) {
+    const k = .065;
+    cam.x    += (camT.x    - cam.x)    * k;
+    cam.y    += (camT.y    - cam.y)    * k;
+    cam.zoom += (camT.zoom - cam.zoom) * k;
+  }
+  // Share with space.js for background parallax
+  window.SPACE_CAM = { x: cam.x * .1, y: cam.y * .1 };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  RESIZE
+// ═══════════════════════════════════════════════════════════════════════════
+function resize() {
+  W = UC.width  = window.innerWidth;
+  H = UC.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════════════════════════════════
+function loop(t) {
+  lastFrameT = t;
+  updateCamera();
+  ctx.clearRect(0, 0, W, H);
+
+  if (view === 'home') drawOrbits();
+
+  drawCentralStar(t);
+  drawGalaxy(t);
+  drawCluster();
+  drawPulsar(t);
+  drawEasterEgg();
+
+  if (view === 'projects') {
+    drawPlanets(t);
+    const hit = hitTestPlanet(mouseX, mouseY, t);
+    UC.style.cursor = drag.on ? 'grabbing' : hit ? 'pointer' : 'grab';
+  }
+
+  if (view === 'skills') {
+    const hitSk = hitTestSkill(mouseX, mouseY);
+    UC.style.cursor = drag.on ? 'grabbing' : hitSk ? 'pointer' : 'grab';
+    // Hint "cliquer pour en savoir plus"
+    const hint = document.getElementById('hint');
+    if (!drag.on) {
+      hint.style.opacity = '1';
+      hint.textContent   = lang === 'fr' ? 'Cliquer sur une étoile · En savoir plus' : 'Click a star · Learn more';
+    }
+  }
+
+  if (view === 'skills') drawSkillStars(t);
+
+  requestAnimationFrame(loop);
+}
+
+requestAnimationFrame(loop);
+showIntro();
+
+})(); // end IIFE
+</script>
+</body>
+</html>

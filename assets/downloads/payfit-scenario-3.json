@@ -1,0 +1,2147 @@
+{
+    "name": "Payfit Concurrent - Recherche URL par mots-clés ",
+    "flow": [
+        {
+            "id": 1,
+            "module": "google-sheets:getSheetContent",
+            "version": 2,
+            "parameters": {
+                "__IMTCONN__": 5644234
+            },
+            "mapper": {
+                "from": "drive",
+                "range": "A2:B4",
+                "select": "list",
+                "sheetId": "Veille",
+                "spreadsheetId": "/1KTsJ385Jx4vv9RNW4CfbYZW7FmXof_jJ/1Jsj9ubwDqM14DWOGaOCg0hlWXhaDzUks/1byIfgF2SISwDcKHZSQBuvaxIXFgULlCsRynPGk9mVWI",
+                "includesHeaders": false,
+                "valueRenderOption": "FORMATTED_VALUE",
+                "dateTimeRenderOption": "FORMATTED_STRING"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "from": {
+                            "label": "My Drive"
+                        },
+                        "select": {
+                            "label": "Search by path"
+                        },
+                        "sheetId": {
+                            "label": "Veille"
+                        },
+                        "spreadsheetId": {
+                            "path": [
+                                "TEAM 10",
+                                "Liens Mots-clés",
+                                "Mots-clés Concurrents Payfit"
+                            ]
+                        },
+                        "includesHeaders": {
+                            "mode": "chose"
+                        },
+                        "valueRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted value"
+                        },
+                        "dateTimeRenderOption": {
+                            "mode": "chose",
+                            "label": "Formatted string"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "google"
+                            },
+                            "label": "My Google connection (hackathon.eugenia@gmail.com)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:google",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Search Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "list",
+                                "fromAll",
+                                "map"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "range",
+                        "type": "text",
+                        "label": "Range",
+                        "required": true
+                    },
+                    {
+                        "name": "includesHeaders",
+                        "type": "boolean",
+                        "label": "Table contains headers",
+                        "required": true
+                    },
+                    {
+                        "name": "valueRenderOption",
+                        "type": "select",
+                        "label": "Value render option",
+                        "validate": {
+                            "enum": [
+                                "FORMATTED_VALUE",
+                                "UNFORMATTED_VALUE",
+                                "FORMULA"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "dateTimeRenderOption",
+                        "type": "select",
+                        "label": "Date and time render option",
+                        "validate": {
+                            "enum": [
+                                "SERIAL_NUMBER",
+                                "FORMATTED_STRING"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "from",
+                        "type": "select",
+                        "label": "Drive",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "drive",
+                                "share",
+                                "team"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "spreadsheetId",
+                        "type": "file",
+                        "label": "Spreadsheet Name",
+                        "required": true
+                    },
+                    {
+                        "name": "sheetId",
+                        "type": "select",
+                        "label": "Sheet Name",
+                        "required": true
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "__IMTLENGTH__",
+                        "type": "uinteger",
+                        "label": "Total number of bundles"
+                    },
+                    {
+                        "name": "__IMTINDEX__",
+                        "type": "uinteger",
+                        "label": "Bundle order position"
+                    },
+                    {
+                        "name": "__ROW_NUMBER__",
+                        "type": "number",
+                        "label": "Row number"
+                    },
+                    {
+                        "name": "__SPREADSHEET_ID__",
+                        "type": "text",
+                        "label": "Spreadsheet ID"
+                    },
+                    {
+                        "name": "__SHEET__",
+                        "type": "text",
+                        "label": "Sheet"
+                    },
+                    {
+                        "name": "0",
+                        "type": "text",
+                        "label": "A"
+                    },
+                    {
+                        "name": "1",
+                        "type": "text",
+                        "label": "B"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "rss:ActionReadArticles",
+            "version": 4,
+            "parameters": {
+                "include": []
+            },
+            "mapper": {
+                "url": "{{1.`1`}}",
+                "gzip": true,
+                "password": "",
+                "username": "",
+                "maxResults": "10",
+                "filterDateTo": "",
+                "filterDateFrom": ""
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {},
+                "parameters": [
+                    {
+                        "name": "include",
+                        "type": "select",
+                        "label": "Process RSS fields",
+                        "multiple": true,
+                        "validate": {
+                            "enum": [
+                                "google-merchant-center",
+                                "itunes"
+                            ]
+                        }
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL",
+                        "required": true
+                    },
+                    {
+                        "name": "username",
+                        "type": "text",
+                        "label": "User name"
+                    },
+                    {
+                        "name": "password",
+                        "type": "text",
+                        "label": "Password"
+                    },
+                    {
+                        "name": "filterDateFrom",
+                        "type": "date",
+                        "label": "Date from"
+                    },
+                    {
+                        "name": "filterDateTo",
+                        "type": "date",
+                        "label": "Date to "
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of returned items",
+                        "required": true
+                    },
+                    {
+                        "name": "gzip",
+                        "type": "boolean",
+                        "label": "Request compressed content",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 3,
+            "module": "openai-gpt-3:CreateCompletion",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 5643797
+            },
+            "mapper": {
+                "model": "o4-mini",
+                "top_p": "1",
+                "select": "chat",
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": "Tu es un expert RH.\r\nÀ partir de ce titre d'article, extrait 3 à 5 mots-clés pertinents.\r\nRetourne uniquement une liste séparée par des virgules, sans explication.\r\n\r\nTitre : {{2.title}}",
+                        "imageDetail": "auto"
+                    }
+                ],
+                "max_tokens": "2048",
+                "temperature": "1",
+                "n_completions": "1",
+                "response_format": "text"
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "restore": {
+                    "expect": {
+                        "stop": {
+                            "mode": "chose"
+                        },
+                        "model": {
+                            "mode": "chose",
+                            "label": "o4-mini (system)Fast, cost-efficient reasoning model, succeeded by GPT-5 mini"
+                        },
+                        "select": {
+                            "label": "Create a Chat Completion (GPT and o1 models)"
+                        },
+                        "messages": {
+                            "mode": "chose",
+                            "items": [
+                                {
+                                    "role": {
+                                        "mode": "chose",
+                                        "label": "User"
+                                    },
+                                    "imageDetail": {
+                                        "mode": "chose",
+                                        "label": "Auto"
+                                    },
+                                    "imageInputType": {
+                                        "mode": "chose",
+                                        "label": "Empty"
+                                    }
+                                }
+                            ]
+                        },
+                        "logit_bias": {
+                            "mode": "chose"
+                        },
+                        "tool_choice": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "response_format": {
+                            "mode": "chose",
+                            "label": "Text"
+                        },
+                        "reasoning_effort": {
+                            "mode": "chose",
+                            "label": "Empty"
+                        },
+                        "additionalParameters": {
+                            "mode": "chose"
+                        }
+                    },
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "data": {
+                                "scoped": "true",
+                                "connection": "openai-gpt-3"
+                            },
+                            "label": "Hackathon Clé Open AI"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:openai-gpt-3",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "select",
+                        "type": "select",
+                        "label": "Select Method",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "chat",
+                                "prompt"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "temperature",
+                        "type": "number",
+                        "label": "Temperature",
+                        "validate": {
+                            "max": 2,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "top_p",
+                        "type": "number",
+                        "label": "Top P",
+                        "validate": {
+                            "max": 1,
+                            "min": 0
+                        }
+                    },
+                    {
+                        "name": "n_completions",
+                        "type": "number",
+                        "label": "Number"
+                    },
+                    {
+                        "name": "frequency_penalty",
+                        "type": "number",
+                        "label": "Frequency Penalty",
+                        "validate": {
+                            "max": 2,
+                            "min": -2
+                        }
+                    },
+                    {
+                        "name": "presence_penalty",
+                        "type": "number",
+                        "label": "Presence Penalty",
+                        "validate": {
+                            "max": 2,
+                            "min": -2
+                        }
+                    },
+                    {
+                        "name": "logit_bias",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "token",
+                                    "type": "text",
+                                    "label": "Token ID",
+                                    "required": true
+                                },
+                                {
+                                    "name": "probability",
+                                    "type": "number",
+                                    "label": "Probability",
+                                    "required": true,
+                                    "validate": {
+                                        "max": 100,
+                                        "min": -100
+                                    }
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Token Probability"
+                        },
+                        "type": "array",
+                        "label": "Token Probability"
+                    },
+                    {
+                        "name": "seed",
+                        "type": "integer",
+                        "label": "Seed"
+                    },
+                    {
+                        "name": "tool_choice",
+                        "type": "select",
+                        "label": "Tool Choice",
+                        "validate": {
+                            "enum": [
+                                "none",
+                                "auto",
+                                "required"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "stop",
+                        "spec": {
+                            "name": "value",
+                            "type": "text",
+                            "label": "Stop Sequence"
+                        },
+                        "type": "array",
+                        "label": "Stop Sequences",
+                        "validate": {
+                            "maxItems": 4
+                        }
+                    },
+                    {
+                        "name": "additionalParameters",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "key",
+                                    "type": "text",
+                                    "label": "Parameter Name",
+                                    "required": true
+                                },
+                                {
+                                    "name": "type",
+                                    "type": "select",
+                                    "label": "Input Type",
+                                    "options": [
+                                        {
+                                            "label": "Text",
+                                            "value": "text",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "text",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ],
+                                            "default": true
+                                        },
+                                        {
+                                            "label": "Number",
+                                            "value": "number",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "number",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Boolean",
+                                            "value": "boolean",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "boolean",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Date",
+                                            "value": "date",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "date",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "Any",
+                                            "value": "any",
+                                            "nested": [
+                                                {
+                                                    "name": "value",
+                                                    "type": "any",
+                                                    "label": "Parameter Value"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Input Parameter"
+                        },
+                        "type": "array",
+                        "label": "Other Input Parameters"
+                    },
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true
+                    },
+                    {
+                        "name": "max_tokens",
+                        "type": "uinteger",
+                        "label": "Max Output Tokens"
+                    },
+                    {
+                        "name": "messages",
+                        "spec": {
+                            "name": "value",
+                            "spec": [
+                                {
+                                    "name": "role",
+                                    "type": "select",
+                                    "label": "Role",
+                                    "options": {
+                                        "store": [
+                                            {
+                                                "label": "User",
+                                                "value": "user",
+                                                "nested": [
+                                                    {
+                                                        "help": "Text content of the message on behalf of the selected __Role__.",
+                                                        "name": "content",
+                                                        "type": "text",
+                                                        "label": "Text Content"
+                                                    },
+                                                    {
+                                                        "name": "imageInputType",
+                                                        "type": "select",
+                                                        "label": "Image Input Type",
+                                                        "options": [
+                                                            {
+                                                                "label": "URL",
+                                                                "value": "url",
+                                                                "nested": [
+                                                                    {
+                                                                        "help": "Make sure to use a publicly accessible URL.\nYou can test if your image is publicly accessible by opening the link in an incognito tab.",
+                                                                        "name": "imageUrl",
+                                                                        "type": "url",
+                                                                        "label": "Image URL"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            {
+                                                                "label": "Image File",
+                                                                "value": "file",
+                                                                "nested": [
+                                                                    {
+                                                                        "name": "imageFile",
+                                                                        "spec": [
+                                                                            {
+                                                                                "help": "Accepted extensions: `.jpg`, `.jpeg`, `.png`, `.webp` and `.gif`.",
+                                                                                "name": "imageFilename",
+                                                                                "type": "filename",
+                                                                                "label": "Image Filename",
+                                                                                "semantic": "file:name",
+                                                                                "extension": [
+                                                                                    "jpg",
+                                                                                    "jpeg",
+                                                                                    "png",
+                                                                                    "webp",
+                                                                                    "gif"
+                                                                                ]
+                                                                            },
+                                                                            {
+                                                                                "name": "imageData",
+                                                                                "type": "buffer",
+                                                                                "label": "Image Data",
+                                                                                "semantic": "file:data"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Image"
+                                                                    }
+                                                                ]
+                                                            }
+                                                        ],
+                                                        "mappable": false
+                                                    },
+                                                    {
+                                                        "help": "Recommended value: `Auto`",
+                                                        "name": "imageDetail",
+                                                        "type": "select",
+                                                        "label": "Image Detail",
+                                                        "options": [
+                                                            {
+                                                                "label": "Auto",
+                                                                "value": "auto",
+                                                                "default": true
+                                                            },
+                                                            {
+                                                                "label": "High",
+                                                                "value": "high"
+                                                            },
+                                                            {
+                                                                "label": "Low",
+                                                                "value": "low"
+                                                            }
+                                                        ]
+                                                    }
+                                                ],
+                                                "default": true
+                                            },
+                                            {
+                                                "label": "Assistant",
+                                                "value": "assistant",
+                                                "nested": [
+                                                    {
+                                                        "help": "Text content of the message on behalf of the selected __Role__.",
+                                                        "name": "content",
+                                                        "type": "text",
+                                                        "label": "Text Content"
+                                                    },
+                                                    {
+                                                        "mode": "edit",
+                                                        "name": "tool_calls",
+                                                        "spec": {
+                                                            "spec": [
+                                                                {
+                                                                    "name": "type",
+                                                                    "type": "hidden",
+                                                                    "default": "function"
+                                                                },
+                                                                {
+                                                                    "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                                                    "name": "id",
+                                                                    "type": "text",
+                                                                    "label": "Tool call ID"
+                                                                },
+                                                                {
+                                                                    "name": "function",
+                                                                    "spec": [
+                                                                        {
+                                                                            "help": "The name of the function previously called.",
+                                                                            "name": "name",
+                                                                            "type": "text",
+                                                                            "label": "Name",
+                                                                            "required": true
+                                                                        },
+                                                                        {
+                                                                            "help": "The arguments previously output by the AI.",
+                                                                            "name": "arguments",
+                                                                            "type": "text",
+                                                                            "label": "Arguments",
+                                                                            "required": true
+                                                                        }
+                                                                    ],
+                                                                    "type": "collection",
+                                                                    "label": "Function"
+                                                                }
+                                                            ],
+                                                            "type": "collection",
+                                                            "label": "Tool Call"
+                                                        },
+                                                        "type": "array",
+                                                        "label": "Tool Calls",
+                                                        "labels": {
+                                                            "add": "Add tool call"
+                                                        },
+                                                        "mappable": {
+                                                            "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "label": "Developer / System",
+                                                "value": "system",
+                                                "nested": [
+                                                    {
+                                                        "help": "Text content of the message on behalf of the selected __Role__.",
+                                                        "name": "content",
+                                                        "type": "text",
+                                                        "label": "Text Content"
+                                                    }
+                                                ]
+                                            },
+                                            {
+                                                "label": "Tool",
+                                                "value": "tool",
+                                                "nested": [
+                                                    {
+                                                        "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                                                        "name": "content",
+                                                        "type": "text",
+                                                        "label": "Text Content",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                                        "name": "tool_call_id",
+                                                        "type": "text",
+                                                        "label": "Tool Call ID.",
+                                                        "required": true
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "required": true
+                                }
+                            ],
+                            "type": "collection",
+                            "label": "Message"
+                        },
+                        "type": "array",
+                        "label": "Messages",
+                        "required": true
+                    },
+                    {
+                        "name": "response_format",
+                        "type": "select",
+                        "label": "Response Format",
+                        "validate": {
+                            "enum": [
+                                "text",
+                                "json_object"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "reasoning_effort",
+                        "type": "select",
+                        "label": "Reasoning Effort",
+                        "validate": {
+                            "enum": [
+                                "minimal",
+                                "low",
+                                "medium",
+                                "high"
+                            ]
+                        }
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "result",
+                        "type": "any",
+                        "label": "Result"
+                    },
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                    },
+                    {
+                        "name": "object",
+                        "type": "text",
+                        "label": "Object"
+                    },
+                    {
+                        "name": "created",
+                        "type": "date",
+                        "label": "Created"
+                    },
+                    {
+                        "name": "model",
+                        "type": "text",
+                        "label": "Model"
+                    },
+                    {
+                        "name": "choices",
+                        "spec": [
+                            {
+                                "name": "text",
+                                "type": "text",
+                                "label": "Text"
+                            },
+                            {
+                                "name": "index",
+                                "type": "number",
+                                "label": "Index"
+                            },
+                            {
+                                "name": "logprobs",
+                                "type": "text",
+                                "label": "Log Probs"
+                            },
+                            {
+                                "name": "finish_reason",
+                                "type": "text",
+                                "label": "Finish Reason"
+                            },
+                            {
+                                "name": "message",
+                                "spec": [
+                                    {
+                                        "name": "role",
+                                        "type": "text",
+                                        "label": "Role"
+                                    },
+                                    {
+                                        "name": "content",
+                                        "type": "text",
+                                        "label": "Content"
+                                    },
+                                    {
+                                        "name": "tool_calls",
+                                        "spec": [
+                                            {
+                                                "name": "id",
+                                                "type": "text",
+                                                "label": "ID"
+                                            },
+                                            {
+                                                "name": "type",
+                                                "type": "text",
+                                                "label": "Type"
+                                            },
+                                            {
+                                                "name": "function",
+                                                "spec": [
+                                                    {
+                                                        "name": "name",
+                                                        "type": "text",
+                                                        "label": "Name"
+                                                    },
+                                                    {
+                                                        "name": "arguments",
+                                                        "type": "text",
+                                                        "label": "Arguments"
+                                                    }
+                                                ],
+                                                "type": "collection",
+                                                "label": "Function"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "Tool Calls"
+                                    },
+                                    {
+                                        "name": "refusal",
+                                        "type": "text",
+                                        "label": "Refusal"
+                                    },
+                                    {
+                                        "name": "annotations",
+                                        "spec": [
+                                            {
+                                                "name": "type",
+                                                "type": "text",
+                                                "label": "Type"
+                                            },
+                                            {
+                                                "name": "url_citation",
+                                                "spec": [
+                                                    {
+                                                        "name": "end_index",
+                                                        "type": "number",
+                                                        "label": "End Index"
+                                                    },
+                                                    {
+                                                        "name": "start_index",
+                                                        "type": "number",
+                                                        "label": "Start Index"
+                                                    },
+                                                    {
+                                                        "name": "title",
+                                                        "type": "text",
+                                                        "label": "Title"
+                                                    },
+                                                    {
+                                                        "name": "url",
+                                                        "type": "text",
+                                                        "label": "URL"
+                                                    }
+                                                ],
+                                                "type": "collection",
+                                                "label": "URL Citation"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "Annotations"
+                                    }
+                                ],
+                                "type": "collection",
+                                "label": "Message"
+                            }
+                        ],
+                        "type": "array",
+                        "label": "Choices"
+                    },
+                    {
+                        "name": "usage",
+                        "spec": [
+                            {
+                                "name": "prompt_tokens",
+                                "type": "number",
+                                "label": "Prompt Tokens"
+                            },
+                            {
+                                "name": "completion_tokens",
+                                "type": "text",
+                                "label": "Completion Tokens"
+                            },
+                            {
+                                "name": "total_tokens",
+                                "type": "number",
+                                "label": "Total Tokens"
+                            },
+                            {
+                                "name": "prompt_tokens_details",
+                                "spec": [
+                                    {
+                                        "name": "cached_tokens",
+                                        "type": "uinteger",
+                                        "label": "Cached Tokens"
+                                    },
+                                    {
+                                        "name": "text_tokens",
+                                        "type": "uinteger",
+                                        "label": "Text Tokens"
+                                    },
+                                    {
+                                        "name": "image_tokens",
+                                        "type": "uinteger",
+                                        "label": "Image Tokens"
+                                    },
+                                    {
+                                        "name": "audio_tokens",
+                                        "type": "uinteger",
+                                        "label": "Audio Tokens"
+                                    }
+                                ],
+                                "type": "collection",
+                                "label": "Prompt Tokens Details"
+                            },
+                            {
+                                "name": "completion_tokens_details",
+                                "spec": [
+                                    {
+                                        "name": "reasoning_tokens",
+                                        "type": "uinteger",
+                                        "label": "Reasoning Tokens"
+                                    },
+                                    {
+                                        "name": "text_tokens",
+                                        "type": "uinteger",
+                                        "label": "Text Tokens"
+                                    },
+                                    {
+                                        "name": "audio_tokens",
+                                        "type": "uinteger",
+                                        "label": "Audio Tokens"
+                                    },
+                                    {
+                                        "name": "accepted_prediction_tokens",
+                                        "type": "uinteger",
+                                        "label": "Accepted Prediction Tokens"
+                                    },
+                                    {
+                                        "name": "rejected_prediction_tokens",
+                                        "type": "uinteger",
+                                        "label": "Rejected Prediction Tokens"
+                                    }
+                                ],
+                                "type": "collection",
+                                "label": "Completion Tokens Details"
+                            }
+                        ],
+                        "type": "collection",
+                        "label": "Usage"
+                    },
+                    {
+                        "name": "service_tier",
+                        "type": "text",
+                        "label": "Service Tier"
+                    },
+                    {
+                        "name": "system_fingerprint",
+                        "type": "text",
+                        "label": "System Fingerprint"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 4,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 900,
+                    "y": 0
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 5,
+                            "module": "builtin:BasicAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 2
+                            },
+                            "mapper": {
+                                "url": "{{2.url}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": -150
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "RSS - Retrieve RSS feed items [2]"
+                                        },
+                                        "target": {
+                                            "label": "Custom"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "id": 9,
+                            "module": "google-sheets:updateRow",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 5644234
+                            },
+                            "mapper": {
+                                "from": "drive",
+                                "mode": "select",
+                                "values": {
+                                    "2": "{{5.array[1].url}}",
+                                    "4": "{{5.array[2].url}}",
+                                    "6": "{{5.array[3].url}}",
+                                    "8": "{{5.array[4].url}}",
+                                    "10": "{{5.array[5].url}}",
+                                    "12": "{{5.array[6].url}}",
+                                    "14": "{{5.array[7].url}}",
+                                    "16": "{{5.array[8].url}}",
+                                    "18": "{{5.array[9].url}}",
+                                    "20": "{{5.array[10].url}}"
+                                },
+                                "sheetId": "Veille",
+                                "rowNumber": "{{1.`__ROW_NUMBER__`}}",
+                                "spreadsheetId": "/1KTsJ385Jx4vv9RNW4CfbYZW7FmXof_jJ/1Jsj9ubwDqM14DWOGaOCg0hlWXhaDzUks/1byIfgF2SISwDcKHZSQBuvaxIXFgULlCsRynPGk9mVWI",
+                                "includesHeaders": true,
+                                "useColumnHeaders": false,
+                                "valueInputOption": "USER_ENTERED"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": -150
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "from": {
+                                            "label": "My Drive"
+                                        },
+                                        "mode": {
+                                            "label": "Search by path"
+                                        },
+                                        "sheetId": {
+                                            "label": "Veille"
+                                        },
+                                        "spreadsheetId": {
+                                            "path": [
+                                                "TEAM 10",
+                                                "Liens Mots-clés",
+                                                "Mots-clés Concurrents Payfit"
+                                            ]
+                                        },
+                                        "includesHeaders": {
+                                            "label": "Yes"
+                                        },
+                                        "useColumnHeaders": {
+                                            "label": "No",
+                                            "nested": [
+                                                {
+                                                    "name": "values",
+                                                    "spec": [
+                                                        {
+                                                            "name": "0",
+                                                            "type": "text",
+                                                            "label": "Concurrent (A)"
+                                                        },
+                                                        {
+                                                            "name": "1",
+                                                            "type": "text",
+                                                            "label": "URL RSS (B)"
+                                                        },
+                                                        {
+                                                            "name": "2",
+                                                            "type": "text",
+                                                            "label": "URL 1 (C)"
+                                                        },
+                                                        {
+                                                            "name": "3",
+                                                            "type": "text",
+                                                            "label": "MC 1 (D)"
+                                                        },
+                                                        {
+                                                            "name": "4",
+                                                            "type": "text",
+                                                            "label": "URL 2 (E)"
+                                                        },
+                                                        {
+                                                            "name": "5",
+                                                            "type": "text",
+                                                            "label": "MC 2 (F)"
+                                                        },
+                                                        {
+                                                            "name": "6",
+                                                            "type": "text",
+                                                            "label": "URL 3 (G)"
+                                                        },
+                                                        {
+                                                            "name": "7",
+                                                            "type": "text",
+                                                            "label": "MC 3 (H)"
+                                                        },
+                                                        {
+                                                            "name": "8",
+                                                            "type": "text",
+                                                            "label": "URL 4 (I)"
+                                                        },
+                                                        {
+                                                            "name": "9",
+                                                            "type": "text",
+                                                            "label": "MC 4  (J)"
+                                                        },
+                                                        {
+                                                            "name": "10",
+                                                            "type": "text",
+                                                            "label": "URL 5 (K)"
+                                                        },
+                                                        {
+                                                            "name": "11",
+                                                            "type": "text",
+                                                            "label": "MC 5 (L)"
+                                                        },
+                                                        {
+                                                            "name": "12",
+                                                            "type": "text",
+                                                            "label": "URL 6 (M)"
+                                                        },
+                                                        {
+                                                            "name": "13",
+                                                            "type": "text",
+                                                            "label": "MC 6 (N)"
+                                                        },
+                                                        {
+                                                            "name": "14",
+                                                            "type": "text",
+                                                            "label": "URL 7 (O)"
+                                                        },
+                                                        {
+                                                            "name": "15",
+                                                            "type": "text",
+                                                            "label": "MC 7 (P)"
+                                                        },
+                                                        {
+                                                            "name": "16",
+                                                            "type": "text",
+                                                            "label": "URL 8 (Q)"
+                                                        },
+                                                        {
+                                                            "name": "17",
+                                                            "type": "text",
+                                                            "label": "MC 8 (R)"
+                                                        },
+                                                        {
+                                                            "name": "18",
+                                                            "type": "text",
+                                                            "label": "URL 9 (S)"
+                                                        },
+                                                        {
+                                                            "name": "19",
+                                                            "type": "text",
+                                                            "label": "MC 9 (T)"
+                                                        },
+                                                        {
+                                                            "name": "20",
+                                                            "type": "text",
+                                                            "label": "URL 10 (U)"
+                                                        },
+                                                        {
+                                                            "name": "21",
+                                                            "type": "text",
+                                                            "label": "MC 10 (V)"
+                                                        },
+                                                        {
+                                                            "name": "22",
+                                                            "type": "text",
+                                                            "label": "(W)"
+                                                        },
+                                                        {
+                                                            "name": "23",
+                                                            "type": "text",
+                                                            "label": "(X)"
+                                                        },
+                                                        {
+                                                            "name": "24",
+                                                            "type": "text",
+                                                            "label": "(Y)"
+                                                        },
+                                                        {
+                                                            "name": "25",
+                                                            "type": "text",
+                                                            "label": "(Z)"
+                                                        },
+                                                        {
+                                                            "name": "26",
+                                                            "type": "text",
+                                                            "label": "(AA)"
+                                                        }
+                                                    ],
+                                                    "type": "collection",
+                                                    "label": "Values in columns",
+                                                    "metadata": [
+                                                        [
+                                                            [
+                                                                "Concurrent",
+                                                                "URL RSS",
+                                                                "URL 1",
+                                                                "MC 1",
+                                                                "URL 2",
+                                                                "MC 2",
+                                                                "URL 3",
+                                                                "MC 3",
+                                                                "URL 4",
+                                                                "MC 4 ",
+                                                                "URL 5",
+                                                                "MC 5",
+                                                                "URL 6",
+                                                                "MC 6",
+                                                                "URL 7",
+                                                                "MC 7",
+                                                                "URL 8",
+                                                                "MC 8",
+                                                                "URL 9",
+                                                                "MC 9",
+                                                                "URL 10",
+                                                                "MC 10"
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "valueInputOption": {
+                                            "mode": "chose",
+                                            "label": "User entered"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google"
+                                            },
+                                            "label": "My Google connection (hackathon.eugenia@gmail.com)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "mode",
+                                        "type": "select",
+                                        "label": "Search Method",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "select",
+                                                "fromAll",
+                                                "map"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "valueInputOption",
+                                        "type": "select",
+                                        "label": "Value input option",
+                                        "validate": {
+                                            "enum": [
+                                                "USER_ENTERED",
+                                                "RAW"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "from",
+                                        "type": "select",
+                                        "label": "Drive",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "drive",
+                                                "share",
+                                                "team"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "spreadsheetId",
+                                        "type": "file",
+                                        "label": "Spreadsheet Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "sheetId",
+                                        "type": "select",
+                                        "label": "Sheet Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "rowNumber",
+                                        "type": "uinteger",
+                                        "label": "Row number",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "includesHeaders",
+                                        "type": "select",
+                                        "label": "Table contains headers",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                true,
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "useColumnHeaders",
+                                        "type": "select",
+                                        "label": "Use column headers as IDs of the columns",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                true,
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "values",
+                                        "spec": [
+                                            {
+                                                "name": "0",
+                                                "type": "text",
+                                                "label": "Concurrent (A)"
+                                            },
+                                            {
+                                                "name": "1",
+                                                "type": "text",
+                                                "label": "URL RSS (B)"
+                                            },
+                                            {
+                                                "name": "2",
+                                                "type": "text",
+                                                "label": "URL 1 (C)"
+                                            },
+                                            {
+                                                "name": "3",
+                                                "type": "text",
+                                                "label": "MC 1 (D)"
+                                            },
+                                            {
+                                                "name": "4",
+                                                "type": "text",
+                                                "label": "URL 2 (E)"
+                                            },
+                                            {
+                                                "name": "5",
+                                                "type": "text",
+                                                "label": "MC 2 (F)"
+                                            },
+                                            {
+                                                "name": "6",
+                                                "type": "text",
+                                                "label": "URL 3 (G)"
+                                            },
+                                            {
+                                                "name": "7",
+                                                "type": "text",
+                                                "label": "MC 3 (H)"
+                                            },
+                                            {
+                                                "name": "8",
+                                                "type": "text",
+                                                "label": "URL 4 (I)"
+                                            },
+                                            {
+                                                "name": "9",
+                                                "type": "text",
+                                                "label": "MC 4  (J)"
+                                            },
+                                            {
+                                                "name": "10",
+                                                "type": "text",
+                                                "label": "URL 5 (K)"
+                                            },
+                                            {
+                                                "name": "11",
+                                                "type": "text",
+                                                "label": "MC 5 (L)"
+                                            },
+                                            {
+                                                "name": "12",
+                                                "type": "text",
+                                                "label": "URL 6 (M)"
+                                            },
+                                            {
+                                                "name": "13",
+                                                "type": "text",
+                                                "label": "MC 6 (N)"
+                                            },
+                                            {
+                                                "name": "14",
+                                                "type": "text",
+                                                "label": "URL 7 (O)"
+                                            },
+                                            {
+                                                "name": "15",
+                                                "type": "text",
+                                                "label": "MC 7 (P)"
+                                            },
+                                            {
+                                                "name": "16",
+                                                "type": "text",
+                                                "label": "URL 8 (Q)"
+                                            },
+                                            {
+                                                "name": "17",
+                                                "type": "text",
+                                                "label": "MC 8 (R)"
+                                            },
+                                            {
+                                                "name": "18",
+                                                "type": "text",
+                                                "label": "URL 9 (S)"
+                                            },
+                                            {
+                                                "name": "19",
+                                                "type": "text",
+                                                "label": "MC 9 (T)"
+                                            },
+                                            {
+                                                "name": "20",
+                                                "type": "text",
+                                                "label": "URL 10 (U)"
+                                            },
+                                            {
+                                                "name": "21",
+                                                "type": "text",
+                                                "label": "MC 10 (V)"
+                                            },
+                                            {
+                                                "name": "22",
+                                                "type": "text",
+                                                "label": "(W)"
+                                            },
+                                            {
+                                                "name": "23",
+                                                "type": "text",
+                                                "label": "(X)"
+                                            },
+                                            {
+                                                "name": "24",
+                                                "type": "text",
+                                                "label": "(Y)"
+                                            },
+                                            {
+                                                "name": "25",
+                                                "type": "text",
+                                                "label": "(Z)"
+                                            },
+                                            {
+                                                "name": "26",
+                                                "type": "text",
+                                                "label": "(AA)"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Values in columns",
+                                        "metadata": [
+                                            [
+                                                [
+                                                    "Concurrent",
+                                                    "URL RSS",
+                                                    "URL 1",
+                                                    "MC 1",
+                                                    "URL 2",
+                                                    "MC 2",
+                                                    "URL 3",
+                                                    "MC 3",
+                                                    "URL 4",
+                                                    "MC 4 ",
+                                                    "URL 5",
+                                                    "MC 5",
+                                                    "URL 6",
+                                                    "MC 6",
+                                                    "URL 7",
+                                                    "MC 7",
+                                                    "URL 8",
+                                                    "MC 8",
+                                                    "URL 9",
+                                                    "MC 9",
+                                                    "URL 10",
+                                                    "MC 10"
+                                                ]
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 6,
+                            "module": "builtin:BasicAggregator",
+                            "version": 1,
+                            "parameters": {
+                                "feeder": 2
+                            },
+                            "mapper": {
+                                "result": "{{3.result}}"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1200,
+                                    "y": 150
+                                },
+                                "restore": {
+                                    "extra": {
+                                        "feeder": {
+                                            "label": "RSS - Retrieve RSS feed items [2]"
+                                        },
+                                        "target": {
+                                            "label": "Custom"
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "id": 10,
+                            "module": "google-sheets:updateRow",
+                            "version": 2,
+                            "parameters": {
+                                "__IMTCONN__": 5644234
+                            },
+                            "mapper": {
+                                "from": "drive",
+                                "mode": "select",
+                                "values": {
+                                    "3": "{{6.array[1].result}}",
+                                    "5": "{{6.array[2].result}}",
+                                    "7": "{{6.array[3].result}}",
+                                    "9": "{{6.array[4].result}}",
+                                    "11": "{{6.array[5].result}}",
+                                    "13": "{{6.array[6].result}}",
+                                    "15": "{{6.array[7].result}}",
+                                    "17": "{{6.array[8].result}}",
+                                    "19": "{{6.array[9].result}}",
+                                    "21": "{{6.array[10].result}}"
+                                },
+                                "sheetId": "Veille",
+                                "rowNumber": "{{1.`__ROW_NUMBER__`}}",
+                                "spreadsheetId": "/1KTsJ385Jx4vv9RNW4CfbYZW7FmXof_jJ/1Jsj9ubwDqM14DWOGaOCg0hlWXhaDzUks/1byIfgF2SISwDcKHZSQBuvaxIXFgULlCsRynPGk9mVWI",
+                                "includesHeaders": true,
+                                "useColumnHeaders": false,
+                                "valueInputOption": "USER_ENTERED"
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 1500,
+                                    "y": 150
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "from": {
+                                            "label": "My Drive"
+                                        },
+                                        "mode": {
+                                            "label": "Search by path"
+                                        },
+                                        "sheetId": {
+                                            "label": "Veille"
+                                        },
+                                        "spreadsheetId": {
+                                            "path": [
+                                                "TEAM 10",
+                                                "Liens Mots-clés",
+                                                "Mots-clés Concurrents Payfit"
+                                            ]
+                                        },
+                                        "includesHeaders": {
+                                            "label": "Yes"
+                                        },
+                                        "useColumnHeaders": {
+                                            "label": "No",
+                                            "nested": [
+                                                {
+                                                    "name": "values",
+                                                    "spec": [
+                                                        {
+                                                            "name": "0",
+                                                            "type": "text",
+                                                            "label": "Concurrent (A)"
+                                                        },
+                                                        {
+                                                            "name": "1",
+                                                            "type": "text",
+                                                            "label": "URL RSS (B)"
+                                                        },
+                                                        {
+                                                            "name": "2",
+                                                            "type": "text",
+                                                            "label": "URL 1 (C)"
+                                                        },
+                                                        {
+                                                            "name": "3",
+                                                            "type": "text",
+                                                            "label": "MC 1 (D)"
+                                                        },
+                                                        {
+                                                            "name": "4",
+                                                            "type": "text",
+                                                            "label": "URL 2 (E)"
+                                                        },
+                                                        {
+                                                            "name": "5",
+                                                            "type": "text",
+                                                            "label": "MC 2 (F)"
+                                                        },
+                                                        {
+                                                            "name": "6",
+                                                            "type": "text",
+                                                            "label": "URL 3 (G)"
+                                                        },
+                                                        {
+                                                            "name": "7",
+                                                            "type": "text",
+                                                            "label": "MC 3 (H)"
+                                                        },
+                                                        {
+                                                            "name": "8",
+                                                            "type": "text",
+                                                            "label": "URL 4 (I)"
+                                                        },
+                                                        {
+                                                            "name": "9",
+                                                            "type": "text",
+                                                            "label": "MC 4  (J)"
+                                                        },
+                                                        {
+                                                            "name": "10",
+                                                            "type": "text",
+                                                            "label": "URL 5 (K)"
+                                                        },
+                                                        {
+                                                            "name": "11",
+                                                            "type": "text",
+                                                            "label": "MC 5 (L)"
+                                                        },
+                                                        {
+                                                            "name": "12",
+                                                            "type": "text",
+                                                            "label": "URL 6 (M)"
+                                                        },
+                                                        {
+                                                            "name": "13",
+                                                            "type": "text",
+                                                            "label": "MC 6 (N)"
+                                                        },
+                                                        {
+                                                            "name": "14",
+                                                            "type": "text",
+                                                            "label": "URL 7 (O)"
+                                                        },
+                                                        {
+                                                            "name": "15",
+                                                            "type": "text",
+                                                            "label": "MC 7 (P)"
+                                                        },
+                                                        {
+                                                            "name": "16",
+                                                            "type": "text",
+                                                            "label": "URL 8 (Q)"
+                                                        },
+                                                        {
+                                                            "name": "17",
+                                                            "type": "text",
+                                                            "label": "MC 8 (R)"
+                                                        },
+                                                        {
+                                                            "name": "18",
+                                                            "type": "text",
+                                                            "label": "URL 9 (S)"
+                                                        },
+                                                        {
+                                                            "name": "19",
+                                                            "type": "text",
+                                                            "label": "MC 9 (T)"
+                                                        },
+                                                        {
+                                                            "name": "20",
+                                                            "type": "text",
+                                                            "label": "URL 10 (U)"
+                                                        },
+                                                        {
+                                                            "name": "21",
+                                                            "type": "text",
+                                                            "label": "MC 10 (V)"
+                                                        },
+                                                        {
+                                                            "name": "22",
+                                                            "type": "text",
+                                                            "label": "(W)"
+                                                        },
+                                                        {
+                                                            "name": "23",
+                                                            "type": "text",
+                                                            "label": "(X)"
+                                                        },
+                                                        {
+                                                            "name": "24",
+                                                            "type": "text",
+                                                            "label": "(Y)"
+                                                        },
+                                                        {
+                                                            "name": "25",
+                                                            "type": "text",
+                                                            "label": "(Z)"
+                                                        },
+                                                        {
+                                                            "name": "26",
+                                                            "type": "text",
+                                                            "label": "(AA)"
+                                                        }
+                                                    ],
+                                                    "type": "collection",
+                                                    "label": "Values in columns",
+                                                    "metadata": [
+                                                        [
+                                                            [
+                                                                "Concurrent",
+                                                                "URL RSS",
+                                                                "URL 1",
+                                                                "MC 1",
+                                                                "URL 2",
+                                                                "MC 2",
+                                                                "URL 3",
+                                                                "MC 3",
+                                                                "URL 4",
+                                                                "MC 4 ",
+                                                                "URL 5",
+                                                                "MC 5",
+                                                                "URL 6",
+                                                                "MC 6",
+                                                                "URL 7",
+                                                                "MC 7",
+                                                                "URL 8",
+                                                                "MC 8",
+                                                                "URL 9",
+                                                                "MC 9",
+                                                                "URL 10",
+                                                                "MC 10"
+                                                            ]
+                                                        ]
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        "valueInputOption": {
+                                            "mode": "chose",
+                                            "label": "User entered"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "google"
+                                            },
+                                            "label": "My Google connection (hackathon.eugenia@gmail.com)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "mode",
+                                        "type": "select",
+                                        "label": "Search Method",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "select",
+                                                "fromAll",
+                                                "map"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "valueInputOption",
+                                        "type": "select",
+                                        "label": "Value input option",
+                                        "validate": {
+                                            "enum": [
+                                                "USER_ENTERED",
+                                                "RAW"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "from",
+                                        "type": "select",
+                                        "label": "Drive",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "drive",
+                                                "share",
+                                                "team"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "spreadsheetId",
+                                        "type": "file",
+                                        "label": "Spreadsheet Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "sheetId",
+                                        "type": "select",
+                                        "label": "Sheet Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "rowNumber",
+                                        "type": "uinteger",
+                                        "label": "Row number",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "includesHeaders",
+                                        "type": "select",
+                                        "label": "Table contains headers",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                true,
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "useColumnHeaders",
+                                        "type": "select",
+                                        "label": "Use column headers as IDs of the columns",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                true,
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "values",
+                                        "spec": [
+                                            {
+                                                "name": "0",
+                                                "type": "text",
+                                                "label": "Concurrent (A)"
+                                            },
+                                            {
+                                                "name": "1",
+                                                "type": "text",
+                                                "label": "URL RSS (B)"
+                                            },
+                                            {
+                                                "name": "2",
+                                                "type": "text",
+                                                "label": "URL 1 (C)"
+                                            },
+                                            {
+                                                "name": "3",
+                                                "type": "text",
+                                                "label": "MC 1 (D)"
+                                            },
+                                            {
+                                                "name": "4",
+                                                "type": "text",
+                                                "label": "URL 2 (E)"
+                                            },
+                                            {
+                                                "name": "5",
+                                                "type": "text",
+                                                "label": "MC 2 (F)"
+                                            },
+                                            {
+                                                "name": "6",
+                                                "type": "text",
+                                                "label": "URL 3 (G)"
+                                            },
+                                            {
+                                                "name": "7",
+                                                "type": "text",
+                                                "label": "MC 3 (H)"
+                                            },
+                                            {
+                                                "name": "8",
+                                                "type": "text",
+                                                "label": "URL 4 (I)"
+                                            },
+                                            {
+                                                "name": "9",
+                                                "type": "text",
+                                                "label": "MC 4  (J)"
+                                            },
+                                            {
+                                                "name": "10",
+                                                "type": "text",
+                                                "label": "URL 5 (K)"
+                                            },
+                                            {
+                                                "name": "11",
+                                                "type": "text",
+                                                "label": "MC 5 (L)"
+                                            },
+                                            {
+                                                "name": "12",
+                                                "type": "text",
+                                                "label": "URL 6 (M)"
+                                            },
+                                            {
+                                                "name": "13",
+                                                "type": "text",
+                                                "label": "MC 6 (N)"
+                                            },
+                                            {
+                                                "name": "14",
+                                                "type": "text",
+                                                "label": "URL 7 (O)"
+                                            },
+                                            {
+                                                "name": "15",
+                                                "type": "text",
+                                                "label": "MC 7 (P)"
+                                            },
+                                            {
+                                                "name": "16",
+                                                "type": "text",
+                                                "label": "URL 8 (Q)"
+                                            },
+                                            {
+                                                "name": "17",
+                                                "type": "text",
+                                                "label": "MC 8 (R)"
+                                            },
+                                            {
+                                                "name": "18",
+                                                "type": "text",
+                                                "label": "URL 9 (S)"
+                                            },
+                                            {
+                                                "name": "19",
+                                                "type": "text",
+                                                "label": "MC 9 (T)"
+                                            },
+                                            {
+                                                "name": "20",
+                                                "type": "text",
+                                                "label": "URL 10 (U)"
+                                            },
+                                            {
+                                                "name": "21",
+                                                "type": "text",
+                                                "label": "MC 10 (V)"
+                                            },
+                                            {
+                                                "name": "22",
+                                                "type": "text",
+                                                "label": "(W)"
+                                            },
+                                            {
+                                                "name": "23",
+                                                "type": "text",
+                                                "label": "(X)"
+                                            },
+                                            {
+                                                "name": "24",
+                                                "type": "text",
+                                                "label": "(Y)"
+                                            },
+                                            {
+                                                "name": "25",
+                                                "type": "text",
+                                                "label": "(Z)"
+                                            },
+                                            {
+                                                "name": "26",
+                                                "type": "text",
+                                                "label": "(AA)"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Values in columns",
+                                        "metadata": [
+                                            [
+                                                [
+                                                    "Concurrent",
+                                                    "URL RSS",
+                                                    "URL 1",
+                                                    "MC 1",
+                                                    "URL 2",
+                                                    "MC 2",
+                                                    "URL 3",
+                                                    "MC 3",
+                                                    "URL 4",
+                                                    "MC 4 ",
+                                                    "URL 5",
+                                                    "MC 5",
+                                                    "URL 6",
+                                                    "MC 6",
+                                                    "URL 7",
+                                                    "MC 7",
+                                                    "URL 8",
+                                                    "MC 8",
+                                                    "URL 9",
+                                                    "MC 9",
+                                                    "URL 10",
+                                                    "MC 10"
+                                                ]
+                                            ]
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}

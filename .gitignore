@@ -1,0 +1,18 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Éditeurs
+.vscode/settings.json
+*.swp
+*.swo
+*~
+
+# Temporaires
+*.tmp
+*.bak
+*.log
+
+# Node (si jamais utilisé pour des outils)
+node_modules/

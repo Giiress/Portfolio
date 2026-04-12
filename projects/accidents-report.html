@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accidents de la route 2020-2024 — Résultats d'analyse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --paper: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --accent: #1e40af;
+      --accent-light: #dbeafe;
+      --border: #e2e8f0;
+      --striped: #f8fafc;
+      --hero-from: #1e3a5f;
+      --hero-to: #1e40af;
+      --shadow: 0 1px 3px rgba(0,0,0,.08);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,.1);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--ink);
+      background: var(--bg);
+      min-height: 100vh;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    nav {
+      width: 280px;
+      min-width: 280px;
+      background: var(--paper);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      position: relative;
+      top: auto;
+      max-height: none;
+      overflow-y: visible;
+      box-shadow: var(--shadow);
+    }
+    nav .nav-inner { padding: 0 1.25rem; }
+    nav h3 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 0 0 0.75rem 0;
+    }
+    nav ul { list-style: none; padding: 0; margin: 0; }
+    nav a {
+      display: block;
+      padding: 0.45rem 0.75rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.9rem;
+      color: var(--ink);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      margin-left: 0;
+      border-radius: 0 6px 6px 0;
+    }
+    nav a:hover {
+      color: var(--accent);
+      background: var(--accent-light);
+      border-left-color: var(--accent);
+    }
+    main {
+      flex: 1;
+      padding: 0 2.5rem 4rem;
+      max-width: 1020px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    header {
+      background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 100%);
+      color: #fff;
+      margin: 0 -2.5rem 2rem -2.5rem;
+      padding: 2.5rem 2.5rem 2rem;
+      box-shadow: var(--shadow-lg);
+    }
+    h1 {
+      font-size: 1.85rem;
+      font-weight: 700;
+      margin: 0 0 0.35rem 0;
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+    .card {
+      background: var(--paper);
+      border-radius: 10px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.75rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .methodo { margin-bottom: 2rem; }
+    .methodo h2 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+    }
+    .methodo p { margin: 0; color: var(--muted); font-size: 0.95rem; }
+    .result-section {
+      margin-bottom: 1.75rem;
+      padding: 1.5rem 1.75rem;
+      border-bottom: none;
+    }
+    .result-section h2 {
+      font-size: 1.22rem;
+      font-weight: 600;
+      margin: 0 0 0.5rem 0;
+      color: var(--ink);
+    }
+    .explication {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin: 0 0 1rem 0;
+      line-height: 1.55;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 1rem 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--striped);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.9rem;
+    }
+    th {
+      text-align: left;
+      padding: 0.7rem 1rem;
+      background: var(--paper);
+      font-weight: 600;
+      color: var(--ink);
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 0.55rem 1rem; border-bottom: 1px solid var(--border); }
+    tr:nth-child(even) td { background: rgba(255,255,255,.6); }
+    tr:last-child td { border-bottom: none; }
+    .meta { font-size: 0.85rem; color: var(--muted); margin: 0.5rem 0 0 0; }
+    .theme-title {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 2.25rem 0 1rem 0;
+      padding-bottom: 0.35rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .theme-title:first-of-type { margin-top: 0; }
+    .nav-theme-title {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      margin-top: 0.75rem;
+      padding: 0.25rem 0.75rem 0.15rem;
+      list-style: none;
+    }
+    .nav-theme-title:first-child { margin-top: 0; }
+    .nav-theme-item { margin-left: 0.5rem; }
+    .map-section { margin-bottom: 2rem; }
+    .map-controls {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.9rem;
+      margin: 0.75rem 0 1rem 0;
+      display: flex;
+      gap: 1.5rem;
+    }
+    .map-controls label { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+    .map-container {
+      height: 520px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      background: var(--striped);
+    }
+    .map-legend {
+      margin-top: 0.75rem;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .dep-label-wrap { background: none !important; border: none !important; }
+    .dep-label {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: #0f172a;
+      text-shadow: 0 0 2px #fff, 0 0 4px #fff, 1px 1px 2px #fff;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .chart-wrapper { position: relative; height: 320px; margin: 1rem 0; }
+    .chart-wrapper canvas { max-height: 320px; }
+    .chart-wrapper-tall { height: 1000px; margin-bottom: 0; }
+    .chart-wrapper-tall canvas { max-height: 1000px; display: block; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .kpi-item {
+      background: var(--striped);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .kpi-value { display: block; font-family: 'Source Sans 3', sans-serif; font-weight: 600; font-size: 1.25rem; color: var(--accent); }
+    .kpi-label { display: block; font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+    .filter-by-category { margin: 1rem 0; }
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+    .filter-tab {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--striped);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .filter-tab:hover { background: var(--accent-light); border-color: var(--accent); }
+    .filter-tab.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .filter-panels { min-height: 120px; }
+    .filter-panel { display: none; }
+    .filter-panel.active { display: block; }
+    @media (max-width: 900px) {
+      .layout { flex-direction: column; }
+      nav { width: 100%; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+      nav ul { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+      nav a { padding: 0.35rem 0.5rem; border-left: none; border-radius: 4px; margin: 0; }
+      nav a:hover { background: var(--accent-light); }
+      main { padding: 0 1.25rem 3rem; }
+      header { margin-left: -1.25rem; margin-right: -1.25rem; padding: 2rem 1.25rem; }
+      .map-container { height: 400px; }
+    }
+    /* ── Scientific design ── */
+    :root {
+      --bg: #f4f6f8;
+      --paper: #ffffff;
+      --ink: #111827;
+      --muted: #4b5563;
+      --accent: #1e3a8a;
+      --accent-light: #dbeafe;
+      --accent-mid: #3b82f6;
+      --border: #d1d5db;
+      --striped: #f9fafb;
+      --hero-from: #0f1f3d;
+      --hero-to: #1e3a8a;
+      --shadow: 0 1px 3px rgba(0,0,0,.07);
+      --shadow-lg: 0 4px 16px rgba(0,0,0,.12);
+      --section-counter: 0;
+    }
+    body { font-size: 1rem; line-height: 1.7; color: var(--ink); }
+    h1 { font-size: 1.7rem; letter-spacing: -0.03em; }
+    h2.theme-title {
+      font-size: 1rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted);
+      border-bottom: 2px solid var(--accent); padding-bottom: 0.25rem;
+    }
+    .result-section h2 { font-size: 1.15rem; font-family: 'Source Sans 3', sans-serif; }
+    /* Hero photo */
+    .hero-photo {
+      position: absolute; inset: 0;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Autoroute_du_Mont_Blanc_%40_Les_Houches_%2837062389901%29.jpg/1200px-Autoroute_du_Mont_Blanc_%40_Les_Houches_%2837062389901%29.jpg');
+      background-size: cover; background-position: center 60%;
+      opacity: 0.22;
+    }
+    header { position: relative; overflow: hidden; padding-bottom: 2.5rem; }
+    header > * { position: relative; z-index: 1; }
+    .header-meta {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.82rem; opacity: 0.7;
+      margin-top: 1rem; display: flex; gap: 1.5rem; flex-wrap: wrap;
+    }
+    .header-meta span::before { content: '▸ '; }
+    /* Figure captions */
+    .figure-wrap { margin: 0.75rem 0 0 0; }
+    .figure-caption {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.82rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 0.5rem; margin-top: 0.5rem;
+      font-style: italic;
+    }
+    .figure-caption strong { font-style: normal; color: var(--ink); }
+    /* Section photo */
+    .section-photo {
+      width: 100%; max-height: 240px; object-fit: cover;
+      border-radius: 8px; margin: 1rem 0;
+      border: 1px solid var(--border);
+    }
+    .photo-credit {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.78rem; color: var(--muted);
+      margin: -0.5rem 0 0.75rem; text-align: right;
+    }
+    /* Faits clés */
+    .faits-cles { margin-bottom: 2rem; }
+    .faits-cles h2 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 1rem 0;
+    }
+    .faits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.85rem;
+    }
+    .fait-item {
+      border-left: 4px solid var(--accent);
+      background: var(--striped);
+      border-radius: 0 8px 8px 0;
+      padding: 0.85rem 1rem;
+    }
+    .fait-item.rouge { border-left-color: #dc2626; }
+    .fait-item.orange { border-left-color: #ea580c; }
+    .fait-item.vert { border-left-color: #16a34a; }
+    .fait-item.violet { border-left-color: #7c3aed; }
+    .fait-valeur {
+      display: block;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .fait-titre {
+      display: block;
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-top: 0.2rem;
+    }
+    .fait-detail {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      line-height: 1.4;
+    }
+    /* Encart contexte */
+    .encart {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 0.85rem 1.1rem;
+      font-size: 0.9rem;
+      color: #1e3a5f;
+      margin: 0.75rem 0 0 0;
+      line-height: 1.55;
+    }
+    .encart strong { color: var(--accent); }
+    /* KPI amélioré */
+    .kpi-item.danger .kpi-value { color: #dc2626; }
+    .kpi-item.warning .kpi-value { color: #ea580c; }
+    .kpi-item.safe .kpi-value { color: #16a34a; }
+    /* References */
+    .references { margin-bottom: 2rem; }
+    .references h2 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      margin: 0 0 1rem 0;
+    }
+    .ref-list { list-style: none; padding: 0; margin: 0; }
+    .ref-list li {
+      font-size: 0.88rem; padding: 0.65rem 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5; display: flex; gap: 0.75rem;
+    }
+    .ref-list li:last-child { border-bottom: none; }
+    .ref-num {
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 700; color: var(--accent);
+      min-width: 1.4rem; text-align: right; flex-shrink: 0;
+    }
+    .ref-body { flex: 1; }
+    .ref-authors { color: var(--ink); font-weight: 600; }
+    .ref-title { font-style: italic; color: var(--ink); }
+    .ref-source { color: var(--muted); }
+    .ref-link { color: var(--accent); text-decoration: none; font-family: 'Source Sans 3', sans-serif; font-size: 0.8rem; }
+    .ref-link:hover { text-decoration: underline; }
+    /* SQL Modal */
+    .sql-btn {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem; padding: 0.4rem 0.9rem;
+      border: 1px solid var(--accent); border-radius: 6px;
+      background: transparent; color: var(--accent);
+      cursor: pointer; margin-top: 0.75rem;
+      transition: background 0.15s;
+    }
+    .sql-btn:hover { background: var(--accent-light); }
+    .sql-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.55); z-index: 9999;
+      align-items: center; justify-content: center;
+    }
+    .sql-overlay.open { display: flex; }
+    .sql-modal {
+      background: var(--paper); border-radius: 12px;
+      width: min(900px, 95vw); max-height: 85vh;
+      overflow-y: auto; box-shadow: var(--shadow-lg);
+      display: flex; flex-direction: column;
+    }
+    .sql-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+      position: relative; top: auto; background: var(--paper); z-index: 1;
+    }
+    .sql-modal-header h3 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1rem; font-weight: 600; margin: 0;
+    }
+    .sql-close {
+      background: none; border: none; font-size: 1.4rem;
+      cursor: pointer; color: var(--muted); line-height: 1;
+    }
+    .sql-modal-body { padding: 1.25rem 1.5rem; }
+    .sql-modal-body pre {
+      background: #0f172a; color: #e2e8f0;
+      border-radius: 8px; padding: 1.25rem;
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 0.82rem; line-height: 1.6;
+      overflow-x: auto; white-space: pre; margin: 0 0 1.5rem;
+    }
+    .sql-query-title {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--muted); margin-bottom: 0.4rem; margin-top: 1.25rem;
+    }
+    .sql-query-title:first-child { margin-top: 0; }
+    /* Data source page link */
+    .data-source-banner {
+      background: var(--accent-light); border: 1px solid #bfdbfe;
+      border-radius: 8px; padding: 0.85rem 1.25rem;
+      font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .data-source-banner a { color: var(--accent); font-weight: 600; text-decoration: none; }
+    .data-source-banner a:hover { text-decoration: underline; }
+    /* Footer */
+    .site-footer {
+      margin: 3rem -2.5rem 0 -2.5rem;
+      padding: 1.5rem 2.5rem;
+      background: var(--paper);
+      border-top: 1px solid var(--border);
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .site-footer a { color: var(--accent); text-decoration: none; }
+    .site-footer a:hover { text-decoration: underline; }
+    @media (max-width: 900px) {
+      .site-footer { margin-left: -1.25rem; margin-right: -1.25rem; padding: 1.25rem; }
+      .faits-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav>
+      <div class="nav-inner">
+        <h3>Résultats</h3>
+        <ul>
+          <li class="nav-theme-title">Vue d'ensemble</li>
+          <li class="nav-theme-item"><a href="#requete-1">Nombre d'accidents par année</a></li>
+          <li class="nav-theme-item"><a href="#requete-9">Bilan global 2020-2024 par gravité</a></li>
+          <li class="nav-theme-item"><a href="#requete-14">Nombre d'usagers victimes et décès par année</a></li>
+          <li class="nav-theme-title">Gravité des victimes</li>
+          <li class="nav-theme-item"><a href="#requete-2">Répartition par gravité des usagers</a></li>
+          <li class="nav-theme-item"><a href="#requete-12">Gravité selon les conditions d'éclairage (%)</a></li>
+          <li class="nav-theme-title">Géographie</li>
+          <li class="nav-theme-item"><a href="#carte">Carte des accidents par département</a></li>
+          <li class="nav-theme-item"><a href="#requete-3">Accidents par département</a></li>
+          <li class="nav-theme-title">Type de route</li>
+          <li class="nav-theme-item"><a href="#requete-7">Nombre d'accidents par type de route (2020-2024)</a></li>
+          <li class="nav-theme-item"><a href="#requete-8">Accidents par type de route (gravité chiffrée)</a></li>
+          <li class="nav-theme-item"><a href="#requete-10">Top 3 tronçons accidentogènes par réseau</a></li>
+          <li class="nav-theme-item"><a href="#requete-13">Top 3 tronçons les plus meurtriers par réseau</a></li>
+          <li class="nav-theme-title">Conditions de circulation</li>
+          <li class="nav-theme-item"><a href="#requete-4">Accidents par conditions d'éclairage (lum)</a></li>
+          <li class="nav-theme-item"><a href="#requete-6">Accidents en agglomération vs hors agglomération</a></li>
+          <li class="nav-theme-item"><a href="#requete-11">Accidents par luminosité dans les rues du Top 3</a></li>
+          <li class="nav-theme-title">Véhicules et usagers</li>
+          <li class="nav-theme-item"><a href="#requete-5">Victimes par type de véhicule (catv)</a></li>
+          <li class="nav-theme-title">Sources &amp; Références</li>
+          <li class="nav-theme-item"><a href="https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2023/" target="_blank" rel="noopener">Données BAAC — data.gouv.fr ↗</a></li>
+          <li class="nav-theme-item"><a href="https://www.onisr.securite-routiere.gouv.fr" target="_blank" rel="noopener">ONISR — Bilans annuels ↗</a></li>
+        </ul>
+      </div>
+    </nav>
+    <main>
+      <header>
+        <div class="hero-photo" aria-hidden="true"></div>
+        <h1>Accidents corporels de la circulation (2020–2024)</h1>
+        <p class="subtitle">Analyse de 268&nbsp;788 accidents corporels &bull; Fichier BAAC, ONISR &bull; Données 2020–2024</p>
+        <div class="header-meta">
+          <span>Source : ONISR / data.gouv.fr</span>
+          <span>Moteur : DuckDB + SQL</span>
+          <span>Visualisation : Chart.js &amp; Leaflet</span>
+          <span>Périmètre : France métropolitaine + DOM</span>
+        </div>
+      </header>
+      <div class="data-source-banner">
+        <span>&#128196;</span>
+        <span>Données publiques disponibles sur <a href="https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2023/" target="_blank" rel="noopener">data.gouv.fr — Bases annuelles des accidents corporels</a> &bull; Licence ouverte Etalab &bull; Mise à jour annuelle par l'ONISR</span>
+      </div>
+      <div class="methodo card">
+        <h2>Méthodologie et source</h2>
+        <p>Les données proviennent du <strong>Fichier national des accidents corporels de la circulation (BAAC)</strong>, administré par l'Observatoire national interministériel de la sécurité routière (ONISR). Chaque enregistrement correspond à un accident corporel impliquant au moins une victime sur une voie ouverte à la circulation publique, avec au moins un véhicule. Les quatre fichiers annuels (<em>Caractéristiques, Lieux, Véhicules, Usagers</em>) ont été fusionnés pour la période 2020–2024, représentant <strong>611&nbsp;762 usagers impliqués</strong>. Les requêtes SQL ont été exécutées sous DuckDB. Les résultats sont présentés sans redressement statistique ; les valeurs &minus;1 indiquent des données non renseignées dans la saisie d'origine.</p>
+        <button class="sql-btn" onclick="document.getElementById('sql-overlay').classList.add('open')">&#128196; Consulter les requêtes SQL utilisées</button>
+      </div>
+
+      <div class="faits-cles card">
+        <h2>Faits clés — 2020–2024</h2>
+        <div class="faits-grid">
+          <div class="fait-item rouge">
+            <span class="fait-valeur">16&nbsp;379</span>
+            <span class="fait-titre">Personnes tuées</span>
+            <span class="fait-detail">En 5 ans, soit environ 3&nbsp;270 décès par an sur les routes de France métropolitaine et d'outre-mer.</span>
+          </div>
+          <div class="fait-item rouge">
+            <span class="fait-valeur">268&nbsp;788</span>
+            <span class="fait-titre">Accidents corporels</span>
+            <span class="fait-detail">Chaque accident implique au moins une victime ; 63&nbsp;% surviennent en agglomération.</span>
+          </div>
+          <div class="fait-item orange">
+            <span class="fait-valeur">93&nbsp;525</span>
+            <span class="fait-titre">Blessés hospitalisés</span>
+            <span class="fait-detail">Les blessés graves nécessitant une hospitalisation représentent 15&nbsp;% des usagers impliqués.</span>
+          </div>
+          <div class="fait-item orange">
+            <span class="fait-valeur">60&nbsp;%</span>
+            <span class="fait-titre">Décès hors agglomération</span>
+            <span class="fait-detail">Malgré moins de trafic, les routes rurales concentrent la majorité des tués (source ONISR 2024).</span>
+          </div>
+          <div class="fait-item violet">
+            <span class="fait-valeur">29&nbsp;%</span>
+            <span class="fait-titre">Décès liés à l'alcool</span>
+            <span class="fait-detail">L'alcool est impliqué dans près d'un tiers des accidents mortels selon les bilans annuels ONISR.</span>
+          </div>
+          <div class="fait-item vert">
+            <span class="fait-valeur">+14&nbsp;%</span>
+            <span class="fait-titre">Hausse 2020 → 2024</span>
+            <span class="fait-detail">Le nombre d'accidents a progressé de 47&nbsp;744 (2020, effet COVID) à 54&nbsp;402 en 2024 avec le retour à la normale du trafic.</span>
+          </div>
+        </div>
+      </div>
+
+      <section id="resultats-requetes" class="card">
+        <h2>Résultats des requêtes</h2>
+        <h2 class="theme-title" id="theme-Vue-densemble">Vue d'ensemble</h2>
+      
+<section id="requete-1" class="result-section card">
+  <h2>Nombre d'accidents par année</h2>
+  <p class="explication">Évolution du nombre d'accidents corporels déclarés par année. La forte baisse de 2020 (47&nbsp;744 accidents, soit &minus;17&nbsp;% par rapport à 2019) s'explique par les confinements liés à la COVID-19 qui ont réduit drastiquement le trafic routier. Dès 2021, avec le retour de la mobilité, les chiffres retrouvent leur niveau habituel autour de 54&nbsp;000–57&nbsp;000 accidents annuels. La légère tendance à la baisse entre 2021 et 2023 est à surveiller, mais reste fragile.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-1" aria-label="Graphique requête 1"></canvas></div>
+  <p class="meta">(5 ligne(s))</p>
+</section>
+
+      
+<section id="requete-9" class="result-section card">
+  <h2>Bilan global 2020-2024 par gravité</h2>
+  <p class="explication">Bilan global sur 2020–2024 : nombre d'accidents distincts et effectifs par gravité, tous usagers confondus. Sur 611&nbsp;762 usagers impliqués, 42&nbsp;% sont indemnes, 40&nbsp;% souffrent de blessures légères, 15&nbsp;% sont hospitalisés et 2,7&nbsp;% décèdent. Ce taux de létalité de 2,7&nbsp;% est cohérent avec les moyennes européennes, mais masque de fortes disparités selon le type de route et les conditions de conduite.</p>
+  <div class="kpi-grid"><div class="kpi-item"><span class="kpi-value">2020–2024</span><span class="kpi-label">Période couverte</span></div><div class="kpi-item"><span class="kpi-value">268&nbsp;788</span><span class="kpi-label">Accidents corporels</span></div><div class="kpi-item safe"><span class="kpi-value">258&nbsp;359</span><span class="kpi-label">Usagers indemnes</span></div><div class="kpi-item danger"><span class="kpi-value">16&nbsp;379</span><span class="kpi-label">Personnes tuées</span></div><div class="kpi-item warning"><span class="kpi-value">93&nbsp;525</span><span class="kpi-label">Blessés hospitalisés</span></div><div class="kpi-item"><span class="kpi-value">243&nbsp;499</span><span class="kpi-label">Blessés légers</span></div><div class="kpi-item"><span class="kpi-value">611&nbsp;762</span><span class="kpi-label">Usagers impliqués (total)</span></div></div>
+  <p class="meta">(1 ligne(s))</p>
+</section>
+
+      
+<section id="requete-14" class="result-section card">
+  <h2>Nombre d'usagers victimes et décès par année</h2>
+  <p class="explication">Nombre total d'usagers victimes (blessés + tués) et de décès par année. La hausse des décès entre 2020 (2&nbsp;780) et 2024 (3&nbsp;432) traduit le retour à un niveau de trafic normal après la crise sanitaire. En contexte européen, la France vise l'objectif "Vision Zero" de l'UE : diviser par deux le nombre de tués entre 2020 et 2030. La stabilisation autour de 3&nbsp;200–3&nbsp;400 décès annuels reste préoccupante au regard de cet objectif. Note : l'année 2022 est absente du jeu de données de cette requête.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-14" aria-label="Graphique requête 14"></canvas></div>
+  <p class="meta">(4 ligne(s))</p>
+</section>
+
+      <h2 class="theme-title" id="theme-Gravité-des-victimes">Gravité des victimes</h2>
+      
+<section id="requete-2" class="result-section card">
+  <h2>Nombre par gravité (1=Indemne, 2=Tué, 3=Blessé hosp., 4=Blessé léger)</h2>
+  <p class="explication">Répartition des usagers impliqués selon la gravité : <strong>indemne (1)</strong>, <strong>tué (2)</strong>, <strong>blessé hospitalisé (3)</strong>, <strong>blessé léger (4)</strong>. La valeur &minus;1 indique une donnée non renseignée dans le BAAC. Les blessés hospitalisés (grav&nbsp;=&nbsp;3) constituent la catégorie la plus fréquente des victimes : leur prise en charge génère une pression importante sur le système de soins. Attention, ces chiffres portent sur un échantillon réduit (16&nbsp;425 usagers) issu d'une requête agrégée par valeur distincte de gravité.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-2" aria-label="Graphique requête 2"></canvas></div>
+  <p class="meta">(5 ligne(s))</p>
+</section>
+
+      
+<section id="requete-12" class="result-section card">
+  <h2>Gravité en fonction de la luminosité avec pourcentages</h2>
+  <p class="explication">Pour chaque condition d'éclairage, part (en&nbsp;%) de chaque gravité parmi les usagers. La comparaison révèle un risque accru la nuit : les accidents nocturnes sur route sans éclairage (lum&nbsp;=&nbsp;3) présentent une proportion de tués systématiquement plus élevée. En France, les routes rurales non éclairées concentrent 80&nbsp;% des décès survenus hors agglomération la nuit, selon l'ONISR. L'éclairage public réduit significativement la létalité, en particulier pour les piétons et cyclistes.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-12" aria-label="Graphique requête 12"></canvas></div>
+  <p class="meta">(20 ligne(s))</p>
+</section>
+
+      <h2 class="theme-title" id="theme-Géographie">Géographie</h2>
+
+      <div class="card" style="margin-bottom:1.75rem; padding: 0; overflow:hidden;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Accident_%C3%A0_V%C3%A9lizy-Villacoublay_sur_la_nationale_118_le_10_septembre_2015.jpg/1200px-Accident_%C3%A0_V%C3%A9lizy-Villacoublay_sur_la_nationale_118_le_10_septembre_2015.jpg"
+          alt="Accident sur la RN 118 à Vélizy-Villacoublay (2015)" class="section-photo" style="max-height:280px; border-radius:0; margin:0;">
+        <p class="photo-credit" style="padding:0.4rem 1rem; margin:0;">Photo : Wikimedia Commons — Accident RN 118, Vélizy-Villacoublay, 10 sept. 2015 (CC BY-SA)</p>
+      </div>
+
+      <section id="carte" class="result-section card map-section">
+        <h2>Carte des accidents par département</h2>
+        <p class="explication">Répartition géographique du nombre d'accidents corporels et du nombre de tués par département (2020–2024). Les départements les plus peuplés (Paris, Nord, Bouches-du-Rhône, Rhône) affichent les volumes absolus les plus élevés. En revanche, rapporté à la population, ce sont souvent les départements ruraux du sud et du centre qui présentent le taux de mortalité routière le plus fort — un phénomène lié à la prépondérance de routes bidirectionnelles sans séparateur central. Choisir l'indicateur ci-dessous pour colorer la carte.</p>
+        <div class="map-controls">
+          <label><input type="radio" name="map-metric" value="nb_accidents" checked> Nombre d'accidents</label>
+          <label><input type="radio" name="map-metric" value="nb_tues"> Nombre de tués</label>
+        </div>
+        <div id="map" class="map-container"></div>
+        <div id="map-legend" class="map-legend"></div>
+      </section>
+
+      
+<section id="requete-3" class="result-section card">
+  <h2>Accidents par département</h2>
+  <p class="explication">Nombre d'accidents distincts par département (code INSEE). Paris (75) et les Bouches-du-Rhône (13) figurent systématiquement en tête en volume brut. Toutefois, pour comparer le risque réel entre départements, il faudrait rapporter ce chiffre au parc de véhicules ou aux kilomètres parcourus. Les données outre-mer (971–976) sont également incluses et montrent des taux de mortalité élevés, notamment en Guyane et à La Réunion.</p>
+  <div class="chart-wrapper chart-wrapper-tall"><canvas id="chart-requete-3" aria-label="Graphique requête 3"></canvas></div>
+  <p class="meta">(107 ligne(s))</p>
+</section>
+
+      <h2 class="theme-title" id="theme-Type-de-route">Type de route</h2>
+      
+<section id="requete-7" class="result-section card">
+  <h2>Nombre d'accidents par type de route (2020-2024)</h2>
+  <p class="explication">Synthèse par type de route (autoroute, nationale, départementale, voie communale, etc.) avec détail des usagers par gravité. Paradoxalement, les <strong>autoroutes</strong> — bien que fréquentées à grande vitesse — affichent le taux de mortalité le plus faible grâce à leur infrastructure sécurisée (séparateur central, bandes d'arrêt d'urgence, éclairage). À l'inverse, les <strong>routes départementales</strong>, avec leur largeur limitée et leur mix de trafics, concentrent la majorité des décès hors agglomération en France.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-7" aria-label="Graphique requête 7"></canvas></div>
+  <p class="meta">(7 ligne(s))</p>
+</section>
+
+      
+<section id="requete-8" class="result-section card">
+  <h2>Nombre d'accidents par type de route avec gravité en chiffres</h2>
+  <p class="explication">Décomposition chiffrée des accidents par type de route, avec le nombre d'indemnes, de tués, de blessés hospitalisés et de blessés légers. Cette vue permet de calculer le <em>taux de létalité par réseau</em> : rapporter le nombre de tués au nombre total d'usagers impliqués. On observe généralement que les routes interurbaines bidirectionnelles (nationales, départementales) présentent un taux de létalité deux à quatre fois supérieur à celui des voies communales urbaines, malgré des vitesses autorisées plus faibles.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-8" aria-label="Graphique requête 8"></canvas></div>
+  <p class="meta">(7 ligne(s))</p>
+</section>
+
+      
+<section id="requete-10" class="result-section card">
+  <h2>Top 3 des rues par type de route avec le plus d'accidents et gravité</h2>
+  <p class="explication">Pour chaque type de route, les 3 rues (ou tronçons) recensant le plus d'accidents sur 2020–2024, avec la répartition par gravité. Ces "points noirs" concentrent un volume anormal d'accidents : leur identification permet de prioriser les aménagements de sécurité (ralentisseurs, glissières, carrefours giratoires, éclairage). Le département 75 (Paris) domine logiquement sur les voies communales en raison de la densité exceptionnelle de trafic urbain.
+  <div class="encart"><strong>Méthode :</strong> Le classement est établi sur le nombre total d'accidents par combinaison <em>type de route × département × nom de voie</em>. Les valeurs "N/A" indiquent que le nom de rue n'était pas renseigné dans le BAAC pour ce département.</div></p>
+  <div class="filter-by-category"><div class="filter-tabs" role="tablist"><button type="button" class="filter-tab active" data-filter-index="0" aria-pressed="true">Autoroute</button><button type="button" class="filter-tab" data-filter-index="1" aria-pressed="false">Route nati</button><button type="button" class="filter-tab" data-filter-index="2" aria-pressed="false">Route dépa</button><button type="button" class="filter-tab" data-filter-index="3" aria-pressed="false">Voie commu</button><button type="button" class="filter-tab" data-filter-index="4" aria-pressed="false">Hors résea</button><button type="button" class="filter-tab" data-filter-index="5" aria-pressed="false">Parc de st</button><button type="button" class="filter-tab" data-filter-index="6" aria-pressed="false">Routes mét</button></div><div class="filter-panels"><div class="filter-panel active" data-filter-index="0" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Autoroute</td><td>AUTO</td><td>91</td><td>587</td><td>770</td><td>7</td><td>31</td><td>788</td><td>1</td></tr><tr><td>Autoroute</td><td>AUTO</td><td>95</td><td>535</td><td>487</td><td>3</td><td>21</td><td>699</td><td>2</td></tr><tr><td>Autoroute</td><td>86</td><td>94</td><td>522</td><td>617</td><td>6</td><td>26</td><td>627</td><td>3</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="1" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Route nati</td><td>RN 1</td><td>91</td><td>403</td><td>379</td><td>6</td><td>10</td><td>516</td><td>1</td></tr><tr><td>Route nati</td><td>RN10</td><td>77</td><td>210</td><td>231</td><td>7</td><td>29</td><td>244</td><td>2</td></tr><tr><td>Route nati</td><td>RN 1</td><td>95</td><td>163</td><td>108</td><td>1</td><td>12</td><td>201</td><td>3</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="2" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Route dépa</td><td>N/A</td><td>93</td><td>810</td><td>936</td><td>9</td><td>91</td><td>909</td><td>1</td></tr><tr><td>Route dépa</td><td>N/A</td><td>94</td><td>720</td><td>867</td><td>4</td><td>69</td><td>837</td><td>2</td></tr><tr><td>Route dépa</td><td>N/A</td><td>85</td><td>400</td><td>435</td><td>49</td><td>316</td><td>298</td><td>3</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="3" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Voie commu</td><td>N/A</td><td>75</td><td>7988</td><td>7386</td><td>60</td><td>612</td><td>8330</td><td>1</td></tr><tr><td>Voie commu</td><td>N/A</td><td>69</td><td>1295</td><td>1441</td><td>46</td><td>359</td><td>1394</td><td>2</td></tr><tr><td>Voie commu</td><td>N/A</td><td>93</td><td>1174</td><td>1458</td><td>7</td><td>146</td><td>1511</td><td>3</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="4" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Hors résea</td><td>N/A</td><td>94</td><td>28</td><td>36</td><td>0</td><td>4</td><td>39</td><td>1</td></tr><tr><td>Hors résea</td><td>N/A</td><td>13</td><td>6</td><td>4</td><td>1</td><td>3</td><td>6</td><td>2</td></tr><tr><td>Hors résea</td><td>N/A</td><td>60</td><td>5</td><td>2</td><td>0</td><td>2</td><td>3</td><td>3</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="5" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Parc de st</td><td>N/A</td><td>94</td><td>33</td><td>40</td><td>1</td><td>3</td><td>33</td><td>1</td></tr><tr><td>Parc de st</td><td>N/A</td><td>56</td><td>17</td><td>15</td><td>1</td><td>8</td><td>11</td><td>2</td></tr><tr><td>Parc de st</td><td>N/A</td><td>69</td><td>16</td><td>15</td><td>0</td><td>3</td><td>17</td><td>3</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="6" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rue</th><th>departement</th><th>nb_accidents</th><th>nb_indemnes</th><th>nb_tues</th><th>nb_blesses_hospitalises</th><th>nb_blesses_legers</th><th>rang</th></tr></thead><tbody><tr><td>Routes mét</td><td>N/A</td><td>69</td><td>165</td><td>186</td><td>8</td><td>52</td><td>191</td><td>1</td></tr><tr><td>Routes mét</td><td>N/A</td><td>63</td><td>138</td><td>178</td><td>13</td><td>34</td><td>183</td><td>2</td></tr><tr><td>Routes mét</td><td>N/A</td><td>76</td><td>80</td><td>100</td><td>4</td><td>25</td><td>95</td><td>3</td></tr></tbody></table></div></div></div></div>
+  <p class="meta">(21 ligne(s))</p>
+</section>
+
+      
+<section id="requete-13" class="result-section card">
+  <h2>Top 3 rues avec le plus de tués par type de route</h2>
+  <p class="explication">Pour chaque type de route, les 3 tronçons où le nombre de tués est le plus élevé sur 2020–2024. Contrairement au classement par volume d'accidents, ce filtre fait ressortir des tronçons à haute létalité, parfois peu fréquents mais très graves. Les routes nationales en outre-mer (dép. 971, 973, 988) apparaissent proéminentes : les routes insulaires et guyanaises présentent des facteurs de risque cumulés (vitesse, absence de séparateur central, conduite nocturne, faible densité de forces de l'ordre).</p>
+  <div class="filter-by-category"><div class="filter-tabs" role="tablist"><button type="button" class="filter-tab active" data-filter-index="0" aria-pressed="true">Autoroute</button><button type="button" class="filter-tab" data-filter-index="1" aria-pressed="false">Route nati</button><button type="button" class="filter-tab" data-filter-index="2" aria-pressed="false">Route dépa</button><button type="button" class="filter-tab" data-filter-index="3" aria-pressed="false">Voie commu</button><button type="button" class="filter-tab" data-filter-index="4" aria-pressed="false">Autre</button></div><div class="filter-panels"><div class="filter-panel active" data-filter-index="0" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rang</th><th>departement</th><th>rue</th><th>nb_accidents</th><th>nb_tues</th></tr></thead><tbody><tr><td>Autoroute</td><td>1</td><td>06</td><td>8</td><td>21</td><td>22</td></tr><tr><td>Autoroute</td><td>2</td><td>34</td><td>9</td><td>14</td><td>14</td></tr><tr><td>Autoroute</td><td>3</td><td>68</td><td>35</td><td>13</td><td>14</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="1" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rang</th><th>departement</th><th>rue</th><th>nb_accidents</th><th>nb_tues</th></tr></thead><tbody><tr><td>Route nati</td><td>1</td><td>973</td><td>1</td><td>46</td><td>60</td></tr><tr><td>Route nati</td><td>2</td><td>988</td><td>1</td><td>33</td><td>40</td></tr><tr><td>Route nati</td><td>3</td><td>971</td><td>1</td><td>31</td><td>34</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="2" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rang</th><th>departement</th><th>rue</th><th>nb_accidents</th><th>nb_tues</th></tr></thead><tbody><tr><td>Route dépa</td><td>1</td><td>10</td><td>619</td><td>13</td><td>18</td></tr><tr><td>Route dépa</td><td>2</td><td>73</td><td>1006</td><td>13</td><td>16</td></tr><tr><td>Route dépa</td><td>3</td><td>89</td><td>606</td><td>12</td><td>16</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="3" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rang</th><th>departement</th><th>rue</th><th>nb_accidents</th><th>nb_tues</th></tr></thead><tbody><tr><td>Voie commu</td><td>1</td><td>83</td><td>NC</td><td>9</td><td>9</td></tr><tr><td>Voie commu</td><td>2</td><td>988</td><td>1</td><td>5</td><td>6</td></tr><tr><td>Voie commu</td><td>3</td><td>06</td><td>VOIE</td><td>5</td><td>5</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="4" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>type_route</th><th>rang</th><th>departement</th><th>rue</th><th>nb_accidents</th><th>nb_tues</th></tr></thead><tbody><tr><td>Autre</td><td>1</td><td>69</td><td>PLAG</td><td>1</td><td>3</td></tr><tr><td>Autre</td><td>2</td><td>987</td><td>Quai</td><td>1</td><td>2</td></tr><tr><td>Autre</td><td>3</td><td>62</td><td>N216</td><td>1</td><td>2</td></tr></tbody></table></div></div></div></div>
+  <p class="meta">(15 ligne(s))</p>
+</section>
+
+      <h2 class="theme-title" id="theme-Conditions-de-circulation">Conditions de circulation</h2>
+      
+<section id="requete-4" class="result-section card">
+  <h2>Accidents par conditions d'éclairage (lum)</h2>
+  <p class="explication">Répartition des accidents selon les conditions d'éclairage au moment des faits (<em>lum</em>&nbsp;: 1&nbsp;= jour, 2&nbsp;= crépuscule/aube, 3&nbsp;= nuit sans éclairage public, 4&nbsp;= nuit avec éclairage public éteint, 5&nbsp;= nuit avec éclairage public allumé). La nuit avec éclairage (lum&nbsp;=&nbsp;5) présente le volume le plus élevé car elle englobe toutes les zones urbaines éclairées. La nuit sans aucun éclairage (lum&nbsp;=&nbsp;3) est la plus dangereuse <em>par accident</em> : le taux de létalité y est nettement supérieur, car elle concerne principalement les routes rurales isolées.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-4" aria-label="Graphique requête 4"></canvas></div>
+  <p class="meta">(6 ligne(s))</p>
+</section>
+
+      
+<section id="requete-6" class="result-section card">
+  <h2>Accidents en agglomération vs hors agglomération (agg)</h2>
+  <p class="explication">Répartition des accidents entre agglomération (agg&nbsp;=&nbsp;2, 63&nbsp;% des accidents) et hors agglomération (agg&nbsp;=&nbsp;1, 37&nbsp;%). Bien que les accidents soient majoritairement urbains en volume, la mortalité est inverse : <strong>60&nbsp;% des décès surviennent hors agglomération</strong>, sur des routes où les vitesses sont plus élevées et les infrastructures moins sécurisées. Ce paradoxe — beaucoup d'accidents en ville, mais plus de morts à la campagne — est une constante observée dans toute l'Europe. La France affiche même un écart légèrement supérieur à la moyenne européenne (51&nbsp;% de décès ruraux en UE).</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-6" aria-label="Graphique requête 6"></canvas></div>
+  <p class="meta">(2 ligne(s))</p>
+</section>
+
+      
+<section id="requete-11" class="result-section card">
+  <h2>Accidents par luminosité dans les rues du Top 3</h2>
+  <p class="explication">Sur les tronçons du Top&nbsp;3 par type de réseau, répartition des accidents selon la luminosité (jour, nuit, crépuscule) et la gravité associée. Cette analyse croisée révèle que sur les autoroutes franciliennes (dép. 91, 93, 95), environ 30&nbsp;% des accidents surviennent la nuit malgré un trafic nocturne bien inférieur, ce qui confirme le surrisque nocturne. Le crépuscule — transition lumineuse défavorable à la visibilité — présente un taux de blessés hospitalisés proportionnellement élevé.</p>
+  <div class="filter-by-category"><div class="filter-tabs" role="tablist"><button type="button" class="filter-tab active" data-filter-index="0" aria-pressed="true">Autoroute</button><button type="button" class="filter-tab" data-filter-index="1" aria-pressed="false">Hors réseau p</button><button type="button" class="filter-tab" data-filter-index="2" aria-pressed="false">Parc de stati</button><button type="button" class="filter-tab" data-filter-index="3" aria-pressed="false">Route départe</button><button type="button" class="filter-tab" data-filter-index="4" aria-pressed="false">Route métropo</button><button type="button" class="filter-tab" data-filter-index="5" aria-pressed="false">Route nationa</button><button type="button" class="filter-tab" data-filter-index="6" aria-pressed="false">Voie communal</button></div><div class="filter-panels"><div class="filter-panel active" data-filter-index="0" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Autoroute</td><td>91</td><td>AUTO</td><td>Plei</td><td>390</td><td>544</td><td>537</td><td>16</td><td>2</td></tr><tr><td>Autoroute</td><td>91</td><td>AUTO</td><td>Nuit</td><td>144</td><td>159</td><td>194</td><td>11</td><td>4</td></tr><tr><td>Autoroute</td><td>91</td><td>AUTO</td><td>Crép</td><td>43</td><td>46</td><td>43</td><td>4</td><td>1</td></tr><tr><td>Autoroute</td><td>91</td><td>AUTO</td><td>Nuit</td><td>9</td><td>17</td><td>13</td><td>0</td><td>0</td></tr><tr><td>Autoroute</td><td>91</td><td>AUTO</td><td>Nuit</td><td>1</td><td>4</td><td>1</td><td>0</td><td>0</td></tr><tr><td>Autoroute</td><td>93</td><td>AUTO</td><td>Plei</td><td>322</td><td>409</td><td>376</td><td>18</td><td>2</td></tr><tr><td>Autoroute</td><td>93</td><td>AUTO</td><td>Nuit</td><td>132</td><td>151</td><td>162</td><td>9</td><td>2</td></tr><tr><td>Autoroute</td><td>93</td><td>AUTO</td><td>Crép</td><td>34</td><td>38</td><td>35</td><td>2</td><td>1</td></tr><tr><td>Autoroute</td><td>93</td><td>AUTO</td><td>Nuit</td><td>17</td><td>18</td><td>22</td><td>2</td><td>0</td></tr><tr><td>Autoroute</td><td>93</td><td>AUTO</td><td>Nuit</td><td>13</td><td>17</td><td>18</td><td>0</td><td>0</td></tr><tr><td>Autoroute</td><td>95</td><td>AUTO</td><td>Plei</td><td>315</td><td>300</td><td>390</td><td>13</td><td>1</td></tr><tr><td>Autoroute</td><td>95</td><td>AUTO</td><td>Nuit</td><td>174</td><td>138</td><td>255</td><td>7</td><td>1</td></tr><tr><td>Autoroute</td><td>95</td><td>AUTO</td><td>Crép</td><td>35</td><td>40</td><td>40</td><td>1</td><td>1</td></tr><tr><td>Autoroute</td><td>95</td><td>AUTO</td><td>Nuit</td><td>6</td><td>5</td><td>7</td><td>0</td><td>0</td></tr><tr><td>Autoroute</td><td>95</td><td>AUTO</td><td>Nuit</td><td>5</td><td>4</td><td>7</td><td>0</td><td>0</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="1" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Hors réseau p</td><td>77</td><td>0</td><td>Plei</td><td>1</td><td>0</td><td>0</td><td>2</td><td>0</td></tr><tr><td>Hors réseau p</td><td>94</td><td>DES</td><td>Crép</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="2" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Parc de stati</td><td>27</td><td>JAUR</td><td>Plei</td><td>3</td><td>2</td><td>4</td><td>0</td><td>0</td></tr><tr><td>Parc de stati</td><td>27</td><td>JAUR</td><td>Nuit</td><td>1</td><td>0</td><td>2</td><td>0</td><td>0</td></tr><tr><td>Parc de stati</td><td>66</td><td>ESPA</td><td>Plei</td><td>3</td><td>3</td><td>2</td><td>2</td><td>0</td></tr><tr><td>Parc de stati</td><td>971</td><td>DOTH</td><td>Plei</td><td>2</td><td>1</td><td>1</td><td>2</td><td>0</td></tr><tr><td>Parc de stati</td><td>971</td><td>DOTH</td><td>Nuit</td><td>1</td><td>2</td><td>1</td><td>0</td><td>0</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="3" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Route départe</td><td>92</td><td>7</td><td>Plei</td><td>120</td><td>127</td><td>122</td><td>9</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>7</td><td>Nuit</td><td>36</td><td>35</td><td>35</td><td>4</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>7</td><td>Crép</td><td>15</td><td>19</td><td>15</td><td>1</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>7</td><td>Nuit</td><td>3</td><td>5</td><td>3</td><td>0</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>7</td><td>Nuit</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>986</td><td>Plei</td><td>93</td><td>104</td><td>94</td><td>8</td><td>2</td></tr><tr><td>Route départe</td><td>92</td><td>986</td><td>Nuit</td><td>49</td><td>41</td><td>53</td><td>7</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>986</td><td>Crép</td><td>8</td><td>7</td><td>10</td><td>1</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>986</td><td>Nuit</td><td>2</td><td>2</td><td>2</td><td>0</td><td>0</td></tr><tr><td>Route départe</td><td>92</td><td>986</td><td>Nuit</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>Route départe</td><td>973</td><td>BADU</td><td>Plei</td><td>127</td><td>131</td><td>174</td><td>13</td><td>0</td></tr><tr><td>Route départe</td><td>973</td><td>BADU</td><td>Nuit</td><td>25</td><td>18</td><td>27</td><td>7</td><td>0</td></tr><tr><td>Route départe</td><td>973</td><td>BADU</td><td>Crép</td><td>10</td><td>12</td><td>11</td><td>2</td><td>0</td></tr><tr><td>Route départe</td><td>973</td><td>BADU</td><td>Nuit</td><td>7</td><td>7</td><td>10</td><td>0</td><td>0</td></tr><tr><td>Route départe</td><td>973</td><td>BADU</td><td>Nuit</td><td>3</td><td>3</td><td>2</td><td>1</td><td>0</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="4" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Route métropo</td><td>37</td><td>RD 3</td><td>Plei</td><td>16</td><td>11</td><td>24</td><td>1</td><td>0</td></tr><tr><td>Route métropo</td><td>37</td><td>RD 3</td><td>Nuit</td><td>6</td><td>1</td><td>5</td><td>1</td><td>0</td></tr><tr><td>Route métropo</td><td>37</td><td>RD 3</td><td>Crép</td><td>4</td><td>4</td><td>2</td><td>1</td><td>1</td></tr><tr><td>Route métropo</td><td>37</td><td>RD 3</td><td>Nuit</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td></tr><tr><td>Route métropo</td><td>37</td><td>RD 3</td><td>Nuit</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>Route métropo</td><td>67</td><td>AUTO</td><td>Plei</td><td>30</td><td>37</td><td>43</td><td>1</td><td>0</td></tr><tr><td>Route métropo</td><td>67</td><td>AUTO</td><td>Nuit</td><td>11</td><td>9</td><td>13</td><td>2</td><td>2</td></tr><tr><td>Route métropo</td><td>67</td><td>AUTO</td><td>Crép</td><td>2</td><td>2</td><td>2</td><td>0</td><td>0</td></tr><tr><td>Route métropo</td><td>67</td><td>AUTO</td><td>Nuit</td><td>1</td><td>1</td><td>2</td><td>0</td><td>0</td></tr><tr><td>Route métropo</td><td>69</td><td>RD38</td><td>Plei</td><td>13</td><td>16</td><td>14</td><td>2</td><td>0</td></tr><tr><td>Route métropo</td><td>69</td><td>RD38</td><td>Nuit</td><td>6</td><td>7</td><td>14</td><td>1</td><td>1</td></tr><tr><td>Route métropo</td><td>69</td><td>RD38</td><td>Nuit</td><td>4</td><td>6</td><td>6</td><td>1</td><td>0</td></tr><tr><td>Route métropo</td><td>69</td><td>RD38</td><td>Crép</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="5" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Route nationa</td><td>77</td><td>RN10</td><td>Plei</td><td>128</td><td>154</td><td>149</td><td>19</td><td>1</td></tr><tr><td>Route nationa</td><td>77</td><td>RN10</td><td>Nuit</td><td>55</td><td>52</td><td>62</td><td>3</td><td>2</td></tr><tr><td>Route nationa</td><td>77</td><td>RN10</td><td>Crép</td><td>22</td><td>20</td><td>28</td><td>6</td><td>4</td></tr><tr><td>Route nationa</td><td>77</td><td>RN10</td><td>Nuit</td><td>3</td><td>3</td><td>2</td><td>1</td><td>0</td></tr><tr><td>Route nationa</td><td>77</td><td>RN10</td><td>Nuit</td><td>2</td><td>2</td><td>3</td><td>0</td><td>0</td></tr><tr><td>Route nationa</td><td>91</td><td>RN 1</td><td>Plei</td><td>235</td><td>233</td><td>292</td><td>4</td><td>4</td></tr><tr><td>Route nationa</td><td>91</td><td>RN 1</td><td>Nuit</td><td>134</td><td>111</td><td>172</td><td>4</td><td>2</td></tr><tr><td>Route nationa</td><td>91</td><td>RN 1</td><td>Crép</td><td>26</td><td>28</td><td>42</td><td>0</td><td>0</td></tr><tr><td>Route nationa</td><td>91</td><td>RN 1</td><td>Nuit</td><td>6</td><td>6</td><td>8</td><td>2</td><td>0</td></tr><tr><td>Route nationa</td><td>91</td><td>RN 1</td><td>Nuit</td><td>2</td><td>1</td><td>2</td><td>0</td><td>0</td></tr><tr><td>Route nationa</td><td>95</td><td>RN 1</td><td>Plei</td><td>100</td><td>70</td><td>129</td><td>6</td><td>0</td></tr><tr><td>Route nationa</td><td>95</td><td>RN 1</td><td>Nuit</td><td>50</td><td>27</td><td>57</td><td>5</td><td>1</td></tr><tr><td>Route nationa</td><td>95</td><td>RN 1</td><td>Crép</td><td>12</td><td>11</td><td>14</td><td>1</td><td>0</td></tr><tr><td>Route nationa</td><td>95</td><td>RN 1</td><td>Nuit</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td></tr></tbody></table></div></div><div class="filter-panel" data-filter-index="6" role="tabpanel"><div class="table-wrapper"><table><thead><tr><th>Type de route</th><th>Dep</th><th>Rue</th><th>Lum</th><th>Nb Accident</th><th>Nb indemne</th><th>Nb Blessé leger</th><th>Nb Blessé Hosp</th><th>Tué</th></tr></thead><tbody><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Plei</td><td>98</td><td>81</td><td>99</td><td>3</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Nuit</td><td>49</td><td>44</td><td>49</td><td>8</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Crép</td><td>10</td><td>9</td><td>10</td><td>0</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Plei</td><td>103</td><td>147</td><td>106</td><td>19</td><td>1</td></tr><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Nuit</td><td>37</td><td>47</td><td>40</td><td>6</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Crép</td><td>8</td><td>9</td><td>8</td><td>1</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>BOUL</td><td>Nuit</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>RUE</td><td>Plei</td><td>112</td><td>74</td><td>120</td><td>6</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>RUE</td><td>Nuit</td><td>36</td><td>19</td><td>35</td><td>4</td><td>0</td></tr><tr><td>Voie communal</td><td>75</td><td>RUE</td><td>Crép</td><td>12</td><td>7</td><td>11</td><td>2</td><td>0</td></tr></tbody></table></div></div></div></div>
+  <p class="meta">(74 ligne(s))</p>
+</section>
+
+      <h2 class="theme-title" id="theme-Véhicules-et-usagers">Véhicules et usagers</h2>
+      
+<section id="requete-5" class="result-section card">
+  <h2>Victimes par type de véhicule (catv)</h2>
+  <p class="explication">Nombre de victimes (tués + blessés) par catégorie de véhicule (<em>catv</em>). Codes principaux : <strong>7</strong>&nbsp;= voiture de tourisme (VL), <strong>1</strong>&nbsp;= bicyclette, <strong>33</strong>&nbsp;= moto &gt;&nbsp;125&nbsp;cm³, <strong>2</strong>&nbsp;= cyclomoteur, <strong>10</strong>&nbsp;= VTM léger. Les <strong>deux-roues motorisés</strong> sont systématiquement surreprésentés : ils représentent seulement 2&nbsp;% du trafic total mais comptent pour plus de 20&nbsp;% des tués sur la route (ONISR). Les cyclistes et piétons, malgré leur faible vitesse, subissent une létalité élevée en cas de choc avec un véhicule motorisé.</p>
+  <div class="chart-wrapper"><canvas id="chart-requete-5" aria-label="Graphique requête 5"></canvas></div>
+  <p class="meta">(32 ligne(s))</p>
+</section>
+
+      </section>
+    </main>
+  </div>
+  <script>window.MAP_DATA = [{"dep": "01", "nb_accidents": 1669, "nb_tues": 163}, {"dep": "02", "nb_accidents": 854, "nb_tues": 131}, {"dep": "03", "nb_accidents": 926, "nb_tues": 101}, {"dep": "04", "nb_accidents": 758, "nb_tues": 57}, {"dep": "05", "nb_accidents": 853, "nb_tues": 45}, {"dep": "06", "nb_accidents": 3374, "nb_tues": 204}, {"dep": "07", "nb_accidents": 1099, "nb_tues": 91}, {"dep": "08", "nb_accidents": 414, "nb_tues": 58}, {"dep": "09", "nb_accidents": 544, "nb_tues": 45}, {"dep": "10", "nb_accidents": 1394, "nb_tues": 115}, {"dep": "11", "nb_accidents": 1347, "nb_tues": 129}, {"dep": "12", "nb_accidents": 727, "nb_tues": 75}, {"dep": "13", "nb_accidents": 9221, "nb_tues": 387}, {"dep": "14", "nb_accidents": 1998, "nb_tues": 120}, {"dep": "15", "nb_accidents": 582, "nb_tues": 31}, {"dep": "16", "nb_accidents": 551, "nb_tues": 85}, {"dep": "17", "nb_accidents": 1736, "nb_tues": 163}, {"dep": "18", "nb_accidents": 649, "nb_tues": 92}, {"dep": "19", "nb_accidents": 734, "nb_tues": 67}, {"dep": "21", "nb_accidents": 827, "nb_tues": 104}, {"dep": "22", "nb_accidents": 1604, "nb_tues": 141}, {"dep": "23", "nb_accidents": 196, "nb_tues": 31}, {"dep": "24", "nb_accidents": 746, "nb_tues": 119}, {"dep": "25", "nb_accidents": 1262, "nb_tues": 102}, {"dep": "26", "nb_accidents": 1209, "nb_tues": 136}, {"dep": "27", "nb_accidents": 1751, "nb_tues": 148}, {"dep": "28", "nb_accidents": 990, "nb_tues": 109}, {"dep": "29", "nb_accidents": 2807, "nb_tues": 159}, {"dep": "2A", "nb_accidents": 997, "nb_tues": 50}, {"dep": "2B", "nb_accidents": 1133, "nb_tues": 69}, {"dep": "30", "nb_accidents": 1674, "nb_tues": 186}, {"dep": "31", "nb_accidents": 2379, "nb_tues": 219}, {"dep": "32", "nb_accidents": 521, "nb_tues": 50}, {"dep": "33", "nb_accidents": 4998, "nb_tues": 290}, {"dep": "34", "nb_accidents": 2640, "nb_tues": 256}, {"dep": "35", "nb_accidents": 2781, "nb_tues": 171}, {"dep": "36", "nb_accidents": 445, "nb_tues": 58}, {"dep": "37", "nb_accidents": 2295, "nb_tues": 118}, {"dep": "38", "nb_accidents": 2562, "nb_tues": 202}, {"dep": "39", "nb_accidents": 562, "nb_tues": 98}, {"dep": "40", "nb_accidents": 694, "nb_tues": 111}, {"dep": "41", "nb_accidents": 755, "nb_tues": 78}, {"dep": "42", "nb_accidents": 1561, "nb_tues": 122}, {"dep": "43", "nb_accidents": 666, "nb_tues": 56}, {"dep": "44", "nb_accidents": 2461, "nb_tues": 218}, {"dep": "45", "nb_accidents": 1752, "nb_tues": 139}, {"dep": "46", "nb_accidents": 408, "nb_tues": 56}, {"dep": "47", "nb_accidents": 840, "nb_tues": 104}, {"dep": "48", "nb_accidents": 287, "nb_tues": 26}, {"dep": "49", "nb_accidents": 2579, "nb_tues": 132}, {"dep": "50", "nb_accidents": 1576, "nb_tues": 117}, {"dep": "51", "nb_accidents": 2126, "nb_tues": 127}, {"dep": "52", "nb_accidents": 451, "nb_tues": 70}, {"dep": "53", "nb_accidents": 491, "nb_tues": 70}, {"dep": "54", "nb_accidents": 2190, "nb_tues": 115}, {"dep": "55", "nb_accidents": 435, "nb_tues": 52}, {"dep": "56", "nb_accidents": 2109, "nb_tues": 165}, {"dep": "57", "nb_accidents": 1274, "nb_tues": 146}, {"dep": "58", "nb_accidents": 642, "nb_tues": 76}, {"dep": "59", "nb_accidents": 3808, "nb_tues": 330}, {"dep": "60", "nb_accidents": 1977, "nb_tues": 145}, {"dep": "61", "nb_accidents": 916, "nb_tues": 95}, {"dep": "62", "nb_accidents": 2174, "nb_tues": 196}, {"dep": "63", "nb_accidents": 2016, "nb_tues": 135}, {"dep": "64", "nb_accidents": 3490, "nb_tues": 141}, {"dep": "65", "nb_accidents": 861, "nb_tues": 55}, {"dep": "66", "nb_accidents": 1402, "nb_tues": 109}, {"dep": "67", "nb_accidents": 2341, "nb_tues": 163}, {"dep": "68", "nb_accidents": 1408, "nb_tues": 111}, {"dep": "69", "nb_accidents": 8000, "nb_tues": 205}, {"dep": "70", "nb_accidents": 426, "nb_tues": 72}, {"dep": "71", "nb_accidents": 1813, "nb_tues": 156}, {"dep": "72", "nb_accidents": 1582, "nb_tues": 98}, {"dep": "73", "nb_accidents": 1049, "nb_tues": 104}, {"dep": "74", "nb_accidents": 1894, "nb_tues": 145}, {"dep": "75", "nb_accidents": 18749, "nb_tues": 154}, {"dep": "76", "nb_accidents": 2851, "nb_tues": 174}, {"dep": "77", "nb_accidents": 3412, "nb_tues": 245}, {"dep": "78", "nb_accidents": 2661, "nb_tues": 147}, {"dep": "79", "nb_accidents": 722, "nb_tues": 93}, {"dep": "80", "nb_accidents": 1475, "nb_tues": 137}, {"dep": "81", "nb_accidents": 825, "nb_tues": 104}, {"dep": "82", "nb_accidents": 590, "nb_tues": 85}, {"dep": "83", "nb_accidents": 3236, "nb_tues": 241}, {"dep": "84", "nb_accidents": 1413, "nb_tues": 139}, {"dep": "85", "nb_accidents": 1352, "nb_tues": 183}, {"dep": "86", "nb_accidents": 862, "nb_tues": 104}, {"dep": "87", "nb_accidents": 1568, "nb_tues": 83}, {"dep": "88", "nb_accidents": 679, "nb_tues": 85}, {"dep": "89", "nb_accidents": 713, "nb_tues": 109}, {"dep": "90", "nb_accidents": 181, "nb_tues": 21}, {"dep": "91", "nb_accidents": 5336, "nb_tues": 133}, {"dep": "92", "nb_accidents": 9411, "nb_tues": 93}, {"dep": "93", "nb_accidents": 10709, "nb_tues": 107}, {"dep": "94", "nb_accidents": 8822, "nb_tues": 83}, {"dep": "95", "nb_accidents": 3530, "nb_tues": 110}, {"dep": "971", "nb_accidents": 2004, "nb_tues": 210}, {"dep": "972", "nb_accidents": 2047, "nb_tues": 105}, {"dep": "973", "nb_accidents": 2154, "nb_tues": 136}, {"dep": "974", "nb_accidents": 3346, "nb_tues": 155}, {"dep": "975", "nb_accidents": 12, "nb_tues": 1}, {"dep": "976", "nb_accidents": 663, "nb_tues": 37}, {"dep": "977", "nb_accidents": 64, "nb_tues": 9}, {"dep": "978", "nb_accidents": 138, "nb_tues": 18}, {"dep": "986", "nb_accidents": 38, "nb_tues": 10}, {"dep": "987", "nb_accidents": 680, "nb_tues": 132}, {"dep": "988", "nb_accidents": 980, "nb_tues": 171}];</script>
+  <script>window.REQUETES_DATA = {"1": {"type": "line", "data": {"labels": ["2020", "2021", "2022", "2023", "2024"], "datasets": [{"label": "Accidents", "data": [47744.0, 56518.0, 55302.0, 54822.0, 54402.0], "backgroundColor": "rgba(30, 64, 175, 0.85)", "borderColor": "rgba(30, 64, 175, 1)", "borderWidth": 1, "fill": false, "tension": 0.2}]}, "indexAxis": null, "options": null, "dense": false}, "2": {"type": "bar", "data": {"labels": ["Indemne", "Blessé léger", "Blessé hospitalisé", "Tué", "Non renseigné"], "datasets": [{"label": "Usagers", "data": [2583.0, 2434.0, 9352.0, 1637.0, 419.0], "backgroundColor": ["rgba(22, 163, 74, 0.85)", "rgba(234, 179, 8, 0.85)", "rgba(234, 88, 12, 0.85)", "rgba(220, 38, 38, 0.85)", "rgba(100, 116, 139, 0.85)"], "borderColor": ["rgba(22, 163, 74, 1)", "rgba(234, 179, 8, 1)", "rgba(234, 88, 12, 1)", "rgba(220, 38, 38, 1)", "rgba(100, 116, 139, 1)"], "borderWidth": 1}]}, "indexAxis": "y", "options": null, "dense": false}, "3": {"type": "bar", "data": {"labels": ["75", "93", "92", "13", "94", "69", "91", "33", "59", "95", "64", "77", "06", "974", "83", "76", "29", "35", "78", "34", "49", "38", "44", "31", "67", "37", "54", "62", "973", "51", "56", "972", "63", "971", "14", "60", "74", "71", "45", "27", "17", "30", "01", "22", "72", "50", "87", "42", "80", "84", "68", "66", "10", "85", "11", "57", "25", "26", "2B", "07", "73", "2A", "28", "988", "03", "61", "86", "65", "02", "05", "47", "21", "81", "04", "41", "24", "19", "12", "79", "89", "40", "987", "88", "43", "976", "18", "58", "82", "15", "39", "16", "09", "32", "53", "52", "36", "55", "70", "08", "46", "48", "23", "90", "978", "977", "986", "975"], "datasets": [{"label": "Accidents", "data": [18749.0, 10709.0, 9411.0, 9221.0, 8822.0, 8000.0, 5336.0, 4998.0, 3808.0, 3530.0, 3490.0, 3412.0, 3374.0, 3346.0, 3236.0, 2851.0, 2807.0, 2781.0, 2661.0, 2640.0, 2579.0, 2562.0, 2461.0, 2379.0, 2341.0, 2295.0, 2190.0, 2174.0, 2154.0, 2126.0, 2109.0, 2047.0, 2016.0, 2004.0, 1998.0, 1977.0, 1894.0, 1813.0, 1752.0, 1751.0, 1736.0, 1674.0, 1669.0, 1604.0, 1582.0, 1576.0, 1568.0, 1561.0, 1475.0, 1413.0, 1408.0, 1402.0, 1394.0, 1352.0, 1347.0, 1274.0, 1262.0, 1209.0, 1133.0, 1099.0, 1049.0, 997.0, 990.0, 980.0, 926.0, 916.0, 862.0, 861.0, 854.0, 853.0, 840.0, 827.0, 825.0, 758.0, 755.0, 746.0, 734.0, 727.0, 722.0, 713.0, 694.0, 680.0, 679.0, 666.0, 663.0, 649.0, 642.0, 590.0, 582.0, 562.0, 551.0, 544.0, 521.0, 491.0, 451.0, 445.0, 435.0, 426.0, 414.0, 408.0, 287.0, 196.0, 181.0, 138.0, 64.0, 38.0, 12.0], "backgroundColor": "rgba(30, 64, 175, 0.85)", "borderColor": "rgba(30, 64, 175, 1)", "borderWidth": 1}]}, "indexAxis": "y", "options": null, "dense": true}, "4": {"type": "bar", "data": {"labels": ["Plein jour", "Crépuscule / aube", "Nuit — éclairage allumé", "Nuit — éclairage éteint", "Nuit sans éclairage", "Non renseigné"], "datasets": [{"label": "Accidents", "data": [1794.0, 1774.0, 4155.0, 2693.0, 2737.0, 9.0], "backgroundColor": ["rgba(253, 224, 71, 0.85)", "rgba(251, 146, 60, 0.85)", "rgba(71, 85, 105, 0.85)", "rgba(30, 41, 59, 0.85)", "rgba(15, 23, 42, 0.85)", "rgba(148, 163, 184, 0.85)"], "borderColor": ["rgba(253, 224, 71, 1)", "rgba(251, 146, 60, 1)", "rgba(71, 85, 105, 1)", "rgba(30, 41, 59, 1)", "rgba(15, 23, 42, 1)", "rgba(148, 163, 184, 1)"], "borderWidth": 1}]}, "indexAxis": "y", "options": null, "dense": false}, "5": {"type": "bar", "data": {"labels": ["Véh. léger (VL)", "Moto >125cc", "Bicyclette", "Cyclomoteur", "VTM léger", "Piéton", "Cyclo >50cc", "EDP motorisé", "VL+remorque", "Side-car", "cat.80", "Quad lourd", "EDP non motor.", "Voiturette", "Autre", "Autre véh.", "PL lourd", "Bus/Car", "Quad léger", "Bus articulé", "Tramway", "Indéterminé", "Semi-remorque", "Tracteur", "Train", "Engin spéc.", "Tricycle", "EDP motor.(42)", "Tramway(41)", "Autocar", "cat.16", "Non renseigné"], "datasets": [{"label": "Victimes", "data": [187912.0, 38490.0, 25491.0, 17801.0, 16384.0, 13571.0, 10211.0, 9846.0, 8435.0, 4723.0, 3067.0, 2767.0, 2732.0, 2020.0, 1525.0, 1117.0, 1035.0, 992.0, 978.0, 813.0, 774.0, 634.0, 600.0, 413.0, 395.0, 243.0, 125.0, 94.0, 86.0, 78.0, 40.0, 11.0], "backgroundColor": "rgba(30, 64, 175, 0.85)", "borderColor": "rgba(30, 64, 175, 1)", "borderWidth": 1}]}, "indexAxis": null, "options": null, "dense": false}, "6": {"type": "doughnut", "data": {"labels": ["En agglomération (63 %)", "Hors agglomération (37 %)"], "datasets": [{"data": [170474.0, 98314.0], "backgroundColor": ["rgba(30, 58, 138, 0.88)", "rgba(234, 88, 12, 0.88)"]}]}, "indexAxis": null, "options": null, "dense": false}, "7": {"type": "bar", "data": {"labels": ["Voie communale", "Route départementale", "Autoroute", "Route nationale", "Route métropole", "Parc de stat.", "Hors réseau"], "datasets": [{"label": "Accidents corporels", "data": [112477.0, 101751.0, 25126.0, 17268.0, 8499.0, 1970.0, 310.0], "backgroundColor": ["rgba(30, 58, 138, 0.85)", "rgba(30, 58, 138, 0.75)", "rgba(30, 58, 138, 0.65)", "rgba(30, 58, 138, 0.55)", "rgba(30, 58, 138, 0.45)", "rgba(30, 58, 138, 0.35)", "rgba(30, 58, 138, 0.25)"], "borderColor": "rgba(30, 58, 138, 1)", "borderWidth": 1}]}, "indexAxis": "y", "options": null, "dense": false}, "8": {"type": "bar", "data": {"labels": ["Voie communale", "Route départementale", "Autoroute", "Route nationale", "Route métropole", "Parc de stat.", "Hors réseau"], "datasets": [{"label": "Accidents", "data": [112477.0, 101751.0, 25126.0, 17268.0, 8499.0, 1970.0, 310.0], "backgroundColor": "rgba(30, 64, 175, 0.85)", "borderColor": "rgba(30, 64, 175, 1)", "borderWidth": 1}, {"label": "Tués", "data": [3545.0, 10063.0, 1296.0, 1739.0, 499.0, 107.0, 31.0], "backgroundColor": "rgba(220, 38, 38, 0.85)", "borderColor": "rgba(220, 38, 38, 1)", "borderWidth": 1}, {"label": "Blessés hosp.", "data": [29627.0, 55061.0, 5885.0, 7400.0, 3142.0, 687.0, 140.0], "backgroundColor": "rgba(22, 163, 74, 0.85)", "borderColor": "rgba(22, 163, 74, 1)", "borderWidth": 1}, {"label": "Blessés légers", "data": [124281.0, 89973.0, 29970.0, 17947.0, 9210.0, 1410.0, 223.0], "backgroundColor": "rgba(234, 179, 8, 0.85)", "borderColor": "rgba(234, 179, 8, 1)", "borderWidth": 1}]}, "indexAxis": null, "options": null, "dense": false}, "9": {"kind": "kpi", "values": [{"label": "periode", "value": "2020-20"}, {"label": "nb_accidents_total", "value": "268788"}, {"label": "nb_indemnes", "value": "258359"}, {"label": "nb_tues", "value": "16379"}, {"label": "nb_blesses_hospitalises", "value": "93525"}, {"label": "nb_blesses_legers", "value": "243499"}, {"label": "nb_usagers_total", "value": "611762"}]}, "12": {"type": "bar", "data": {"labels": ["Plein jour", "Crépuscule/aube", "Nuit sans éclairage", "Nuit avec éclairage"], "datasets": [{"label": "Indemne", "data": [43.54, 41.32, 34.65, 41.98], "backgroundColor": "rgba(30, 64, 175, 0.85)"}, {"label": "Tué", "data": [2.26, 2.99, 6.19, 1.65], "backgroundColor": "rgba(220, 38, 38, 0.85)"}, {"label": "Blessé hosp.", "data": [14.84, 17.13, 21.96, 16.63], "backgroundColor": "rgba(22, 163, 74, 0.85)"}, {"label": "Blessé lég.", "data": [39.35, 38.56, 37.19, 44.43], "backgroundColor": "rgba(234, 179, 8, 0.85)"}]}, "indexAxis": "x", "options": {"scales": {"x": {"stacked": true}, "y": {"stacked": true, "max": 100}}}, "dense": false}, "14": {"type": "line", "data": {"labels": ["2020", "2021", "2023", "2024"], "datasets": [{"label": "Victimes", "data": [105295.0, 129248.0, 125789.0, 125187.0], "backgroundColor": "rgba(30, 64, 175, 0.85)", "borderColor": "rgba(30, 64, 175, 1)", "borderWidth": 1, "fill": false, "tension": 0.2}, {"label": "Décès", "data": [2780.0, 3219.0, 3398.0, 3432.0], "backgroundColor": "rgba(220, 38, 38, 0.85)", "borderColor": "rgba(220, 38, 38, 1)", "borderWidth": 1, "fill": false, "tension": 0.2}]}, "indexAxis": null, "options": null, "dense": false}};</script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin=""></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js" crossorigin=""></script>
+  <script>
+(function() {
+  var GEOJSON_URL = 'https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements-version-simplifiee.geojson';
+  var mapData = window.MAP_DATA || [];
+  var dataByDep = {};
+  mapData.forEach(function(d) {
+    var code = String(d.dep);
+    if (code.length === 1) code = '0' + code;
+    dataByDep[code] = { nb_accidents: d.nb_accidents, nb_tues: d.nb_tues };
+  });
+
+  function getColor(val, max, metric) {
+    if (val == null || max <= 0) return '#e2e8f0';
+    var t = Math.min(1, val / max);
+    var r = Math.round(30 + (1 - t) * 180);
+    var g = Math.round(64 + (1 - t) * 120);
+    var b = Math.round(158 + (1 - t) * 97);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  var maxByMetric = {};
+  function getMax(metric) {
+    if (!maxByMetric[metric]) {
+      var vals = mapData.map(function(x) { return x[metric]; }).filter(function(v) { return v > 0; });
+      maxByMetric[metric] = vals.length ? Math.max.apply(null, vals) : 1;
+    }
+    return maxByMetric[metric];
+  }
+
+  function styleLayer(feature, metric) {
+    var code = feature.properties.code || '';
+    var codeAlt = code.charAt(0) === '0' ? code.replace(/^0/, '') : code;
+    var d = dataByDep[code] || dataByDep[codeAlt];
+    var val = d ? d[metric] : null;
+    var max = getMax(metric);
+    return {
+      fillColor: getColor(val, max, metric),
+      weight: 1.2,
+      opacity: 1,
+      color: '#94a3b8',
+      fillOpacity: 0.85
+    };
+  }
+
+  var map = L.map('map').setView([46.6, 2.5], 6);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap, &copy; CARTO'
+  }).addTo(map);
+
+  function getCentroid(feature) {
+    var coords = feature.geometry && feature.geometry.coordinates;
+    if (!coords) return null;
+    var ring = feature.geometry.type === 'Polygon' ? coords[0] : (feature.geometry.type === 'MultiPolygon' ? coords[0][0] : null);
+    if (!ring || !ring.length) return null;
+    var sumLat = 0, sumLng = 0, n = 0;
+    for (var i = 0; i < ring.length; i++) { sumLng += ring[i][0]; sumLat += ring[i][1]; n++; }
+    return [sumLat / n, sumLng / n];
+  }
+
+  var geoLayer = null;
+  var labelLayer = null;
+  var currentMetric = 'nb_accidents';
+
+  function updateLabels(metric) {
+    if (!labelLayer || !window.geoJson) return;
+    labelLayer.clearLayers();
+    window.geoJson.features.forEach(function(f) {
+      var center = getCentroid(f);
+      if (!center) return;
+      var code = f.properties.code || '';
+      var d = dataByDep[code] || dataByDep[code.replace(/^0/, '')];
+      var val = d ? d[metric] : '-';
+      var icon = L.divIcon({ html: '<span class="dep-label">' + val + '</span>', className: 'dep-label-wrap', iconSize: null, iconAnchor: [0, 0] });
+      L.marker(center, { icon: icon }).addTo(labelLayer);
+    });
+  }
+
+  function updateMap(metric) {
+    currentMetric = metric;
+    if (!window.geoJson) return;
+    if (geoLayer) map.removeLayer(geoLayer);
+    geoLayer = L.geoJSON(window.geoJson, {
+      style: function(f) { return styleLayer(f, metric); },
+      onEachFeature: function(feature, layer) {
+        var code = feature.properties.code;
+        var d = dataByDep[code] || dataByDep[code.replace(/^0/, '')];
+        var acc = d ? d.nb_accidents : '-';
+        var tues = d ? d.nb_tues : '-';
+        layer.bindPopup('<strong>Département ' + (feature.properties.nom || code) + '</strong><br>Accidents : ' + acc + '<br>Tués : ' + tues);
+      }
+    }).addTo(map);
+    if (labelLayer) { updateLabels(metric); if (map.getZoom() >= 6) map.addLayer(labelLayer); }
+    updateLegend(metric);
+  }
+
+  function updateLegend(metric) {
+    var vals = mapData.map(function(d) { return d[metric]; }).filter(function(v) { return v > 0; });
+    var max = vals.length ? Math.max.apply(null, vals) : 1;
+    var el = document.getElementById('map-legend');
+    var label = metric === 'nb_accidents' ? 'Nombre d\'accidents' : 'Nombre de tués';
+    el.innerHTML = '<strong>' + label + '</strong> — Départements colorés du plus faible au plus élevé (max : ' + max + ').';
+  }
+
+  document.querySelectorAll('input[name="map-metric"]').forEach(function(radio) {
+    radio.addEventListener('change', function() { updateMap(this.value); });
+  });
+
+  fetch(GEOJSON_URL)
+    .then(function(r) { return r.json(); })
+    .then(function(geojson) {
+      window.geoJson = geojson;
+      labelLayer = L.layerGroup();
+      map.on('zoomend', function() {
+        if (map.getZoom() >= 6) { updateLabels(currentMetric); map.addLayer(labelLayer); }
+        else { map.removeLayer(labelLayer); }
+      });
+      updateMap('nb_accidents');
+    })
+    .catch(function() {
+      document.getElementById('map-legend').innerHTML = 'Impossible de charger la carte (vérifier la connexion).';
+    });
+})();
+  </script>
+  <script>
+(function() {
+  if (typeof Chart === 'undefined') return;
+  var hasDatalabels = typeof ChartDataLabels !== 'undefined';
+  if (hasDatalabels) Chart.register(ChartDataLabels);
+  var data = window.REQUETES_DATA || {};
+  function formatLabel(value) {
+    if (typeof value !== 'number') return value;
+    return value >= 1000 ? (value / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : (value % 1 === 0 ? value : value.toFixed(1));
+  };
+  for (var num in data) {
+    var config = data[num];
+    if (!config || config.kind === 'kpi' || config.kind === 'table') continue;
+    var el = document.getElementById('chart-requete-' + num);
+    if (!el || !el.getContext) continue;
+    var type = config.type || 'bar';
+    var opts = { responsive: true, maintainAspectRatio: !config.dense, plugins: { legend: { display: true, position: 'top' } }, scales: {} };
+    if (config.dense) opts.layout = { padding: { right: 80 } };
+    if (config.indexAxis) opts.indexAxis = config.indexAxis;
+    if (config.indexAxis === 'y') {
+      opts.scales.x = config.dense ? { beginAtZero: true, grace: '22%' } : { beginAtZero: true };
+      opts.scales.y = config.dense ? { ticks: { font: { size: 10 }, maxRotation: 0 } } : {};
+    } else {
+      opts.scales.x = {};
+      opts.scales.y = { beginAtZero: true };
+    }
+    if (config.options && config.options.scales) {
+      for (var k in config.options.scales) opts.scales[k] = config.options.scales[k];
+    }
+    if (hasDatalabels) {
+      if (config.dense) {
+        opts.plugins.datalabels = {
+          display: true,
+          anchor: 'end',
+          align: 'end',
+          offset: 2,
+          formatter: formatLabel,
+          color: '#0f172a',
+          font: { size: 10, weight: '600' },
+          padding: { left: 2, right: 0 },
+          clip: false
+        };
+      } else {
+        var isHorizontal = opts.indexAxis === 'y';
+        var isPie = type === 'pie' || type === 'doughnut';
+        var isLine = type === 'line';
+        var isGrouped = config.data && config.data.datasets && config.data.datasets.length > 2;
+        opts.plugins.datalabels = {
+          display: isPie ? true : (isGrouped ? false : true),
+          anchor: isPie ? 'center' : (isHorizontal ? 'end' : 'end'),
+          align: isPie ? 'center' : (isHorizontal ? 'end' : 'top'),
+          offset: isLine ? 6 : (isHorizontal ? 4 : 2),
+          formatter: formatLabel,
+          color: isPie ? '#fff' : '#0f172a',
+          font: { size: isPie ? 12 : 10, weight: '600' },
+          padding: { top: 2, bottom: 2, left: 4, right: 4 },
+          clip: false,
+          backgroundColor: isPie ? null : 'rgba(255,255,255,0.75)',
+          borderRadius: 3
+        };
+      }
+    }
+    new Chart(el, { type: type, data: config.data || { labels: [], datasets: [] }, options: opts });
+  }
+})();
+  </script>
+  <script>
+(function() {
+  document.querySelectorAll('.filter-tab').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var idx = this.getAttribute('data-filter-index');
+      var container = this.closest('.filter-by-category');
+      if (!container) return;
+      container.querySelectorAll('.filter-panel').forEach(function(p) {
+        p.classList.toggle('active', p.getAttribute('data-filter-index') === idx);
+      });
+      container.querySelectorAll('.filter-tab').forEach(function(b) {
+        b.classList.toggle('active', b.getAttribute('data-filter-index') === idx);
+        b.setAttribute('aria-pressed', b.getAttribute('data-filter-index') === idx ? 'true' : 'false');
+      });
+    });
+  });
+})();
+  </script>
+  <!-- Modal SQL -->
+  <div id="sql-overlay" class="sql-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="sql-modal" role="dialog" aria-modal="true" aria-label="Requêtes SQL utilisées">
+      <div class="sql-modal-header">
+        <h3>Requêtes SQL — Accidents corporels 2020–2024</h3>
+        <button class="sql-close" onclick="document.getElementById('sql-overlay').classList.remove('open')" aria-label="Fermer">&times;</button>
+      </div>
+      <div class="sql-modal-body">
+        <p style="font-size:0.85rem; color:var(--muted); margin:0 0 1rem">Requêtes exécutées sous <strong>DuckDB</strong> sur les fichiers CSV du BAAC. Les vues <code>caracteristiques</code>, <code>lieux</code>, <code>vehicules</code>, <code>usagers</code> sont construites par union des fichiers annuels 2020–2024.</p>
+        <p class="sql-query-title">Req. 1 — Accidents par année</p>
+        <pre>SELECT an, COUNT(*) AS nb_accidents
+FROM caracteristiques
+GROUP BY an ORDER BY an;</pre>
+        <p class="sql-query-title">Req. 2 — Usagers par gravité</p>
+        <pre>SELECT grav, COUNT(*) AS nb
+FROM usagers
+GROUP BY grav ORDER BY grav;</pre>
+        <p class="sql-query-title">Req. 3 — Accidents par département</p>
+        <pre>SELECT dep, COUNT(DISTINCT Num_Acc) AS nb_accidents
+FROM caracteristiques
+GROUP BY dep ORDER BY nb_accidents DESC;</pre>
+        <p class="sql-query-title">Req. 4 — Accidents par conditions d'éclairage</p>
+        <pre>SELECT lum, COUNT(*) AS nb
+FROM caracteristiques
+GROUP BY lum ORDER BY nb DESC;</pre>
+        <p class="sql-query-title">Req. 5 — Victimes par type de véhicule</p>
+        <pre>SELECT v.catv, COUNT(*) AS nb_usagers
+FROM usagers u
+JOIN vehicules v ON u.Num_Acc = v.Num_Acc
+  AND u.id_vehicule = v.id_vehicule
+WHERE u.grav IN (2, 3, 4)
+GROUP BY v.catv ORDER BY nb_usagers DESC;</pre>
+        <p class="sql-query-title">Req. 6 — Agglomération vs hors agglomération</p>
+        <pre>SELECT agg, COUNT(*) AS nb_accidents
+FROM caracteristiques GROUP BY agg;</pre>
+        <p class="sql-query-title">Req. 7 — Accidents par type de route (simplifié)</p>
+        <pre>SELECT
+  CASE CAST(l.catr AS VARCHAR)
+    WHEN '1' THEN 'Autoroute'
+    WHEN '2' THEN 'Route nationale'
+    WHEN '3' THEN 'Route départementale'
+    WHEN '4' THEN 'Voie communale'
+    WHEN '5' THEN 'Hors réseau public'
+    WHEN '6' THEN 'Parc de stationnement'
+    WHEN '7' THEN 'Route métropole urbaine'
+    ELSE 'Autre'
+  END AS type_route,
+  COUNT(DISTINCT l.Num_Acc) AS nb_accidents
+FROM lieux l
+INNER JOIN usagers u ON l.Num_Acc = u.Num_Acc
+WHERE CAST(l.catr AS VARCHAR) IN ('1','2','3','4','5','6','7')
+  AND CAST(u.grav AS VARCHAR) IN ('1','2','3','4')
+GROUP BY l.catr ORDER BY nb_accidents DESC;</pre>
+        <p class="sql-query-title">Req. 8 — Accidents par type de route avec gravité détaillée</p>
+        <pre>SELECT type_route,
+  COUNT(DISTINCT accident_id) AS nb_accidents,
+  SUM(CASE WHEN grav='1' THEN 1 ELSE 0 END) AS nb_indemnes,
+  SUM(CASE WHEN grav='2' THEN 1 ELSE 0 END) AS nb_tues,
+  SUM(CASE WHEN grav='3' THEN 1 ELSE 0 END) AS nb_blesses_hospitalises,
+  SUM(CASE WHEN grav='4' THEN 1 ELSE 0 END) AS nb_blesses_legers
+FROM (-- UNION ALL des 5 années sur lieux + usagers)
+GROUP BY catr ORDER BY nb_accidents DESC;</pre>
+        <p class="sql-query-title">Req. 9 — Bilan global 2020–2024</p>
+        <pre>SELECT '2020-2024' AS periode,
+  COUNT(DISTINCT Num_Acc) AS nb_accidents_total,
+  SUM(CASE WHEN grav='1' THEN 1 ELSE 0 END) AS nb_indemnes,
+  SUM(CASE WHEN grav='2' THEN 1 ELSE 0 END) AS nb_tues,
+  SUM(CASE WHEN grav='3' THEN 1 ELSE 0 END) AS nb_blesses_hospitalises,
+  SUM(CASE WHEN grav='4' THEN 1 ELSE 0 END) AS nb_blesses_legers,
+  COUNT(*) AS nb_usagers_total
+FROM (-- UNION ALL des 5 années usagers);</pre>
+        <p class="sql-query-title">Req. 10 — Top 3 tronçons par type de route (accidents)</p>
+        <pre>WITH ranked AS (
+  SELECT type_route, rue, dep, nb_accidents,
+    ROW_NUMBER() OVER (PARTITION BY catr ORDER BY nb_accidents DESC) AS rang
+  FROM agregation_rues
+)
+SELECT * FROM ranked WHERE rang &lt;= 3;</pre>
+        <p class="sql-query-title">Req. 12 — Gravité (%) par condition d'éclairage</p>
+        <pre>SELECT
+  lum_label,
+  ROUND(100.0 * SUM(CASE WHEN grav='1' THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_indemne,
+  ROUND(100.0 * SUM(CASE WHEN grav='2' THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_tue,
+  ROUND(100.0 * SUM(CASE WHEN grav='3' THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_blesse_hosp,
+  ROUND(100.0 * SUM(CASE WHEN grav='4' THEN 1 ELSE 0 END) / COUNT(*), 2) AS pct_blesse_leger
+FROM (-- UNION ALL des 5 années caract. + usagers)
+GROUP BY lum;</pre>
+        <p class="sql-query-title">Req. 14 — Victimes et décès par année</p>
+        <pre>SELECT an AS annee,
+  COUNT(*) AS nb_usagers_victimes,
+  SUM(CASE WHEN grav='2' THEN 1 ELSE 0 END) AS nb_deces
+FROM (-- UNION ALL des 5 années usagers + caract.)
+WHERE grav IN ('2','3','4')
+GROUP BY an ORDER BY an;</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Références -->
+  <div class="references card" style="margin-bottom:2rem;">
+    <h2>Références bibliographiques</h2>
+    <ul class="ref-list">
+      <li>
+        <span class="ref-num">[1]</span>
+        <span class="ref-body">
+          <span class="ref-authors">ONISR.</span>
+          <span class="ref-title"> Bilan définitif de l'accidentalité de l'année 2024.</span>
+          <span class="ref-source"> Observatoire national interministériel de la sécurité routière, 2025.</span>
+          <br><a class="ref-link" href="https://www.onisr.securite-routiere.gouv.fr/en/road-safety-performance/annual-road-safety-reports/2024-road-safety-annual-report" target="_blank" rel="noopener">→ onisr.securite-routiere.gouv.fr</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[2]</span>
+        <span class="ref-body">
+          <span class="ref-authors">ONISR.</span>
+          <span class="ref-title"> Bilan définitif de l'accidentalité de l'année 2023.</span>
+          <span class="ref-source"> Observatoire national interministériel de la sécurité routière, 2024.</span>
+          <br><a class="ref-link" href="https://www.onisr.securite-routiere.gouv.fr/en/road-safety-performance/annual-road-safety-reports/2023-road-safety-annual-report" target="_blank" rel="noopener">→ onisr.securite-routiere.gouv.fr</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[3]</span>
+        <span class="ref-body">
+          <span class="ref-authors">International Transport Forum (OCDE).</span>
+          <span class="ref-title"> Road Safety Country Profile — France 2024.</span>
+          <span class="ref-source"> ITF-OCDE, 2024.</span>
+          <br><a class="ref-link" href="https://www.itf-oecd.org/sites/default/files/france-road-safety.pdf" target="_blank" rel="noopener">→ itf-oecd.org (PDF)</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[4]</span>
+        <span class="ref-body">
+          <span class="ref-authors">European Road Safety Observatory (ERSO).</span>
+          <span class="ref-title"> National Road Safety Profile — France 2024.</span>
+          <span class="ref-source"> Commission européenne, DG MOVE, 2024.</span>
+          <br><a class="ref-link" href="https://road-safety.transport.ec.europa.eu/system/files/2024-01/erso-country-overview-2024-france.pdf" target="_blank" rel="noopener">→ road-safety.transport.ec.europa.eu (PDF)</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[5]</span>
+        <span class="ref-body">
+          <span class="ref-authors">International Transport Forum (OCDE).</span>
+          <span class="ref-title"> Road Safety Annual Report 2024.</span>
+          <span class="ref-source"> ITF-OCDE, 2024 — données IRTAD (40 pays membres).</span>
+          <br><a class="ref-link" href="https://www.itf-oecd.org/road-safety-annual-report-2024" target="_blank" rel="noopener">→ itf-oecd.org</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[6]</span>
+        <span class="ref-body">
+          <span class="ref-authors">Bureau d'enquêtes sur les accidents de transport terrestre (BEA-TT).</span>
+          <span class="ref-title"> Rapports d'enquêtes techniques sur accidents routiers graves.</span>
+          <span class="ref-source"> Ministère chargé des Transports, depuis 2004.</span>
+          <br><a class="ref-link" href="https://www.bea-tt.developpement-durable.gouv.fr/" target="_blank" rel="noopener">→ bea-tt.developpement-durable.gouv.fr</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[7]</span>
+        <span class="ref-body">
+          <span class="ref-authors">Laumon B., Martin J.-L. et al. (UMRESTTE, Inserm).</span>
+          <span class="ref-title"> The burden of road traffic accidents in a French département: description of injuries and recent changes.</span>
+          <span class="ref-source"> Archives ouvertes HAL / Inserm, 2009.</span>
+          <br><a class="ref-link" href="https://inserm.hal.science/inserm-00663588" target="_blank" rel="noopener">→ inserm.hal.science</a>
+        </span>
+      </li>
+      <li>
+        <span class="ref-num">[8]</span>
+        <span class="ref-body">
+          <span class="ref-authors">Santé Publique France (ex-InVS).</span>
+          <span class="ref-title"> Victimes d'accidents de la circulation : quelles évolutions ? Registre du Rhône 1996–2008.</span>
+          <span class="ref-source"> Bulletin Épidémiologique Hebdomadaire n°47, 14 décembre 2010.</span>
+          <br><a class="ref-link" href="https://beh.santepubliquefrance.fr/beh/2010/47/" target="_blank" rel="noopener">→ beh.santepubliquefrance.fr</a>
+        </span>
+      </li>
+    </ul>
+  </div>
+
+  <footer class="site-footer">
+    <p>
+      <strong>Données :</strong>
+      <a href="https://www.data.gouv.fr/fr/datasets/bases-de-donnees-annuelles-des-accidents-corporels-de-la-circulation-routiere-annees-de-2005-a-2023/" target="_blank" rel="noopener">data.gouv.fr — BAAC 2020–2024</a>
+      (Licence Ouverte Etalab) &bull;
+      <a href="https://www.onisr.securite-routiere.gouv.fr" target="_blank" rel="noopener">ONISR</a>
+    </p>
+    <p>
+      <strong>Outils :</strong> DuckDB (SQL) &bull; Python &bull; Chart.js 4 &bull; Leaflet.js &bull; GeoJSON FR (<a href="https://github.com/gregoiredavid/france-geojson" target="_blank" rel="noopener">gregoiredavid</a>)
+    </p>
+    <p>
+      <strong>Photos :</strong>
+      Autoroute du Mont-Blanc © Wikimedia Commons (CC BY-SA 2.0) &bull;
+      Accident RN 118 Vélizy © Wikimedia Commons (CC BY-SA 4.0)
+    </p>
+    <p style="margin-top:0.5rem; font-size:0.8rem; color:var(--muted);">Les résultats reflètent les déclarations BAAC sans redressement statistique. Les valeurs &minus;1 correspondent à des champs non renseignés. Pour les références bibliographiques complètes, voir la section dédiée ci-dessus.</p>
+  </footer>
+</body>
+</html>

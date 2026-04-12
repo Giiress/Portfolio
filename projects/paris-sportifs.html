@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paris Sportifs — Lucas Fouquet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'Segoe UI', system-ui, sans-serif; background: #02020e; color: #dde4f0; min-height: 100vh; line-height: 1.6; }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
+
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; line-height: 1.1; margin-bottom: .4rem; }
+    .project-title span { background: linear-gradient(120deg,rgba(255,255,255,.9),rgba(255,255,255,.35)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
+    .project-sub { color: #6a7590; font-size: .95rem; max-width: 640px; margin-bottom: 1.5rem; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 2rem; }
+    .tag { padding: .2rem .65rem; border-radius: 999px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
+
+    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.1rem; border-radius: .35rem; font-size: .8rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.04); color: rgba(255,255,255,.55); transition: color .2s, border-color .2s, background .2s; }
+    .btn:hover { color: white; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.08); }
+    .btn-primary { border-color: rgba(80,210,140,.35); color: rgba(80,210,140,.8); background: rgba(80,210,140,.05); }
+    .btn-primary:hover { border-color: rgba(80,210,140,.6); color: rgba(80,210,140,1); background: rgba(80,210,140,.1); }
+
+    /* ── Visionneuse Excel ── */
+    .excel-viewer {
+      border-radius: .5rem; overflow: hidden;
+      margin-bottom: 3.5rem;
+      box-shadow: 0 8px 48px rgba(0,0,0,.7);
+      background: #1d6039;
+    }
+
+    /* Barre titre Excel */
+    .excel-titlebar {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .45rem 1rem;
+      background: #185230;
+    }
+    .excel-logo {
+      width: 20px; height: 20px; background: #217346;
+      border-radius: .2rem; display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; font-weight: 900; color: white; flex-shrink: 0;
+    }
+    .excel-titlebar-name { font-size: .78rem; color: rgba(255,255,255,.75); flex: 1; }
+    .excel-titlebar-btns { display: flex; gap: .4rem; }
+    .excel-titlebar-btn { width: 11px; height: 11px; border-radius: 50%; }
+
+    /* Onglets */
+    .excel-tabs {
+      display: flex; align-items: flex-end; gap: 1px;
+      padding: 0 6px; background: #185230;
+    }
+    .excel-tab {
+      padding: .32rem 1.1rem .28rem;
+      font-size: .72rem; font-weight: 600;
+      background: #2a7a50; color: rgba(255,255,255,.55);
+      border-radius: .25rem .25rem 0 0;
+      cursor: pointer; user-select: none; white-space: nowrap;
+      border: 1px solid rgba(255,255,255,.1); border-bottom: none;
+      transition: background .15s, color .15s;
+    }
+    .excel-tab:hover { background: #328a5c; color: rgba(255,255,255,.8); }
+    .excel-tab.active { background: white; color: #217346; font-weight: 700; border-color: #c8c8c8; }
+
+    /* Zone image */
+    .excel-sheet { display: none; background: white; }
+    .excel-sheet.active { display: block; }
+    .excel-sheet img {
+      display: block; width: 100%; height: auto;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
+    /* Zoom sur clic */
+    .excel-sheet img { cursor: zoom-in; }
+    .img-zoomed { cursor: zoom-out !important; }
+
+    /* Lightbox */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.92); align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: .3rem; box-shadow: 0 0 80px rgba(0,0,0,.8); }
+    .lightbox-close { position: fixed; top: 1.5rem; right: 2rem; color: rgba(255,255,255,.5); font-size: 1.5rem; cursor: pointer; z-index: 1001; transition: color .2s; background: none; border: none; }
+    .lightbox-close:hover { color: white; }
+
+    /* Barre de statut */
+    .excel-statusbar {
+      background: #217346; color: rgba(255,255,255,.6);
+      font-size: .67rem; padding: .22rem 1rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    /* Sections texte */
+    .section { margin-bottom: 3rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+    .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
+    .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
+    .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
+    hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<a href="../index.html" class="nav-back">← Portfolio</a>
+
+<div class="page">
+  <div class="eyebrow">Projet · Excel · Analyse Sportive</div>
+  <h1 class="project-title"><span>Paris Sportifs — Top 5 Ligues</span></h1>
+  <div class="rule"></div>
+  <p class="project-sub">Analyse des résultats des 5 grands championnats européens de football pour identifier les stratégies de paris les plus rentables.</p>
+
+  <div class="tags">
+    <span class="tag">Excel</span>
+    <span class="tag">Analyse de données</span>
+    <span class="tag">Football</span>
+    <span class="tag">Ligue 1</span>
+    <span class="tag">Premier League</span>
+    <span class="tag">La Liga</span>
+    <span class="tag">Serie A</span>
+    <span class="tag">Bundesliga</span>
+  </div>
+
+  <div class="btn-row">
+    <a href="../assets/downloads/paris-sportifs.xlsx" download class="btn btn-primary">⬇ Télécharger le fichier Excel</a>
+  </div>
+
+  <!-- Visionneuse Excel -->
+  <div class="excel-viewer">
+
+    <div class="excel-titlebar">
+      <div class="excel-logo">X</div>
+      <span class="excel-titlebar-name">paris-sportifs.xlsx — Microsoft Excel</span>
+      <div class="excel-titlebar-btns">
+        <div class="excel-titlebar-btn" style="background:#ff5f56"></div>
+        <div class="excel-titlebar-btn" style="background:#ffbd2e"></div>
+        <div class="excel-titlebar-btn" style="background:#27c93f"></div>
+      </div>
+    </div>
+
+    <div class="excel-tabs" id="excel-tabs">
+      <div class="excel-tab active" data-sheet="0">Dashboard Pro</div>
+      <div class="excel-tab" data-sheet="1">Dashboard</div>
+    </div>
+
+    <div class="excel-sheet active" id="sheet-0">
+      <img src="../assets/img/paris-sportifs-dashboard-pro.png"
+           alt="Dashboard Pro — Paris Sportifs"
+           onclick="openLightbox(this.src)">
+    </div>
+
+    <div class="excel-sheet" id="sheet-1">
+      <img src="../assets/img/paris-sportifs-dashboard.png"
+           alt="Dashboard interactif — Paris Sportifs"
+           onclick="openLightbox(this.src)">
+    </div>
+
+    <div class="excel-statusbar">
+      <span id="excel-sheet-name">Dashboard Pro</span>
+      <span>Cliquer sur l'image pour agrandir</span>
+    </div>
+
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <div class="section">
+    <div class="section-eyebrow">Description</div>
+    <div class="section-title">À propos du projet</div>
+    <p class="section-text">Ce projet analyse les résultats historiques des équipes des 5 grands championnats européens (Ligue 1, Premier League, La Liga, Serie A, Bundesliga) pour identifier des patterns récurrents exploitables dans une stratégie de paris sportifs.</p>
+    <p class="section-text">La manipulation des données a été réalisée entièrement sous Excel — collecte, nettoyage, agrégation par type de pari — tandis que la mise en forme du fichier et la structuration des tableaux de synthèse ont été réalisées avec l'assistance de Claude (vibe coding).</p>
+  </div>
+
+  <hr class="divider"/>
+
+  <div class="section">
+    <div class="section-eyebrow">Méthodologie</div>
+    <div class="section-title">Approche d'analyse</div>
+    <div class="info-block">
+      <div class="info-row">
+        <div class="info-label">Données</div>
+        <div class="info-val">Résultats des matchs sur les dernières saisons complètes pour chaque championnat · Score à domicile et à l'extérieur</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Calculs</div>
+        <div class="info-val">Taux de victoire domicile/extérieur par tier d'équipe · Fréquence des scores par type (buts, nuls) · Corrélation classement / résultat</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Comparaison</div>
+        <div class="info-val">Taux de réussite historique croisé avec les cotes moyennes de bookmakers pour estimer la rentabilité espérée</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Outils</div>
+        <div class="info-val"><code>Excel</code> — tableaux croisés dynamiques, formules conditionnelles · <code>Claude</code> — mise en forme et structuration</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../space.js"></script>
+<script>
+  // Onglets
+  document.getElementById('excel-tabs').addEventListener('click', e => {
+    const tab = e.target.closest('.excel-tab');
+    if (!tab) return;
+    const idx = tab.dataset.sheet;
+    document.querySelectorAll('.excel-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.excel-sheet').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('sheet-' + idx).classList.add('active');
+    document.getElementById('excel-sheet-name').textContent = tab.textContent;
+  });
+
+  // Lightbox
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>

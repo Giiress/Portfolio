@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Together — Lucas Fouquet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'Segoe UI', system-ui, sans-serif; background: #02020e; color: #dde4f0; min-height: 100vh; line-height: 1.6; }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .page { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
+
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; line-height: 1.1; margin-bottom: .4rem; }
+    .project-title span { background: linear-gradient(120deg,#00d4ff,#ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
+    .project-sub { color: #6a7590; font-size: .95rem; max-width: 620px; margin-bottom: 1.5rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 2rem; }
+    .tag { padding: .2rem .65rem; border-radius: 999px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
+    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-bottom: 2.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.1rem; border-radius: .35rem; font-size: .8rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.04); color: rgba(255,255,255,.55); transition: color .2s, border-color .2s, background .2s; }
+    .btn:hover { color: white; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.08); }
+    .demo-note { display: inline-flex; align-items: center; gap: .45rem; font-size: .68rem; font-weight: 600; color: rgba(0,212,255,.55); background: rgba(0,212,255,.05); border: 1px solid rgba(0,212,255,.12); padding: .3rem .75rem; border-radius: .3rem; margin-bottom: 2.5rem; }
+
+    /* ══════════════════════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════════════════════ */
+    .demo-layout { display: grid; grid-template-columns: 340px 1fr; gap: 3.5rem; align-items: start; margin-bottom: 3.5rem; }
+    @media(max-width:820px){ .demo-layout { grid-template-columns: 1fr; } }
+
+    /* ══════════════════════════════════════════════════════
+       PHONE FRAME
+    ══════════════════════════════════════════════════════ */
+    .phone-outer { position: sticky; top: 5rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; }
+    .phone-hint  { font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.18); }
+
+    .phone {
+      width: 310px;
+      height: 640px;
+      background: #0b0a14;
+      border-radius: 42px;
+      border: 2px solid rgba(255,255,255,.09);
+      box-shadow: 0 0 0 5px rgba(255,255,255,.025),
+                  0 30px 80px rgba(0,0,0,.9),
+                  inset 0 0 0 1px rgba(255,255,255,.03);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Notch */
+    .phone-notch {
+      width: 100px; height: 24px;
+      background: #0b0a14;
+      border-radius: 0 0 16px 16px;
+      margin: 0 auto;
+      flex-shrink: 0;
+      z-index: 5;
+      box-shadow: 0 0 0 1.5px rgba(255,255,255,.05);
+    }
+
+    /* Content area — grows, clips, holds the scrollable screen */
+    .phone-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+      background: #0a0912;
+    }
+
+    /* Each screen fills the content area and scrolls independently */
+    .screen {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: none;
+      flex-direction: column;
+      background: #0a0912;
+      font-size: 12.5px;
+      color: #dde4f0;
+    }
+    .screen.active { display: flex; }
+    .screen::-webkit-scrollbar { display: none; }
+
+    /* Bottom nav — OUTSIDE .phone-content, as its own flex row */
+    .bottom-nav {
+      flex-shrink: 0;
+      height: 54px;
+      background: rgba(8,7,16,.95);
+      border-top: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      padding: 0 .25rem .3rem;
+    }
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
+      padding: .3rem .4rem; border-radius: 10px; cursor: pointer;
+      transition: background .18s;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.04); }
+    .nav-item svg   { color: rgba(255,255,255,.25); transition: color .18s; }
+    .nav-item span  { font-size: .55rem; font-weight: 600; letter-spacing: .02em; color: rgba(255,255,255,.25); transition: color .18s; }
+    .nav-item.active svg  { color: #00d4ff; }
+    .nav-item.active span { color: #00d4ff; }
+
+    /* ══════════════════════════════════════════════════════
+       APP COMPONENTS
+    ══════════════════════════════════════════════════════ */
+
+    /* Header */
+    .app-hdr {
+      position: sticky; top: 0; z-index: 10; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .55rem .85rem .5rem;
+      background: rgba(10,9,18,.88); backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .app-title  { font-size: 1rem; font-weight: 800; background: linear-gradient(90deg,#00d4ff,#0096c7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .app-title.warm { background: linear-gradient(90deg,#ff6b35,#e85a25); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hdr-actions { display: flex; gap: .35rem; }
+    .hdr-btn { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.45); cursor: pointer; }
+    .hdr-back { display: flex; align-items: center; gap: .25rem; font-size: .72rem; font-weight: 600; color: #00d4ff; cursor: pointer; }
+
+    /* Scroll container inside each screen */
+    .scroll-pad { padding: .7rem .8rem 1.2rem; display: flex; flex-direction: column; gap: .6rem; }
+
+    /* ── Group cards ── */
+    .group-card {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 14px; padding: .75rem .85rem; cursor: pointer;
+      display: flex; align-items: center; gap: .65rem;
+      transition: background .18s, border-color .18s;
+    }
+    .group-card:hover { background: rgba(255,255,255,.05); border-color: rgba(0,212,255,.18); }
+    .g-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .g-info { flex: 1; min-width: 0; }
+    .g-name { font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.88); }
+    .g-meta { font-size: .64rem; color: rgba(255,255,255,.32); margin-top: 1px; }
+    .g-badge { display: inline-block; margin-top: .28rem; padding: .14rem .5rem; border-radius: 999px; font-size: .6rem; font-weight: 600; border: 1px solid; }
+    .b-green { background:rgba(52,211,153,.1);  color:#34d399; border-color:rgba(52,211,153,.2); }
+    .b-blue  { background:rgba(0,212,255,.08);  color:#00d4ff; border-color:rgba(0,212,255,.18);}
+    .b-amber { background:rgba(251,191,36,.08); color:#fbbf24; border-color:rgba(251,191,36,.18);}
+    .g-arr { color: rgba(255,255,255,.16); font-size: .9rem; }
+
+    /* ── Stories ── */
+    .stories-row { display:flex; gap:.5rem; padding:.55rem .8rem .3rem; overflow-x:auto; flex-shrink:0; }
+    .stories-row::-webkit-scrollbar { display:none; }
+    .story { display:flex; flex-direction:column; align-items:center; gap:.28rem; flex-shrink:0; cursor:pointer; }
+    .s-ring { width:46px; height:46px; border-radius:50%; padding:2px; background:linear-gradient(135deg,#00d4ff,#ff6b35); }
+    .s-ring.seen { background:rgba(255,255,255,.14); }
+    .s-av { width:100%; height:100%; border-radius:50%; background:#191828; border:2px solid #0a0912; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; }
+    .s-name { font-size:.52rem; color:rgba(255,255,255,.4); max-width:50px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* ── Feed tabs ── */
+    .feed-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,.06); padding:0 .8rem; flex-shrink:0; }
+    .feed-tab { padding:.45rem .8rem; font-size:.68rem; font-weight:600; color:rgba(255,255,255,.3); cursor:pointer; border-bottom:2px solid transparent; transition:all .18s; }
+    .feed-tab.active { color:#00d4ff; border-bottom-color:#00d4ff; }
+
+    /* ── Moment card ── */
+    .moment { background:rgba(255,255,255,.025); border:1px solid rgba(255,255,255,.06); border-radius:12px; overflow:hidden; }
+    .m-hdr { display:flex; align-items:center; gap:.5rem; padding:.6rem .7rem .35rem; }
+    .av { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; flex-shrink:0; }
+    .m-user { font-size:.72rem; font-weight:700; color:rgba(255,255,255,.85); }
+    .m-time { font-size:.58rem; color:rgba(255,255,255,.28); }
+    .m-photo { width:100%; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
+    .m-caption { padding:.45rem .7rem; font-size:.7rem; color:rgba(255,255,255,.62); line-height:1.5; }
+    .m-actions { display:flex; gap:.4rem; padding:.25rem .7rem .6rem; }
+    .act { display:flex; align-items:center; gap:.28rem; font-size:.62rem; color:rgba(255,255,255,.38); cursor:pointer; padding:.22rem .4rem; border-radius:7px; transition:all .18s; }
+    .act:hover { color:rgba(255,255,255,.7); background:rgba(255,255,255,.04); }
+    .act.liked { color:#f87171; }
+
+    /* ── Activity card ── */
+    .activity { background:rgba(0,212,255,.04); border:1px solid rgba(0,212,255,.1); border-radius:12px; padding:.65rem .75rem; display:flex; align-items:center; gap:.6rem; }
+    .act-ico { width:34px; height:34px; border-radius:10px; background:rgba(0,212,255,.1); display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
+    .act-pl { font-size:.74rem; font-weight:700; color:rgba(255,255,255,.85); }
+    .act-dt { font-size:.6rem; color:rgba(255,255,255,.32); margin-top:1px; }
+    .act-go { font-size:.62rem; font-weight:700; color:#00d4ff; white-space:nowrap; cursor:pointer; margin-left:auto; }
+
+    /* ── Group detail ── */
+    .outing-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:.75rem; }
+    .oc-title { font-size:.78rem; font-weight:700; color:rgba(255,255,255,.9); margin-bottom:.45rem; }
+    .oc-line { display:flex; align-items:center; gap:.35rem; font-size:.64rem; color:rgba(255,255,255,.38); margin-bottom:.22rem; }
+    .chips { display:flex; flex-wrap:wrap; gap:.3rem; margin:.55rem 0; }
+    .chip { padding:.15rem .45rem; border-radius:999px; font-size:.58rem; font-weight:600; }
+    .cy { background:rgba(52,211,153,.1);  color:#34d399; }
+    .cm { background:rgba(251,191,36,.08); color:#fbbf24; }
+    .cn { background:rgba(248,113,113,.08);color:#f87171; }
+    .vote-row { display:flex; gap:.4rem; margin-top:.6rem; }
+    .vb { flex:1; padding:.38rem; border-radius:9px; font-size:.62rem; font-weight:700; border:1px solid; cursor:pointer; text-align:center; transition:filter .18s; }
+    .vb:hover { filter:brightness(1.25); }
+    .vy { background:rgba(52,211,153,.1);  border-color:rgba(52,211,153,.25); color:#34d399; }
+    .vm { background:rgba(251,191,36,.08); border-color:rgba(251,191,36,.22);  color:#fbbf24; }
+    .vn { background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.22); color:#f87171; }
+
+    /* ── Chat ── */
+    .sec-lbl { font-size:.58rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.18); padding:.3rem 0 .15rem; }
+    .chat-msg { display:flex; gap:.45rem; align-items:flex-end; }
+    .chat-msg.me { flex-direction:row-reverse; }
+    .bubble { max-width:72%; padding:.42rem .6rem; border-radius:10px; font-size:.68rem; line-height:1.45; }
+    .b-them { background:rgba(255,255,255,.07); color:rgba(255,255,255,.8); border-radius:10px 10px 10px 2px; }
+    .b-me   { background:linear-gradient(135deg,#007aaa,#005f88); color:white; border-radius:10px 10px 2px 10px; }
+    .chat-who { font-size:.55rem; color:rgba(255,255,255,.28); margin-bottom:2px; }
+
+    /* Chat input bar — at the bottom of group screen, not sticky, just last element */
+    .chat-bar { display:flex; align-items:center; gap:.45rem; padding:.5rem .75rem .65rem; background:rgba(8,7,16,.95); border-top:1px solid rgba(255,255,255,.05); flex-shrink:0; position:sticky; bottom:0; }
+    .chat-input { flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:.4rem .75rem; font-size:.68rem; color:rgba(255,255,255,.55); outline:none; font-family:inherit; }
+    .chat-send { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#0096c7); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+
+    /* ── Map ── */
+    .map-body { flex:1; position:relative; background:#0d1118; display:flex; align-items:center; justify-content:center; overflow:hidden; min-height:0; }
+    .map-grid { position:absolute; inset:0; opacity:.055; background-image:linear-gradient(rgba(0,212,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,.6) 1px,transparent 1px); background-size:26px 26px; }
+    .map-pin { position:absolute; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; }
+    .pin-dot { width:11px; height:11px; border-radius:50%; }
+    .pd-blue  { background:#00d4ff; box-shadow:0 0 0 4px rgba(0,212,255,.18),0 0 12px rgba(0,212,255,.5); }
+    .pd-orange{ background:#ff6b35; box-shadow:0 0 0 4px rgba(255,107,53,.18),0 0 12px rgba(255,107,53,.5); }
+    .pd-green { background:#34d399; box-shadow:0 0 0 4px rgba(52,211,153,.18),0 0 12px rgba(52,211,153,.5); }
+    .pin-lbl { font-size:.52rem; font-weight:700; color:rgba(255,255,255,.7); background:rgba(8,7,16,.88); padding:.13rem .38rem; border-radius:4px; white-space:nowrap; }
+    .map-pill { position:absolute; bottom:1rem; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#00d4ff,#0096c7); color:white; font-size:.65rem; font-weight:700; padding:.45rem 1.1rem; border-radius:999px; white-space:nowrap; box-shadow:0 4px 16px rgba(0,212,255,.35); }
+
+    /* ── Profile ── */
+    .profile-top { display:flex; flex-direction:column; align-items:center; padding:1.1rem .8rem .65rem; }
+    .p-av { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#0096c7); display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800; color:white; margin-bottom:.55rem; box-shadow:0 0 22px rgba(0,212,255,.28); }
+    .p-name { font-size:.9rem; font-weight:800; color:rgba(255,255,255,.9); }
+    .p-handle { font-size:.65rem; color:rgba(255,255,255,.32); margin-top:1px; }
+    .p-bio { font-size:.65rem; color:rgba(255,255,255,.42); margin-top:.4rem; text-align:center; max-width:200px; line-height:1.45; }
+    .p-stats { display:flex; justify-content:center; gap:1.4rem; margin-top:.8rem; padding-top:.7rem; border-top:1px solid rgba(255,255,255,.06); width:100%; }
+    .ps-item { display:flex; flex-direction:column; align-items:center; gap:1px; }
+    .ps-v { font-size:.85rem; font-weight:800; color:rgba(255,255,255,.88); }
+    .ps-l { font-size:.54rem; color:rgba(255,255,255,.28); font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+    .moments-lbl { padding:0 .8rem; font-size:.58rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.2); margin-bottom:.35rem; flex-shrink:0; }
+    .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding:0 .8rem .8rem; }
+    .gc { aspect-ratio:1; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
+
+    /* ══════════════════════════════════════════════════════
+       SIDEBAR
+    ══════════════════════════════════════════════════════ */
+    .sidebar { display:flex; flex-direction:column; gap:1.8rem; }
+    .side-title { font-size:1rem; font-weight:700; color:white; margin-bottom:.8rem; }
+    .side-text  { font-size:.87rem; color:#6a7590; line-height:1.75; margin-bottom:.6rem; }
+    .feat-list  { display:flex; flex-direction:column; gap:.6rem; }
+    .feat-item  { display:flex; gap:.7rem; align-items:flex-start; }
+    .feat-dot   { width:6px; height:6px; border-radius:50%; background:#00d4ff; margin-top:.42rem; flex-shrink:0; }
+    .feat-dot.warm { background:#ff6b35; }
+    .feat-text  { font-size:.84rem; color:rgba(255,255,255,.48); line-height:1.55; }
+    .feat-text strong { color:rgba(255,255,255,.78); font-weight:600; }
+    .info-block { border:1px solid rgba(255,255,255,.07); border-radius:.5rem; overflow:hidden; }
+    .info-row   { padding:.8rem 1.05rem; border-bottom:1px solid rgba(255,255,255,.05); display:grid; grid-template-columns:120px 1fr; gap:.8rem; align-items:start; }
+    .info-row:last-child { border-bottom:none; }
+    .info-lbl { font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.22); padding-top:.1rem; }
+    .info-val { font-size:.82rem; color:rgba(255,255,255,.48); line-height:1.6; }
+    .info-val code { font-family:'Consolas',monospace; font-size:.76rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); padding:.1rem .32rem; border-radius:.2rem; color:rgba(255,255,255,.6); }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<a href="../index.html" class="nav-back">← Portfolio</a>
+
+<div class="page">
+
+  <div class="eyebrow">Projet · Mobile · Social</div>
+  <h1 class="project-title"><span>Together</span></h1>
+  <div class="rule" style="width:48px;height:1px;background:rgba(255,255,255,.2);margin:.8rem 0 1.2rem"></div>
+  <p class="project-sub">Application mobile-first pour organiser des sorties entre amis. Groupes, votes, RSVP, feed de moments et profils sociaux — propulsé par Next.js et Supabase.</p>
+
+  <div class="tags">
+    <span class="tag">Next.js 14</span><span class="tag">TypeScript</span><span class="tag">Supabase</span>
+    <span class="tag">PostgreSQL</span><span class="tag">Tailwind CSS 4</span><span class="tag">shadcn/ui</span>
+    <span class="tag">App Router</span><span class="tag">Realtime</span>
+  </div>
+
+  <div class="btn-row">
+    <a href="https://github.com/alexishonnorat/Together" target="_blank" rel="noopener" class="btn">
+      <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      GitHub
+    </a>
+  </div>
+
+  <div class="demo-note">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Démo interactive — Supabase requis en production
+  </div>
+
+  <div class="demo-layout">
+
+    <!-- ═══════════ PHONE ═══════════ -->
+    <div class="phone-outer">
+      <div class="phone">
+
+        <!-- Notch -->
+        <div class="phone-notch"></div>
+
+        <!-- Screens area -->
+        <div class="phone-content">
+
+          <!-- ── Groupes ── -->
+          <div class="screen active" id="s-home">
+            <div class="app-hdr">
+              <span class="app-title">Together</span>
+              <div class="hdr-actions">
+                <div class="hdr-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+                <div class="hdr-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+              </div>
+            </div>
+            <div class="scroll-pad">
+              <div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2)">Mes groupes</div>
+
+              <div class="group-card" onclick="goGroup()">
+                <div class="g-icon" style="background:rgba(139,92,246,.12)">🎳</div>
+                <div class="g-info">
+                  <div class="g-name">Les Copains</div>
+                  <div class="g-meta">4 membres · Actif hier</div>
+                  <div class="g-badge b-green">Sortie confirmée ✓</div>
+                </div>
+                <div class="g-arr">›</div>
+              </div>
+
+              <div class="group-card">
+                <div class="g-icon" style="background:rgba(255,107,53,.1)">👨‍👩‍👧</div>
+                <div class="g-info">
+                  <div class="g-name">Famille</div>
+                  <div class="g-meta">6 membres · Actif aujourd'hui</div>
+                  <div class="g-badge b-blue">Idée : dîner dimanche</div>
+                </div>
+                <div class="g-arr">›</div>
+              </div>
+
+              <div class="group-card">
+                <div class="g-icon" style="background:rgba(251,191,36,.1)">💼</div>
+                <div class="g-info">
+                  <div class="g-name">Collègues Paris</div>
+                  <div class="g-meta">3 membres · Il y a 2h</div>
+                  <div class="g-badge b-amber">Vote en cours 🗳️</div>
+                </div>
+                <div class="g-arr">›</div>
+              </div>
+
+              <div class="group-card" style="border-style:dashed;justify-content:center;border-color:rgba(255,255,255,.09)">
+                <div style="font-size:.68rem;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:.35rem">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Créer un groupe
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Feed ── -->
+          <div class="screen" id="s-feed">
+            <div class="app-hdr">
+              <span class="app-title">Feed</span>
+              <div class="hdr-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+            </div>
+            <div class="feed-tabs">
+              <div class="feed-tab active">Pour toi</div>
+              <div class="feed-tab">Découvrir</div>
+            </div>
+            <div class="stories-row">
+              <div class="story"><div class="s-ring"><div class="s-av" style="color:#00d4ff">L</div></div><div class="s-name">Moi</div></div>
+              <div class="story"><div class="s-ring"><div class="s-av" style="color:#a78bfa">M</div></div><div class="s-name">Marie</div></div>
+              <div class="story"><div class="s-ring"><div class="s-av" style="color:#34d399">A</div></div><div class="s-name">Alex</div></div>
+              <div class="story"><div class="s-ring seen"><div class="s-av" style="color:#fbbf24">S</div></div><div class="s-name">Sarah</div></div>
+              <div class="story"><div class="s-ring seen"><div class="s-av" style="color:#f87171">T</div></div><div class="s-name">Thomas</div></div>
+            </div>
+            <div class="scroll-pad" style="padding-top:.4rem">
+              <div class="moment">
+                <div class="m-hdr">
+                  <div class="av" style="background:linear-gradient(135deg,#2d1a4e,#1a0d2b);color:#a78bfa">M</div>
+                  <div><div class="m-user">Marie</div><div class="m-time">il y a 2h</div></div>
+                </div>
+                <div class="m-photo" style="background:#0a0520;padding:0"><img src="../assets/img/photo test Marie Together.jpg" alt="Soirée avec les Copains" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+                <div class="m-caption">Soirée inoubliable avec les Copains 🎳✨</div>
+                <div class="m-actions">
+                  <div class="act liked">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="#f87171" stroke="#f87171" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    12
+                  </div>
+                  <div class="act"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>3</div>
+                  <div class="act"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+                </div>
+              </div>
+
+              <div class="activity">
+                <div class="act-ico">📍</div>
+                <div style="flex:1;min-width:0">
+                  <div class="act-pl">Bowling Montparnasse</div>
+                  <div class="act-dt">10 av du Maine · Vendredi 20h</div>
+                </div>
+                <div class="act-go" onclick="goGroup()">Voir →</div>
+              </div>
+
+              <div class="moment">
+                <div class="m-hdr">
+                  <div class="av" style="background:linear-gradient(135deg,#0a2e1a,#051a0d);color:#34d399">A</div>
+                  <div><div class="m-user">Alex</div><div class="m-time">hier</div></div>
+                </div>
+                <div class="m-photo" style="background:linear-gradient(135deg,#051520,#0a2035,#051a28)">🏔️</div>
+                <div class="m-caption">Vue incroyable depuis le sommet ! Prochaine sortie randonnée ? 🥾</div>
+                <div class="m-actions">
+                  <div class="act"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>8</div>
+                  <div class="act"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Groupe detail ── -->
+          <div class="screen" id="s-group">
+            <div class="app-hdr">
+              <div class="hdr-back" onclick="goNav('home')">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+                Retour
+              </div>
+              <span style="font-size:.8rem;font-weight:700;color:rgba(255,255,255,.8)">Les Copains</span>
+              <div style="display:flex;gap:.3rem">
+                <div class="av" style="width:20px;height:20px;font-size:.52rem;background:linear-gradient(135deg,#1e1a3e,#160d2b);color:#a78bfa">M</div>
+                <div class="av" style="width:20px;height:20px;font-size:.52rem;background:linear-gradient(135deg,#0a2e1a,#051a0d);color:#34d399">A</div>
+                <div class="av" style="width:20px;height:20px;font-size:.52rem;background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)">+2</div>
+              </div>
+            </div>
+            <div class="scroll-pad">
+              <div class="outing-card">
+                <div class="oc-title">🎳 Bowling Montparnasse</div>
+                <div class="oc-line"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Vendredi 15 nov · 20h00</div>
+                <div class="oc-line"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>10 av du Maine, Paris 14e</div>
+                <div class="chips">
+                  <span class="chip cy">✓ Lucas</span>
+                  <span class="chip cy">✓ Marie</span>
+                  <span class="chip cm">? Alex</span>
+                  <span class="chip cn">✗ Sarah</span>
+                </div>
+                <div class="vote-row">
+                  <div class="vb vy">✓ Je viens</div>
+                  <div class="vb vm">~ Peut-être</div>
+                  <div class="vb vn">✗ Non</div>
+                </div>
+              </div>
+
+              <div class="sec-lbl">Messages</div>
+
+              <div class="chat-msg">
+                <div class="av" style="width:22px;height:22px;font-size:.58rem;background:linear-gradient(135deg,#1e1a3e,#160d2b);color:#a78bfa;flex-shrink:0">M</div>
+                <div><div class="chat-who">Marie</div><div class="bubble b-them">Super idée le bowling ! 🎳</div></div>
+              </div>
+              <div class="chat-msg">
+                <div class="av" style="width:22px;height:22px;font-size:.58rem;background:linear-gradient(135deg,#0a2e1a,#051a0d);color:#34d399;flex-shrink:0">A</div>
+                <div><div class="chat-who">Alex</div><div class="bubble b-them">Je suis partant, j'essaie de venir 🤞</div></div>
+              </div>
+              <div class="chat-msg me">
+                <div class="av" style="width:22px;height:22px;font-size:.58rem;background:linear-gradient(135deg,#004466,#002244);color:#00d4ff;flex-shrink:0">L</div>
+                <div style="display:flex;flex-direction:column;align-items:flex-end">
+                  <div class="chat-who" style="text-align:right">Lucas</div>
+                  <div class="bubble b-me">J'ai réservé pour 4 ✅🎳</div>
+                </div>
+              </div>
+            </div>
+            <div class="chat-bar">
+              <input class="chat-input" placeholder="Message..." readonly/>
+              <div class="chat-send"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+            </div>
+          </div>
+
+          <!-- ── Carte ── -->
+          <div class="screen" id="s-map">
+            <div class="app-hdr"><span class="app-title">Carte</span></div>
+            <div class="map-body">
+              <div class="map-grid"></div>
+              <div class="map-pin" style="top:30%;left:44%">
+                <div class="pin-dot pd-blue"></div><div class="pin-lbl">Bowling Montparnasse</div>
+              </div>
+              <div class="map-pin" style="top:54%;left:63%">
+                <div class="pin-dot pd-orange"></div><div class="pin-lbl">Le Petit Bistro</div>
+              </div>
+              <div class="map-pin" style="top:43%;left:27%">
+                <div class="pin-dot pd-green"></div><div class="pin-lbl">Cinéma MK2</div>
+              </div>
+              <div class="map-pin" style="top:68%;left:36%;opacity:.45">
+                <div class="pin-dot pd-blue"></div><div class="pin-lbl">Escape Game</div>
+              </div>
+              <div class="map-pill">3 sorties à proximité</div>
+            </div>
+          </div>
+
+          <!-- ── Profil ── -->
+          <div class="screen" id="s-profile">
+            <div class="app-hdr"><span class="app-title warm">Profil</span></div>
+            <div class="profile-top">
+              <div class="p-av">L</div>
+              <div class="p-name">Lucas Fouquet</div>
+              <div class="p-handle">@lucas.fouquet</div>
+              <div class="p-bio">Étudiant Data & IA · Paris 🗼 Amateur de sorties improvisées</div>
+              <div class="p-stats">
+                <div class="ps-item"><span class="ps-v">42</span><span class="ps-l">Sorties</span></div>
+                <div class="ps-item"><span class="ps-v">128</span><span class="ps-l">Abonnés</span></div>
+                <div class="ps-item"><span class="ps-v">96</span><span class="ps-l">Suivis</span></div>
+              </div>
+            </div>
+            <div class="moments-lbl">Mes moments</div>
+            <div class="grid3">
+              <div class="gc" style="background:linear-gradient(135deg,#1a0a2e,#2e1a4e)">🎳</div>
+              <div class="gc" style="background:linear-gradient(135deg,#051520,#0a2035)">🏔️</div>
+              <div class="gc" style="background:linear-gradient(135deg,#1a2e0a,#2e4e1a)">🍕</div>
+              <div class="gc" style="background:linear-gradient(135deg,#2e1a0a,#4e2e1a)">🎭</div>
+              <div class="gc" style="background:linear-gradient(135deg,#0a1a2e,#1a2e4e)">🎸</div>
+              <div class="gc" style="background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.08)">+</div>
+            </div>
+          </div>
+
+        </div><!-- /phone-content -->
+
+        <!-- Bottom nav — flex item OUTSIDE phone-content -->
+        <nav class="bottom-nav" id="bottom-nav">
+          <div class="nav-item active" id="nav-home" onclick="goNav('home')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Groupes</span>
+          </div>
+          <div class="nav-item" id="nav-feed" onclick="goNav('feed')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+            <span>Feed</span>
+          </div>
+          <div class="nav-item" id="nav-map" onclick="goNav('map')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <span>Carte</span>
+          </div>
+          <div class="nav-item" id="nav-profile" onclick="goNav('profile')">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profil</span>
+          </div>
+        </nav>
+
+      </div><!-- /phone -->
+      <div class="phone-hint">← Cliquer pour naviguer</div>
+    </div>
+
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <div class="sidebar">
+      <div>
+        <div class="side-title">Concept</div>
+        <p class="side-text">Together résout un problème concret : organiser une sortie entre amis sans jongler avec dix fils de messages. L'app centralise la proposition, le vote, la confirmation, le RSVP et le partage de souvenirs dans une interface mobile cohérente.</p>
+        <p class="side-text">Conçu mobile-first avec un rendu proche d'une application native iOS/Android — navigation par onglets, stories, feed social et cartes.</p>
+      </div>
+
+      <div>
+        <div class="side-title">Fonctionnalités</div>
+        <div class="feat-list">
+          <div class="feat-item"><div class="feat-dot"></div><div class="feat-text"><strong>Groupes & Chat</strong> — Messages en temps réel via Supabase Realtime, historique persisté en PostgreSQL</div></div>
+          <div class="feat-item"><div class="feat-dot"></div><div class="feat-text"><strong>Workflow de sortie</strong> — Proposition → vote → confirmation → RSVP → partage de moments</div></div>
+          <div class="feat-item"><div class="feat-dot"></div><div class="feat-text"><strong>Feed & Stories</strong> — Publications photos, likes, commentaires, partage</div></div>
+          <div class="feat-item"><div class="feat-dot warm"></div><div class="feat-text"><strong>Carte</strong> — Visualisation des sorties planifiées et suggestions géolocalisées</div></div>
+          <div class="feat-item"><div class="feat-dot warm"></div><div class="feat-text"><strong>Profils sociaux</strong> — Public/privé, abonnements, historique de sorties</div></div>
+          <div class="feat-item"><div class="feat-dot warm"></div><div class="feat-text"><strong>Recommendations</strong> — Suggestions de lieux selon les préférences du groupe</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="side-title">Architecture</div>
+        <div class="info-block">
+          <div class="info-row"><div class="info-lbl">Frontend</div><div class="info-val"><code>Next.js 14</code> App Router · <code>TypeScript</code> · <code>Tailwind CSS 4</code></div></div>
+          <div class="info-row"><div class="info-lbl">Composants</div><div class="info-val"><code>shadcn/ui</code> · thème sombre natif · accessibilité aria</div></div>
+          <div class="info-row"><div class="info-lbl">Backend</div><div class="info-val"><code>Supabase</code> — Auth, PostgreSQL, Realtime, Storage</div></div>
+          <div class="info-row"><div class="info-lbl">Déploiement</div><div class="info-val"><code>Vercel</code> · variables d'env Supabase requises</div></div>
+          <div class="info-row"><div class="info-lbl">Langage</div><div class="info-val">TypeScript 93.8% · JavaScript 2.8% · CSS 1.7%</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../space.js"></script>
+<script>
+function goNav(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  const ni = document.getElementById('nav-' + id);
+  if (ni) ni.classList.add('active');
+}
+function goGroup() {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-group').classList.add('active');
+}
+</script>
+</body>
+</html>

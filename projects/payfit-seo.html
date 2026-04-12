@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Automatisation SEO Payfit — Lucas Fouquet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'Segoe UI', system-ui, sans-serif; background: #02020e; color: #dde4f0; min-height: 100vh; line-height: 1.6; }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
+
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; line-height: 1.1; margin-bottom: .4rem; }
+    .project-title span { background: linear-gradient(120deg,#f97316,#fb923c,#fbbf24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
+    .project-sub { color: #6a7590; font-size: .95rem; max-width: 720px; margin-bottom: 1.5rem; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 2.5rem; }
+    .tag { padding: .2rem .65rem; border-radius: 999px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 3.5rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1.1rem; }
+    .section-text { color: #6a7590; font-size: .92rem; line-height: 1.8; margin-bottom: .8rem; }
+    hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
+
+    /* ── Architecture image ── */
+    .arch-wrap { border-radius: .55rem; overflow: hidden; box-shadow: 0 8px 48px rgba(0,0,0,.7); background: #0d0c1a; border: 1px solid rgba(255,255,255,.07); margin-bottom: 3.5rem; cursor: zoom-in; }
+    .arch-wrap img { display: block; width: 100%; height: auto; }
+    .arch-caption { padding: .55rem 1rem; background: rgba(0,0,0,.4); font-size: .67rem; color: rgba(255,255,255,.28); display: flex; align-items: center; gap: .4rem; }
+
+    /* ── Scénarios : layout onglets ── */
+    .scenario-tabs { display: flex; gap: 1px; margin-bottom: 0; }
+    .sc-tab {
+      flex: 1; padding: .55rem .8rem; text-align: center;
+      font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-bottom: none; border-radius: .4rem .4rem 0 0;
+      color: rgba(255,255,255,.32); cursor: pointer; transition: all .18s;
+      user-select: none;
+    }
+    .sc-tab:hover { color: rgba(255,255,255,.6); background: rgba(255,255,255,.06); }
+    .sc-tab.active { background: rgba(249,115,22,.08); border-color: rgba(249,115,22,.25); color: #fb923c; }
+
+    .sc-panel { display: none; border: 1px solid rgba(249,115,22,.15); border-radius: 0 0 .55rem .55rem; background: rgba(255,255,255,.02); overflow: hidden; }
+    .sc-panel.active { display: block; }
+
+    /* Screenshot */
+    .sc-screenshot { background: #0f0e1c; cursor: zoom-in; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .sc-screenshot img { display: block; width: 100%; height: auto; }
+
+    /* Details */
+    .sc-body { padding: 1.4rem 1.5rem 1.6rem; }
+    .sc-desc { font-size: .88rem; color: #6a7590; line-height: 1.75; margin-bottom: 1.4rem; padding-bottom: 1.2rem; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .sc-desc strong { color: rgba(255,255,255,.7); font-weight: 600; }
+
+    /* Modules list */
+    .modules-list { display: flex; flex-direction: column; gap: .55rem; }
+    .mod {
+      display: flex; gap: .8rem; align-items: flex-start;
+      padding: .65rem .85rem;
+      background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.06);
+      border-radius: .45rem;
+    }
+    .mod-num { width: 22px; height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: .62rem; font-weight: 800; flex-shrink: 0; margin-top: .08rem; }
+    .mn-sheets { background: rgba(52,211,153,.12); color: #34d399; border: 1px solid rgba(52,211,153,.18); }
+    .mn-rss    { background: rgba(251,146,60,.12); color: #fb923c; border: 1px solid rgba(251,146,60,.18); }
+    .mn-arr    { background: rgba(129,140,248,.12); color: #818cf8; border: 1px solid rgba(129,140,248,.18); }
+    .mn-gpt    { background: rgba(96,165,250,.12);  color: #60a5fa; border: 1px solid rgba(96,165,250,.18); }
+    .mn-iter   { background: rgba(251,191,36,.12);  color: #fbbf24; border: 1px solid rgba(251,191,36,.18); }
+    .mn-filter { background: rgba(248,113,113,.12); color: #f87171; border: 1px solid rgba(248,113,113,.18); }
+    .mn-router { background: rgba(167,139,250,.12); color: #a78bfa; border: 1px solid rgba(167,139,250,.18); }
+    .mn-make   { background: rgba(249,115,22,.12);  color: #fb923c; border: 1px solid rgba(249,115,22,.18); }
+    .mod-text { flex: 1; }
+    .mod-name { font-size: .76rem; font-weight: 700; color: rgba(255,255,255,.82); margin-bottom: 2px; }
+    .mod-desc { font-size: .72rem; color: rgba(255,255,255,.4); line-height: 1.5; }
+    .mod-note { margin-top: .4rem; padding: .4rem .6rem; background: rgba(129,140,248,.06); border-left: 2px solid rgba(129,140,248,.3); border-radius: 0 .25rem .25rem 0; font-size: .68rem; color: rgba(255,255,255,.38); line-height: 1.5; font-style: italic; }
+
+    /* Sources RSS */
+    .sources-grid { display: flex; flex-direction: column; gap: .3rem; margin: .9rem 0 0; }
+    .source-item { display: flex; align-items: center; gap: .5rem; font-size: .72rem; color: rgba(255,255,255,.35); padding: .32rem .55rem; background: rgba(255,255,255,.025); border-radius: .3rem; }
+    .source-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+    .sd-blog { background: #34d399; }
+    .sd-news { background: #60a5fa; }
+
+    /* Prompt block */
+    .prompt-block {
+      background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.08);
+      border-radius: .45rem; overflow: hidden; margin-top: .8rem;
+    }
+    .pb-label { padding: .4rem .75rem; font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.25); background: rgba(255,255,255,.03); border-bottom: 1px solid rgba(255,255,255,.06); display: flex; align-items: center; gap: .4rem; }
+    .pb-img { display: block; width: 100%; max-width: 380px; cursor: zoom-in; }
+    .pb-text { padding: .75rem .9rem; font-family: 'Consolas', monospace; font-size: .75rem; color: rgba(255,255,255,.55); line-height: 1.65; white-space: pre-wrap; }
+    .pb-text em { color: rgba(251,191,36,.7); font-style: normal; }
+
+    /* ── Architecture Dust image ── */
+    .dust-wrap { border-radius: .55rem; overflow: hidden; box-shadow: 0 8px 48px rgba(0,0,0,.7); background: #0d0c1a; border: 1px solid rgba(255,255,255,.07); cursor: zoom-in; }
+    .dust-wrap img { display: block; width: 100%; height: auto; }
+
+    /* ── Info block ── */
+    .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
+    .info-row { padding: .9rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-val { font-size: .88rem; color: rgba(255,255,255,.52); line-height: 1.6; }
+    .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
+
+    /* Chain arrow between scenarios */
+    .chain-arrow { display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .7rem 0; font-size: .68rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(249,115,22,.45); }
+    .chain-line { flex: 1; max-width: 80px; height: 1px; background: rgba(249,115,22,.2); }
+
+    /* Lightbox */
+    .lightbox { display: none; position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.93); align-items: center; justify-content: center; padding: 2rem; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: .3rem; box-shadow: 0 0 80px rgba(0,0,0,.8); }
+    .lightbox-close { position: fixed; top: 1.5rem; right: 2rem; color: rgba(255,255,255,.5); font-size: 1.5rem; cursor: pointer; z-index: 1001; transition: color .2s; background: none; border: none; }
+    .lightbox-close:hover { color: white; }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<a href="../index.html" class="nav-back">← Portfolio</a>
+
+<div class="page">
+  <div class="eyebrow">Projet · SEO · Automatisation IA · Payfit</div>
+  <h1 class="project-title"><span>Veille SEO automatisée</span></h1>
+  <div class="rule"></div>
+  <p class="project-sub">Système d'automatisation no-code pour Payfit — génération automatique de mots-clés SEO depuis l'actualité RH, extraction d'URLs par mot-clé, et veille concurrentielle (Factorial, Cegid, Sage). Piloté par 3 scénarios Make chaînés et des agents Dust.</p>
+
+  <div class="tags">
+    <span class="tag">Make</span>
+    <span class="tag">Dust</span>
+    <span class="tag">SEO</span>
+    <span class="tag">GPT-4o-mini</span>
+    <span class="tag">Google Sheets</span>
+    <span class="tag">Google News RSS</span>
+    <span class="tag">Veille concurrentielle</span>
+    <span class="tag">No-code</span>
+    <span class="tag">RH · Paie · SIRH</span>
+  </div>
+
+  <!-- Architecture Dust -->
+  <div class="section">
+    <div class="section-eyebrow">Architecture</div>
+    <div class="section-title">Agents Dust</div>
+    <div class="dust-wrap" onclick="openLightbox('../assets/img/payfit-architecture-dust.png')">
+      <img src="../assets/img/payfit-architecture-dust.png" alt="Architecture des agents Dust — Payfit SEO">
+    </div>
+    <div class="arch-caption" style="background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.06);border-top:none;border-radius:0 0 .4rem .4rem;padding:.55rem 1rem;font-size:.67rem;color:rgba(255,255,255,.25);display:flex;align-items:center;gap:.4rem">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Cliquer pour agrandir
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Scénarios Make — onglets -->
+  <div class="section">
+    <div class="section-eyebrow">Automatisation Make</div>
+    <div class="section-title">3 scénarios chaînés</div>
+    <p class="section-text" style="margin-bottom:1.6rem">Les scénarios 1 et 2 sont <strong style="color:rgba(255,255,255,.7)">chaînés</strong> : à la fin du Scénario 1, Make déclenche automatiquement le Scénario 2. Le Scénario 3 est indépendant.</p>
+
+    <div class="scenario-tabs">
+      <div class="sc-tab active" onclick="switchTab(0)">① Génération mots-clés</div>
+      <div class="sc-tab" onclick="switchTab(1)">② Extraction URLs</div>
+      <div class="sc-tab" onclick="switchTab(2)">③ Veille concurrents</div>
+    </div>
+
+    <!-- Panel 1 -->
+    <div class="sc-panel active" id="sc-panel-0">
+      <div class="sc-screenshot" onclick="openLightbox('../assets/img/payfit-scenario-1.png')">
+        <img src="../assets/img/payfit-scenario-1.png" alt="Scénario 1 Make — Génération mots-clés">
+      </div>
+      <div class="sc-body">
+        <p class="sc-desc">
+          Analyse les titres d'articles publiés par <strong>10 sources spécialisées RH</strong>, et demande à l'IA de générer une liste de <strong>100 mots-clés tendance</strong> du secteur. Cette liste vient automatiquement remplacer les mots-clés utilisés par le Scénario 2, pour que la veille reste toujours à jour.
+        </p>
+
+        <div style="margin-bottom:1.2rem">
+          <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.55rem">Sources RSS surveillées</div>
+          <div class="sources-grid">
+            <div class="source-item"><div class="source-dot sd-blog"></div>culture-rh.com/feed</div>
+            <div class="source-item"><div class="source-dot sd-blog"></div>parlonsrh.com/feed</div>
+            <div class="source-item"><div class="source-dot sd-blog"></div>myrhline.com/feed</div>
+            <div class="source-item"><div class="source-dot sd-blog"></div>blog-rh.com/feed</div>
+            <div class="source-item"><div class="source-dot sd-news"></div>Google News · logiciel paie SIRH France</div>
+            <div class="source-item"><div class="source-dot sd-news"></div>Google News · droit travail réforme france</div>
+            <div class="source-item"><div class="source-dot sd-news"></div>Google News · recrutement RH france</div>
+            <div class="source-item"><div class="source-dot sd-news"></div>Google News · cotisations sociales paie France</div>
+            <div class="source-item"><div class="source-dot sd-news"></div>Google News · gestion ressources humaines entreprise</div>
+            <div class="source-item"><div class="source-dot sd-news"></div>Google News · SIRH logiciel RH entreprise France</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:1.4rem">
+          <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.55rem">Prompt GPT-4o-mini</div>
+          <div class="prompt-block">
+            <div class="pb-label">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              System prompt
+            </div>
+            <img class="pb-img" src="../assets/img/payfit-prompt-openai.png" alt="Prompt OpenAI" onclick="openLightbox('../assets/img/payfit-prompt-openai.png')">
+          </div>
+        </div>
+
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.7rem">Modules</div>
+        <div class="modules-list">
+          <div class="mod"><div class="mod-num mn-filter">✕</div><div class="mod-text"><div class="mod-name">Google Sheets — Clear Values</div><div class="mod-desc">Efface l'ancienne liste de mots-clés (plage A2:U102) avant chaque run — garantit une page vierge sans mélange avec les données précédentes.</div></div></div>
+          <div class="mod"><div class="mod-num mn-sheets">1</div><div class="mod-text"><div class="mod-name">Google Sheets — Get Range Values</div><div class="mod-desc">Lit la liste des 10 sources RSS depuis l'onglet "Requêtes" et les envoie une par une au module suivant.</div></div></div>
+          <div class="mod"><div class="mod-num mn-rss">2</div><div class="mod-text"><div class="mod-name">RSS — Récupération des articles</div><div class="mod-desc">Pour chaque source, lit le flux d'actualités et récupère les titres des <strong style="color:rgba(255,255,255,.65)">10 derniers articles</strong>.</div></div></div>
+          <div class="mod"><div class="mod-num mn-arr">3</div><div class="mod-text"><div class="mod-name">Array Aggregator 1</div><div class="mod-desc">Regroupe les titres collectés source par source en un premier bloc.</div></div></div>
+          <div class="mod"><div class="mod-num mn-arr">4</div><div class="mod-text"><div class="mod-name">Array Aggregator 2</div><div class="mod-desc">Fusionne tous les groupes en un seul bloc de 100 titres.</div><div class="mod-note">Pourquoi 2 aggregators ? Make traite les données source par source. Avec un seul aggregator, l'IA serait appelée 10 fois (une par source). Avec 2 aggregators, le second fusionne tout — l'IA est appelée une seule fois avec les 100 titres et génère 100 mots-clés en une passe.</div></div></div>
+          <div class="mod"><div class="mod-num mn-gpt">5</div><div class="mod-text"><div class="mod-name">OpenAI GPT-4o-mini — Génération 100 mots-clés</div><div class="mod-desc">Envoie tous les titres à l'IA avec un prompt "expert SEO spécialisé RH". Retourne une liste de 100 mots-clés séparés par des virgules, sans doublon.</div></div></div>
+          <div class="mod"><div class="mod-num mn-iter">6</div><div class="mod-text"><div class="mod-name">Iterator — Découpage</div><div class="mod-desc">Découpe la chaîne de 100 mots-clés virgule par virgule pour les traiter un par un.</div></div></div>
+          <div class="mod"><div class="mod-num mn-filter">7</div><div class="mod-text"><div class="mod-name">Filtre — Nettoyage</div><div class="mod-desc">Vérifie que chaque mot-clé est non-vide avant l'écriture — élimine les éléments vides issus du découpage.</div></div></div>
+          <div class="mod"><div class="mod-num mn-sheets">8</div><div class="mod-text"><div class="mod-name">Google Sheets — Update a Cell</div><div class="mod-desc">Écrit chaque mot-clé dans une cellule, ligne par ligne. À la fin : 100 mots-clés frais prêts pour le Scénario 2.</div></div></div>
+          <div class="mod"><div class="mod-num mn-make">9</div><div class="mod-text"><div class="mod-name">Make — Run a Scenario</div><div class="mod-desc">Dernière étape : déclenche automatiquement le <strong style="color:rgba(255,255,255,.65)">Scénario 2</strong> dès que l'écriture est terminée.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 2 -->
+    <div class="sc-panel" id="sc-panel-1">
+      <div class="sc-screenshot" onclick="openLightbox('../assets/img/payfit-scenario-2.png')">
+        <img src="../assets/img/payfit-scenario-2.png" alt="Scénario 2 Make — Extraction URLs">
+      </div>
+      <div class="sc-body">
+        <p class="sc-desc">
+          Parcourt la liste des <strong>100 mots-clés</strong> générée par le Scénario 1, recherche les <strong>10 derniers articles Google News</strong> pour chacun, et enregistre dans le Google Sheet les URLs et les mots-clés extraits par IA de chaque titre.
+        </p>
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.7rem">Modules</div>
+        <div class="modules-list">
+          <div class="mod"><div class="mod-num mn-sheets">1</div><div class="mod-text"><div class="mod-name">Google Sheets — Get Range Values</div><div class="mod-desc">Lit la liste des mots-clés dans l'onglet "Mots clés Actualité" et les envoie un par un au module suivant.</div></div></div>
+          <div class="mod"><div class="mod-num mn-rss">2</div><div class="mod-text"><div class="mod-name">RSS Google News — Recherche par mot-clé</div><div class="mod-desc">Pour chaque mot-clé, interroge Google News via son flux RSS (<code style="font-family:monospace;font-size:.7rem;background:rgba(255,255,255,.06);padding:.05rem .3rem;border-radius:.2rem">news.google.com/rss/search?q=…&hl=fr</code>) et récupère les 10 articles les plus récents.</div></div></div>
+          <div class="mod"><div class="mod-num mn-gpt">3</div><div class="mod-text"><div class="mod-name">OpenAI GPT-4o-mini — Extraction mots-clés</div><div class="mod-desc">Pour chaque article, envoie le titre à l'IA qui extrait 3 à 5 mots-clés pertinents. Prompt "expert RH" pour qualifier rapidement chaque article sans le lire.</div></div></div>
+          <div class="mod"><div class="mod-num mn-router">4</div><div class="mod-text"><div class="mod-name">Router — 2 routes parallèles</div><div class="mod-desc">Sépare le flux en deux chemins : <strong style="color:rgba(255,255,255,.65)">Route 1</strong> → URLs des articles · <strong style="color:rgba(255,255,255,.65)">Route 2</strong> → mots-clés extraits.</div></div></div>
+          <div class="mod"><div class="mod-num mn-arr">5</div><div class="mod-text"><div class="mod-name">Array Aggregator × 2</div><div class="mod-desc">Un aggregator par route. Rassemble les 10 URLs (route 1) et les 10 sets de mots-clés (route 2) correspondant à un même mot-clé recherché.</div></div></div>
+          <div class="mod"><div class="mod-num mn-sheets">6</div><div class="mod-text"><div class="mod-name">Google Sheets — Update a Row × 2</div><div class="mod-desc">Écrit les résultats sur la ligne du mot-clé correspondant. Résultat : chaque ligne contient le mot-clé + 10 URLs + mots-clés extraits de chacun.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel 3 -->
+    <div class="sc-panel" id="sc-panel-2">
+      <div class="sc-screenshot" onclick="openLightbox('../assets/img/payfit-scenario-3.png')">
+        <img src="../assets/img/payfit-scenario-3.png" alt="Scénario 3 Make — Veille concurrents">
+      </div>
+      <div class="sc-body">
+        <p class="sc-desc">
+          Surveille les blogs de <strong>3 concurrents directs</strong> de Payfit — Factorial, Cegid et Sage — et enregistre automatiquement leurs derniers articles et les mots-clés de leurs titres. Scénario indépendant, déclenché séparément.
+        </p>
+        <div style="font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:.7rem">Modules</div>
+        <div class="modules-list">
+          <div class="mod"><div class="mod-num mn-sheets">1</div><div class="mod-text"><div class="mod-name">Google Sheets — Get Range Values</div><div class="mod-desc">Lit la liste des concurrents dans l'onglet "Veille" avec leur nom et l'URL de leur flux RSS (colonnes A:B).</div></div></div>
+          <div class="mod"><div class="mod-num mn-rss">2</div><div class="mod-text"><div class="mod-name">RSS — Flux concurrents</div><div class="mod-desc">Pour chaque concurrent (Factorial, Cegid, Sage), lit son flux RSS et récupère les 10 derniers articles publiés sur son blog.</div></div></div>
+          <div class="mod"><div class="mod-num mn-gpt">3</div><div class="mod-text"><div class="mod-name">OpenAI o4-mini — Extraction mots-clés</div><div class="mod-desc">Pour chaque article, extrait les mots-clés pertinents depuis le titre. Permet de comprendre en un coup d'œil les sujets traités par chaque concurrent.</div></div></div>
+          <div class="mod"><div class="mod-num mn-router">4</div><div class="mod-text"><div class="mod-name">Router — 2 routes parallèles</div><div class="mod-desc">Sépare le flux : <strong style="color:rgba(255,255,255,.65)">Route 1</strong> → URLs · <strong style="color:rgba(255,255,255,.65)">Route 2</strong> → mots-clés.</div></div></div>
+          <div class="mod"><div class="mod-num mn-arr">5</div><div class="mod-text"><div class="mod-name">Array Aggregator × 2</div><div class="mod-desc">Rassemble les 10 URLs et les 10 sets de mots-clés par concurrent avant l'écriture.</div></div></div>
+          <div class="mod"><div class="mod-num mn-sheets">6</div><div class="mod-text"><div class="mod-name">Google Sheets — Update a Row × 2</div><div class="mod-desc">Écrit les résultats sur la ligne de chaque concurrent. Vue hebdomadaire des sujets publiés par Factorial, Cegid et Sage.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Contexte -->
+  <div class="section">
+    <div class="section-eyebrow">Contexte</div>
+    <div class="section-title">Objectif du projet</div>
+    <p class="section-text">Dans le cadre d'une mission SEO pour Payfit — plateforme SaaS RH et paie — l'enjeu était d'identifier automatiquement les mots-clés émergeants dans l'actualité RH française et dans les contenus publiés par les concurrents directs.</p>
+    <p class="section-text">Plutôt qu'une veille manuelle chronophage, j'ai conçu un système entièrement automatisé : les scénarios Make collectent l'actualité via Google News RSS, GPT-4o-mini extrait la sémantique, les agents Dust analysent et priorisent, et Google Sheets centralise les outputs pour l'équipe SEO.</p>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Stack -->
+  <div class="section">
+    <div class="section-eyebrow">Stack technique</div>
+    <div class="section-title">Outils utilisés</div>
+    <div class="info-block">
+      <div class="info-row">
+        <div class="info-label">Orchestration</div>
+        <div class="info-val"><code>Make</code> — 3 scénarios no-code · chaînage automatique · déclenchement planifié</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Agents IA</div>
+        <div class="info-val"><code>Dust</code> — agents LLM multi-étapes pour l'analyse sémantique et la priorisation des mots-clés</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Collecte</div>
+        <div class="info-val"><code>Google News RSS</code> · Flux RSS blogs RH (culture-rh, parlonsrh, myrhline, blog-rh) · RSS concurrents</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Extraction IA</div>
+        <div class="info-val"><code>GPT-4o-mini</code> — génération 100 mots-clés SEO · extraction 3–5 mots-clés par titre · prompt "expert RH" · <code>o4-mini</code> — veille concurrents</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Stockage</div>
+        <div class="info-val"><code>Google Sheets</code> — base partagée · onglets : Requêtes · Mots clés Actualité · Veille concurrents</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Scope</div>
+        <div class="info-val">10 sources RH françaises · 3 concurrents (Factorial, Cegid, Sage) · 100 mots-clés générés par run · 10 articles/mot-clé</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script src="../space.js"></script>
+<script>
+function switchTab(idx) {
+  document.querySelectorAll('.sc-tab').forEach((t,i) => t.classList.toggle('active', i === idx));
+  document.querySelectorAll('.sc-panel').forEach((p,i) => p.classList.toggle('active', i === idx));
+}
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>
