@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hackathon Mirakl — Lucas Fouquet</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'Segoe UI', system-ui, sans-serif; background: #02020e; color: #dde4f0; min-height: 100vh; line-height: 1.6; }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .page { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
+
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; line-height: 1.1; margin-bottom: .4rem; }
+    .project-title span {
+      background: linear-gradient(135deg, #2764FF 0%, #00d4ff 60%, #2764FF 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
+    .project-sub { color: #6a7590; font-size: .95rem; max-width: 680px; margin-bottom: 1.5rem; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 2rem; }
+    .tag { padding: .2rem .65rem; border-radius: 999px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
+
+    .badge-winner {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+      color: rgba(255,200,80,.85); background: rgba(255,200,80,.07);
+      border: 1px solid rgba(255,200,80,.25); padding: .35rem .9rem;
+      border-radius: .35rem; margin-bottom: 2rem;
+    }
+
+    /* ── Video ── */
+    .video-wrap {
+      position: relative; border-radius: .5rem; overflow: hidden;
+      border: 1px solid rgba(39,100,255,.25);
+      margin-bottom: 0;
+      box-shadow: 0 8px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(39,100,255,.08);
+      aspect-ratio: 16/9;
+    }
+    .video-wrap iframe, .video-wrap video {
+      display: block; width: 100%; height: 100%; border: none;
+    }
+    .video-label {
+      display: flex; align-items: center; gap: .5rem;
+      padding: .5rem 1rem; margin-bottom: 3.5rem;
+      background: rgba(39,100,255,.07); border: 1px solid rgba(39,100,255,.12);
+      border-top: none; border-radius: 0 0 .5rem .5rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(39,100,255,.6);
+    }
+
+    /* ── Iframe présentation ── */
+    .deck-frame-wrap {
+      position: relative; border-radius: .5rem; overflow: hidden;
+      border: 1px solid rgba(39,100,255,.2);
+      margin-bottom: 3.5rem;
+      box-shadow: 0 8px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(39,100,255,.06);
+    }
+    .deck-frame-wrap iframe {
+      display: block; width: 100%; height: 620px; border: none;
+    }
+    .deck-frame-wrap.expanded iframe { height: 100vh; }
+    .frame-label {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .5rem 1rem;
+      background: rgba(39,100,255,.07); border-top: 1px solid rgba(39,100,255,.12);
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(39,100,255,.55);
+    }
+    .frame-expand-btn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(39,100,255,.65); background: none; border: none; cursor: pointer;
+      transition: color .2s;
+    }
+    .frame-expand-btn:hover { color: #2764FF; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 3rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+    .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
+    hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
+
+    /* ── Feature cards ── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    .feature-card {
+      padding: 1.5rem; border-radius: .5rem;
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06);
+      position: relative; overflow: hidden;
+      transition: border-color .3s, background .3s, transform .3s;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(39,100,255,.6), transparent);
+      opacity: 0; transition: opacity .3s;
+    }
+    .feature-card:hover { border-color: rgba(39,100,255,.22); background: rgba(255,255,255,.035); transform: translateY(-3px); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon {
+      width: 38px; height: 38px; border-radius: .4rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .fi-blue  { background: rgba(39,100,255,.12);  color: #2764FF; }
+    .fi-cyan  { background: rgba(0,212,255,.12);   color: #00d4ff; }
+    .fi-mixed { background: linear-gradient(135deg,rgba(39,100,255,.12),rgba(0,212,255,.12)); color: #2764FF; }
+    .feature-card h3 { font-size: .95rem; font-weight: 700; color: rgba(255,255,255,.88); margin-bottom: .4rem; }
+    .feature-card p  { font-size: .83rem; color: #6a7590; line-height: 1.6; }
+
+    /* ── Pipeline ── */
+    .pipeline-steps { display: flex; flex-direction: column; gap: 0; position: relative; margin-top: 1.5rem; }
+    .pipeline-line {
+      position: absolute; left: 18px; top: 10px; bottom: 10px; width: 2px;
+      background: linear-gradient(180deg,rgba(39,100,255,.4),rgba(0,212,255,.4),rgba(39,100,255,.4));
+    }
+    .pipeline-step { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.1rem 0; }
+    .step-num {
+      width: 38px; height: 38px; min-width: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .88rem; font-weight: 700; z-index: 1;
+      background: rgba(39,100,255,.12); border: 1.5px solid rgba(39,100,255,.28);
+      color: #2764FF; transition: all .25s;
+    }
+    .pipeline-step:hover .step-num {
+      background: rgba(39,100,255,.25); border-color: #2764FF;
+      box-shadow: 0 0 16px rgba(39,100,255,.35);
+    }
+    .step-body h3 { font-size: .92rem; font-weight: 700; color: rgba(255,255,255,.85); margin-bottom: .25rem; }
+    .step-body p  { font-size: .82rem; color: #6a7590; line-height: 1.6; }
+    .step-tag {
+      display: inline-block; margin-top: .4rem; padding: .15rem .5rem;
+      border-radius: .25rem; font-size: .68rem; font-weight: 600;
+      background: rgba(0,212,255,.08); border: 1px solid rgba(0,212,255,.18);
+      color: #00d4ff;
+    }
+
+    /* ── Agents table ── */
+    .agents-grid { display: flex; flex-direction: column; gap: .6rem; margin-top: 1.5rem; }
+    .agent-row {
+      display: grid; grid-template-columns: 160px 1fr auto;
+      gap: 1rem; align-items: center;
+      padding: .85rem 1.1rem; border-radius: .4rem;
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06);
+      transition: border-color .2s, background .2s;
+    }
+    .agent-row:hover { border-color: rgba(39,100,255,.18); background: rgba(39,100,255,.03); }
+    .agent-name { font-size: .85rem; font-weight: 700; color: rgba(255,255,255,.8); }
+    .agent-desc { font-size: .8rem; color: #6a7590; }
+    .agent-view {
+      font-size: .65rem; font-weight: 700; letter-spacing: .06em;
+      color: #00d4ff; background: rgba(0,212,255,.07);
+      border: 1px solid rgba(0,212,255,.15);
+      padding: .15rem .5rem; border-radius: .25rem; white-space: nowrap;
+    }
+
+    /* ── Tech stack ── */
+    .tech-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+    .tech-pill {
+      padding: .3rem .8rem; border-radius: 999px; font-size: .75rem; font-weight: 500;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09);
+      color: rgba(255,255,255,.45); transition: all .2s;
+    }
+    .tech-pill:hover { border-color: rgba(39,100,255,.3); color: rgba(255,255,255,.75); background: rgba(39,100,255,.06); }
+
+    /* ── Info block ── */
+    .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
+    .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
+  </style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<a href="../index.html" class="nav-back" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='../index.html'">← Portfolio</a>
+
+<div class="page">
+
+  <div class="eyebrow">Hackathon · Mirakl Connect · IA Supply Chain</div>
+  <h1 class="project-title"><span>Supply Brain</span></h1>
+  <div class="rule"></div>
+  <p class="project-sub">Dashboard d'intelligence supply chain pour l'écosystème Mirakl Connect — analyse en temps réel des ventes, stocks et empreinte CO₂, avec 6 agents IA spécialisés et un chat NL2SQL intégré. Projet réalisé lors du Hackathon Mirakl Avril 2026.</p>
+
+  <div class="tags">
+    <span class="tag">React 19</span>
+    <span class="tag">Vite</span>
+    <span class="tag">Supabase</span>
+    <span class="tag">Dust.tt</span>
+    <span class="tag">OpenAI GPT-4o</span>
+    <span class="tag">Recharts</span>
+    <span class="tag">Leaflet</span>
+    <span class="tag">i18next</span>
+    <span class="tag">NL2SQL</span>
+    <span class="tag">SSE Streaming</span>
+    <span class="tag">n8n</span>
+  </div>
+
+  <div class="badge-winner">
+    🏆 &nbsp;Finaliste · Hackathon Mirakl Connect « Build the Future » · Avril 2026
+  </div>
+
+  <!-- Vidéo de démo -->
+  <div class="video-wrap">
+    <video controls muted preload="metadata" poster="">
+      <source src="../assets/video/mirakl-demo.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="video-label">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    Démo complète — Hackathon Mirakl Connect
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Description -->
+  <div class="section">
+    <div class="section-eyebrow">Description</div>
+    <div class="section-title">À propos du projet</div>
+    <p class="section-text">Supply Brain est un tableau de bord IA complet pensé pour les équipes supply chain opérant sur la marketplace Mirakl Connect. Il agrège en temps réel les données de commandes, stocks, géographie et empreinte carbone issues de Supabase, et les rend exploitables via 6 vues métier distinctes.</p>
+    <p class="section-text">Le cœur du produit est un ChatPanel intelligent : il classe automatiquement chaque question utilisateur, détecte les intentions graphiques, génère du SQL à partir du langage naturel (NL2SQL via GPT-4o) et route vers l'agent Dust.tt le plus adapté parmi les 6 agents spécialisés disponibles — tout en streamant les réponses en temps réel via SSE.</p>
+    <p class="section-text">Le dashboard supporte deux langues (FR/EN) et s'actualise automatiquement toutes les 30 secondes. L'interface permet également de générer à la demande un dashboard personnalisé par rôle métier (CEO, Supply, Marketing, Financier, Éco, Vendeur) en parallélisant 4 à 5 requêtes Supabase simultanées.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.8rem;">
+      <div style="border-radius:.5rem;overflow:hidden;border:1px solid rgba(39,100,255,.15);cursor:zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
+        <img src="../assets/img/IMG_3355.jpeg" alt="Hackathon Mirakl" style="display:block;width:100%;height:220px;object-fit:cover;"/>
+      </div>
+      <div style="border-radius:.5rem;overflow:hidden;border:1px solid rgba(39,100,255,.15);cursor:zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
+        <img src="../assets/img/IMG_3369.jpeg" alt="Hackathon Mirakl" style="display:block;width:100%;height:220px;object-fit:cover;"/>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- 6 vues -->
+  <div class="section">
+    <div class="section-eyebrow">Vues métier</div>
+    <div class="section-title">6 modules analytics intégrés</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+        </div>
+        <h3>Vue Overview</h3>
+        <p>5 KPIs en temps réel (CA, commandes, retours, panier moyen, délai moyen), carte choroplèthe FR/DE/IT, feed d'alertes et recommandations actionnables.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-cyan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="2"/></svg>
+        </div>
+        <h3>Vue Products</h3>
+        <p>Table produits enrichie avec classification ABC, score HHI de concentration, détection des oversells et analyse d'allocation par SKU.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-mixed">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <h3>Vue Financial</h3>
+        <p>Analyse de rotation stock, DSI, panier moyen et produits dormants. Graphiques composés sur la performance financière par période et marché.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Vue Sustainability</h3>
+        <p>Suivi de l'empreinte carbone par commande et par entrepôt. Carte Leaflet des émissions par ville avec bulles proportionnelles.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-cyan">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h3>Vue Predictive</h3>
+        <p>Prévisions de rupture de stock, velocity produit et alertes prédictives. Projection des ventes sur 3 mois avec intervalles de confiance ±15%.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-mixed">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+        </div>
+        <h3>Vue AI Analysis</h3>
+        <p>Dashboard généré dynamiquement à partir d'une requête en langage naturel. Jusqu'à 5 graphiques Recharts produits en parallèle selon le rôle métier détecté.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Agents IA -->
+  <div class="section">
+    <div class="section-eyebrow">Agents IA</div>
+    <div class="section-title">6 agents Dust.tt spécialisés</div>
+    <p class="section-text">Chaque message utilisateur est automatiquement classifié puis routé vers l'agent le plus pertinent grâce au système <code style="font-family:Consolas,monospace;font-size:.82rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);padding:.1rem .4rem;border-radius:.25rem;color:rgba(255,255,255,.6)">AGENT_ROUTING</code>. Les réponses sont streamées via SSE en temps réel.</p>
+    <div class="agents-grid">
+      <div class="agent-row">
+        <div class="agent-name">Monitoring</div>
+        <div class="agent-desc">Analyse des ventes, commandes et tendances marketplace</div>
+        <div class="agent-view">Overview</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">Supply Allocation</div>
+        <div class="agent-desc">Allocation produit, classification ABC, concentration HHI</div>
+        <div class="agent-view">Products</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">Pricing Adjustment</div>
+        <div class="agent-desc">Rotation stock, DSI, panier moyen, produits dormants</div>
+        <div class="agent-view">Financial</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">EcoFlow Analyst</div>
+        <div class="agent-desc">CO₂, empreinte carbone, score logistique par entrepôt</div>
+        <div class="agent-view">Sustainability</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">IA Predictive</div>
+        <div class="agent-desc">Prévisions rupture, velocity produit, alertes anticipées</div>
+        <div class="agent-view">Predictive</div>
+      </div>
+      <div class="agent-row">
+        <div class="agent-name">Orchestrateur</div>
+        <div class="agent-desc">Délègue à 5 sous-agents n8n en parallèle (2–5 min) pour les requêtes cross-domaine</div>
+        <div class="agent-view">AI Analysis</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Pipeline ChatPanel -->
+  <div class="section">
+    <div class="section-eyebrow">Pipeline IA</div>
+    <div class="section-title">ChatPanel — du message à la réponse</div>
+    <div class="pipeline-steps">
+      <div class="pipeline-line"></div>
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Détection de dashboard</h3>
+          <p>Si le message déclenche un rôle métier (supply, CEO, marketing…), 4–5 charts sont générés en parallèle via des templates prédéfinis.</p>
+          <span class="step-tag">dashboardTemplates.js</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Topic Guard</h3>
+          <p>Vérification que la question est dans le domaine supply chain. Si hors-sujet, GPT-4o-mini tranche en 3 tokens max.</p>
+          <span class="step-tag">GPT-4o-mini</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Détection d'intention graphique</h3>
+          <p>Regex sur le message pour détecter un besoin de visualisation. Si trouvé, requête Supabase directe sans passer par Dust.</p>
+          <span class="step-tag">chartIntents.js</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>NL2SQL (fallback)</h3>
+          <p>Questions de données libres → GPT-4o génère un SELECT sécurisé, exécuté via la RPC Supabase <code style="font-size:.78rem;color:rgba(255,255,255,.55)">safe_query()</code>.</p>
+          <span class="step-tag">nl2sql.js · GPT-4o</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Stream Dust SSE</h3>
+          <p>L'agent Dust ciblé répond en streaming token par token. Routage automatique selon mots-clés du message.</p>
+          <span class="step-tag">dust.js · SSE</span>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h3>UI Action & rendu</h3>
+          <p>Extraction des actions JSON <code style="font-size:.78rem;color:rgba(255,255,255,.55)">ui_action</code> depuis la réponse Dust pour mettre à jour le dashboard en temps réel.</p>
+          <span class="step-tag">Recharts · Leaflet</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Présentation pitch deck -->
+  <div class="section">
+    <div class="section-eyebrow">Pitch Deck</div>
+    <div class="section-title">Présentation Hackathon</div>
+  </div>
+  <div class="deck-frame-wrap" id="deck-wrap">
+    <iframe src="mirakl-presentation.html" title="Supply Brain — Pitch Deck Hackathon Mirakl"></iframe>
+    <div class="frame-label">
+      <span>Nordika Pulse — Executive Pitch · Hackathon Mirakl Connect</span>
+      <button class="frame-expand-btn" onclick="toggleDeck()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        <span id="deck-label">Agrandir</span>
+      </button>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Tech stack -->
+  <div class="section">
+    <div class="section-eyebrow">Stack Technique</div>
+    <div class="section-title">Technologies utilisées</div>
+    <div class="tech-pills">
+      <span class="tech-pill">React 19</span>
+      <span class="tech-pill">Vite 6</span>
+      <span class="tech-pill">Recharts</span>
+      <span class="tech-pill">Leaflet</span>
+      <span class="tech-pill">i18next</span>
+      <span class="tech-pill">Supabase</span>
+      <span class="tech-pill">PostgreSQL</span>
+      <span class="tech-pill">Dust.tt</span>
+      <span class="tech-pill">OpenAI GPT-4o</span>
+      <span class="tech-pill">OpenAI GPT-4o-mini</span>
+      <span class="tech-pill">SSE Streaming</span>
+      <span class="tech-pill">NL2SQL</span>
+      <span class="tech-pill">n8n</span>
+      <span class="tech-pill">safe_query RPC</span>
+      <span class="tech-pill">ESLint</span>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Architecture -->
+  <div class="section">
+    <div class="section-eyebrow">Architecture</div>
+    <div class="section-title">Infrastructure technique</div>
+    <div class="info-block">
+      <div class="info-row">
+        <div class="info-label">Frontend</div>
+        <div class="info-val"><code>React 19</code> · <code>Vite</code> proxy API · <code>i18next</code> FR/EN · polling 30s</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Base de données</div>
+        <div class="info-val"><code>Supabase PostgreSQL</code> · 8 tables · RPC <code>safe_query()</code> et <code>get_oversells()</code></div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Agents IA</div>
+        <div class="info-val"><code>Dust.tt EU</code> · 6 agents spécialisés · SSE streaming · routage automatique par mots-clés</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">NL2SQL</div>
+        <div class="info-val"><code>GPT-4o</code> → SQL → <code>safe_query()</code> RPC → rendu <code>Recharts</code> dynamique</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Visualisations</div>
+        <div class="info-val"><code>Recharts</code> (bar, line, area, pie, composé) · <code>Leaflet</code> (carte Europe, bulles CO₂)</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Automatisation</div>
+        <div class="info-val"><code>n8n</code> cloud · proxy déclaré · sous-agents parallèles pour l'Orchestrateur cross-domaine</div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:2rem;">
+  <button onclick="closeLightbox()" style="position:fixed;top:1.5rem;right:2rem;color:rgba(255,255,255,.5);font-size:1.5rem;cursor:pointer;background:none;border:none;">✕</button>
+  <img id="lightbox-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:.3rem;box-shadow:0 0 80px rgba(0,0,0,.8);"/>
+</div>
+
+<script src="../space.js"></script>
+<script>
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = src;
+  lb.style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+function toggleDeck() {
+  const wrap  = document.getElementById('deck-wrap');
+  const label = document.getElementById('deck-label');
+  const expanded = wrap.classList.toggle('expanded');
+  label.textContent = expanded ? 'Réduire' : 'Agrandir';
+  if (expanded) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+
+</body>
+</html>

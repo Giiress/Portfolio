@@ -42,7 +42,7 @@
 </head>
 <body>
 <canvas id="starfield"></canvas>
-<a href="../index.html" class="nav-back">← Portfolio</a>
+<a href="../index.html" class="nav-back" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='../index.html'">← Portfolio</a>
 <div class="page">
   <div class="page-text">
     <div class="eyebrow">Projet · Tableau · Data Viz</div>
@@ -117,35 +117,6 @@
   </div>
 </div>
 <script src="../space.js"></script>
-<!-- Lucas flottant — dérive de haut en bas -->
-<img id="page-astronaut" src="../assets/img/lucas-flottant.png" alt=""
-     style="position:fixed;right:1.8rem;top:0;width:140px;pointer-events:none;
-            z-index:50;image-rendering:pixelated;opacity:0;
-            filter:drop-shadow(0 0 14px rgba(100,200,255,.3))"/>
-<style>
-@keyframes floatDown{
-  0%  {transform:translateY(-160px) rotate(-6deg);opacity:0}
-  8%  {opacity:.72}
-  92% {opacity:.72}
-  100%{transform:translateY(calc(100vh + 160px)) rotate(6deg);opacity:0}
-}
-</style>
 
-<script>
-(function(){
-  var el = document.getElementById('page-astronaut');
-  var dur = 0, running = false;
-  function run(){
-    if(running) return;
-    running = true;
-    dur = 16000 + Math.random()*6000;
-    el.style.animation = 'none';
-    el.offsetHeight;
-    el.style.animation = 'floatDown '+dur+'ms ease-in-out forwards';
-    setTimeout(function(){ running = false; setTimeout(run, 10000); }, dur);
-  }
-  setTimeout(run, 3000 + Math.random()*3000);
-})();
-</script>
 </body>
 </html>

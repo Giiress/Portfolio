@@ -41,6 +41,77 @@
     #langBtn  { top: 1.5rem; right: 1.75rem; }
     #backBtn  { top: 1.5rem; left: 1.75rem; display: none; }
 
+    /* ── Planets overlay (projects view) ───────────── */
+    #planets-overlay {
+      position: fixed; inset: 0; z-index: 5;
+      pointer-events: none;
+      opacity: 0; transition: opacity .4s ease;
+    }
+    #planets-overlay.visible { opacity: 1; pointer-events: all; }
+
+    /* Warp-flash layer */
+    #warp-flash {
+      position: fixed; inset: 0; z-index: 6;
+      background: rgba(160,210,255,1); opacity: 0; pointer-events: none;
+    }
+
+    /* Planet open hint */
+    .open-hint {
+      font-size: 10.5px; margin-top: 4px;
+      color: rgba(255,255,255,0);
+      transition: color .22s, transform .22s;
+      letter-spacing: .06em; transform: translateY(3px);
+    }
+    .system-node:hover .open-hint {
+      color: rgba(255,255,255,.55); transform: translateY(0);
+    }
+
+    .orbit-lines-svg {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .orbit-lines-svg svg { width: 100%; height: 100%; }
+    .orbit-lines-svg ellipse {
+      fill: none;
+      stroke: rgba(255,255,255,.06);
+      stroke-width: 1;
+      stroke-dasharray: 2, 6;
+    }
+
+    .system-node {
+      position: absolute;
+      display: flex; flex-direction: column; align-items: center;
+      transform: translate(-50%, -50%);
+      cursor: pointer; z-index: 10;
+      /* no transition on top/left — driven by rAF at 60fps */
+    }
+    .system-node:hover { transform: translate(-50%, -50%) scale(1.15); z-index: 20; }
+    .system-node svg.planet-svg {
+      display: block;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.2));
+      transition: filter .3s;
+    }
+    .system-node:hover svg.planet-svg { filter: drop-shadow(0 0 22px rgba(255,255,255,.5)); }
+    .node-label {
+      font-size: 14px; margin-top: 10px;
+      text-shadow: 0 2px 8px rgba(0,0,0,.95);
+      white-space: nowrap; text-align: center;
+      color: rgba(255,255,255,.7);
+      transition: color .3s; letter-spacing: .3px;
+    }
+    .system-node:hover .node-label { color: #ffe696; }
+
+    #node-payfit    { top: 17%; left: 50%; }   /* top */
+    #node-together  { top: 27%; left: 77%; }   /* top-right */
+    #node-mirakl    { top: 50%; left: 88%; }   /* right */
+    #node-discogs   { top: 73%; left: 77%; }   /* bottom-right */
+    #node-synapse   { top: 83%; left: 50%; }   /* bottom */
+    #node-accidents { top: 73%; left: 23%; }   /* bottom-left */
+    #node-olist     { top: 50%; left: 12%; }   /* left */
+    #node-sportifs  { top: 27%; left: 23%; }   /* top-left */
+
     /* ── Panel (About) ──────────────────────────────── */
     #panel {
       position: fixed; inset: 0; z-index: 50; background: #02020e;
@@ -163,8 +234,10 @@
       background: rgba(2,2,14,.98);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 1.8rem; transition: opacity .7s ease;
+      opacity: 0; pointer-events: none;
     }
-    #intro.hidden { opacity: 0; pointer-events: none; }
+    #intro.visible { opacity: 1; pointer-events: all; }
+    #intro.hidden  { opacity: 0; pointer-events: none; }
     #intro-status {
       font-family: 'Consolas','Courier New',monospace;
       font-size: .72rem; letter-spacing: .22em; color: rgba(100,200,255,.45);
@@ -308,9 +381,228 @@
   ← <span id="backLabel">Retour</span>
 </button>
 
-<div id="hint" data-fr="Cliquer sur un objet · Maintenir pour naviguer"
-                data-en="Click an object · Hold to navigate">
-  Cliquer sur un objet · Maintenir pour naviguer
+
+<div id="warp-flash"></div>
+
+<div id="planets-overlay">
+  <div class="orbit-lines-svg">
+    <svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid meet">
+      <ellipse cx="500" cy="500" rx="380" ry="330"/>
+    </svg>
+  </div>
+
+  <div class="system-node" id="node-payfit" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/payfit-seo.html'">
+    <svg class="planet-svg" width="160" height="100" viewBox="0 0 160 100">
+      <defs>
+        <radialGradient id="saturnBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#fff5d0"/><stop offset="35%" stop-color="#e8c878"/>
+          <stop offset="70%" stop-color="#b88838"/><stop offset="100%" stop-color="#3a2200"/>
+        </radialGradient>
+        <radialGradient id="saturnRing" cx="50%" cy="50%" r="50%">
+          <stop offset="55%" stop-color="transparent"/>
+          <stop offset="68%" stop-color="rgba(230,200,130,0.85)"/>
+          <stop offset="82%" stop-color="rgba(220,180,110,0.8)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+        <clipPath id="saturnClip"><circle cx="80" cy="50" r="32"/></clipPath>
+      </defs>
+      <ellipse cx="80" cy="50" rx="70" ry="14" fill="url(#saturnRing)"/>
+      <circle cx="80" cy="50" r="32" fill="url(#saturnBody)"/>
+      <g clip-path="url(#saturnClip)" opacity="0.5">
+        <ellipse cx="80" cy="44" rx="32" ry="1.2" fill="#a87530"/>
+        <ellipse cx="80" cy="52" rx="32" ry="2.5" fill="#704510"/>
+        <ellipse cx="80" cy="58" rx="32" ry="1.5" fill="#9c6a25"/>
+      </g>
+      <circle cx="80" cy="50" r="32" fill="black" opacity="0.35" style="mix-blend-mode:multiply"/>
+      <ellipse cx="68" cy="40" rx="22" ry="22" fill="rgba(255,240,200,0.25)"/>
+      <path d="M 10,50 Q 80,68 150,50" stroke="rgba(230,200,130,0.85)" stroke-width="3" fill="none"/>
+    </svg>
+    <div class="node-label" data-fr="Hackathon Payfit" data-en="Hackathon Payfit">Hackathon Payfit</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-together" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/together.html'">
+    <svg class="planet-svg" width="80" height="80" viewBox="0 0 80 80">
+      <defs>
+        <radialGradient id="earthOcean" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#5fb4f0"/><stop offset="50%" stop-color="#1e5fa8"/>
+          <stop offset="100%" stop-color="#001a3a"/>
+        </radialGradient>
+        <clipPath id="earthClip"><circle cx="40" cy="40" r="34"/></clipPath>
+        <filter id="earthClouds">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="7"/>
+          <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.2 -0.4"/>
+        </filter>
+      </defs>
+      <circle cx="40" cy="40" r="34" fill="url(#earthOcean)"/>
+      <g clip-path="url(#earthClip)">
+        <path d="M 18,28 Q 24,22 32,26 Q 38,28 36,34 Q 30,38 22,36 Z" fill="#3d8a4a"/>
+        <path d="M 38,18 Q 48,16 54,22 Q 56,28 50,30 Q 44,28 38,24 Z" fill="#4a9656"/>
+        <path d="M 44,42 Q 54,40 60,48 Q 58,56 50,58 Q 42,54 42,48 Z" fill="#3d7a44"/>
+        <circle cx="40" cy="40" r="34" fill="white" filter="url(#earthClouds)" opacity="0.55"/>
+        <ellipse cx="40" cy="9" rx="14" ry="4" fill="white" opacity="0.85"/>
+      </g>
+      <circle cx="40" cy="40" r="34" fill="black" opacity="0.35" style="mix-blend-mode:multiply"/>
+      <ellipse cx="30" cy="30" rx="14" ry="14" fill="rgba(255,255,255,0.3)"/>
+      <circle cx="40" cy="40" r="35" fill="none" stroke="rgba(120,200,255,0.4)" stroke-width="1.5"/>
+    </svg>
+    <div class="node-label" data-fr="Together" data-en="Together">Together</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-sportifs" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/paris-sportifs.html'">
+    <svg class="planet-svg" width="70" height="70" viewBox="0 0 70 70">
+      <defs>
+        <radialGradient id="sportifsBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#b8f0c8"/><stop offset="40%" stop-color="#3da868"/>
+          <stop offset="80%" stop-color="#1a5530"/><stop offset="100%" stop-color="#001f0a"/>
+        </radialGradient>
+        <clipPath id="sportifsClip"><circle cx="35" cy="35" r="29"/></clipPath>
+      </defs>
+      <circle cx="35" cy="35" r="29" fill="url(#sportifsBody)"/>
+      <g clip-path="url(#sportifsClip)" opacity="0.55">
+        <ellipse cx="35" cy="30" rx="29" ry="3" fill="#2d6638"/>
+        <ellipse cx="35" cy="40" rx="29" ry="2.5" fill="#0f3318"/>
+      </g>
+      <circle cx="35" cy="35" r="29" fill="black" opacity="0.32" style="mix-blend-mode:multiply"/>
+      <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(220,255,230,0.25)"/>
+    </svg>
+    <div class="node-label" data-fr="Paris Sportifs" data-en="Sports Betting">Paris Sportifs</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-olist" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/olist.html'">
+    <svg class="planet-svg" width="70" height="70" viewBox="0 0 70 70">
+      <defs>
+        <radialGradient id="olistBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#c8f0ff"/><stop offset="40%" stop-color="#5ab8d8"/>
+          <stop offset="80%" stop-color="#1d5a78"/><stop offset="100%" stop-color="#001a2a"/>
+        </radialGradient>
+        <clipPath id="olistClip"><circle cx="35" cy="35" r="29"/></clipPath>
+      </defs>
+      <circle cx="35" cy="35" r="29" fill="url(#olistBody)"/>
+      <g clip-path="url(#olistClip)" opacity="0.5">
+        <ellipse cx="35" cy="28" rx="29" ry="1" fill="#2a7090"/>
+        <ellipse cx="35" cy="36" rx="29" ry="2" fill="#7bc8e0"/>
+        <ellipse cx="35" cy="44" rx="29" ry="1.2" fill="#1d5a78"/>
+      </g>
+      <circle cx="35" cy="35" r="29" fill="black" opacity="0.35" style="mix-blend-mode:multiply"/>
+      <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(220,245,255,0.3)"/>
+    </svg>
+    <div class="node-label" data-fr="Analyse Olist" data-en="Olist Analysis">Analyse Olist</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-accidents" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/accidents.html'">
+    <svg class="planet-svg" width="70" height="70" viewBox="0 0 70 70">
+      <defs>
+        <radialGradient id="marsBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#ffb085"/><stop offset="40%" stop-color="#c85530"/>
+          <stop offset="80%" stop-color="#7a2010"/><stop offset="100%" stop-color="#1a0500"/>
+        </radialGradient>
+        <clipPath id="marsClip"><circle cx="35" cy="35" r="29"/></clipPath>
+        <filter id="marsNoise">
+          <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="5"/>
+          <feColorMatrix values="0 0 0 0 0.3  0 0 0 0 0.1  0 0 0 0 0  0 0 0 0.4 0"/>
+        </filter>
+      </defs>
+      <circle cx="35" cy="35" r="29" fill="url(#marsBody)"/>
+      <g clip-path="url(#marsClip)">
+        <circle cx="42" cy="28" r="3.5" fill="#5a1a08" opacity="0.7"/>
+        <circle cx="25" cy="38" r="2.8" fill="#5a1a08" opacity="0.65"/>
+        <circle cx="35" cy="35" r="29" filter="url(#marsNoise)" opacity="0.5"/>
+        <ellipse cx="35" cy="9" rx="9" ry="3" fill="rgba(255,240,230,0.85)"/>
+      </g>
+      <circle cx="35" cy="35" r="29" fill="black" opacity="0.35" style="mix-blend-mode:multiply"/>
+      <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(255,220,200,0.25)"/>
+    </svg>
+    <div class="node-label" data-fr="Accidents de la route" data-en="Road Accidents">Accidents de la route</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-synapse" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/synapse.html'">
+    <svg class="planet-svg" width="70" height="70" viewBox="0 0 70 70">
+      <defs>
+        <radialGradient id="synapseBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#ffe080"/><stop offset="35%" stop-color="#ff6020"/>
+          <stop offset="75%" stop-color="#a01a00"/><stop offset="100%" stop-color="#1a0000"/>
+        </radialGradient>
+        <clipPath id="synapseClip"><circle cx="35" cy="35" r="27"/></clipPath>
+        <filter id="synapseLava">
+          <feTurbulence type="turbulence" baseFrequency="0.15" numOctaves="3" seed="9"/>
+          <feColorMatrix values="0 0 0 0 1  0 0 0 0 0.3  0 0 0 0 0  0 0 0 0.7 0"/>
+        </filter>
+      </defs>
+      <circle cx="35" cy="35" r="30" fill="rgba(255,140,60,0.35)"/>
+      <circle cx="35" cy="35" r="27" fill="url(#synapseBody)"/>
+      <g clip-path="url(#synapseClip)">
+        <circle cx="35" cy="35" r="27" filter="url(#synapseLava)" opacity="0.45"/>
+        <ellipse cx="32" cy="36" rx="8" ry="3" fill="#ffaa30" opacity="0.5"/>
+      </g>
+      <circle cx="35" cy="35" r="27" fill="black" opacity="0.25" style="mix-blend-mode:multiply"/>
+      <ellipse cx="27" cy="27" rx="9" ry="9" fill="rgba(255,240,200,0.35)"/>
+    </svg>
+    <div class="node-label" data-fr="Synapse" data-en="Synapse">Synapse</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-discogs" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/discogs.html'">
+    <svg class="planet-svg" width="70" height="70" viewBox="0 0 70 70">
+      <defs>
+        <radialGradient id="discogsBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#ffc0e0"/><stop offset="40%" stop-color="#cc4080"/>
+          <stop offset="80%" stop-color="#5a1a3a"/><stop offset="100%" stop-color="#1a0010"/>
+        </radialGradient>
+        <clipPath id="discogsClip"><circle cx="35" cy="35" r="29"/></clipPath>
+        <filter id="discogsClouds">
+          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" seed="13"/>
+          <feColorMatrix values="0 0 0 0 1  0 0 0 0 0.7  0 0 0 0 0.85  0 0 0 1 -0.3"/>
+        </filter>
+      </defs>
+      <circle cx="35" cy="35" r="29" fill="url(#discogsBody)"/>
+      <g clip-path="url(#discogsClip)">
+        <ellipse cx="35" cy="32" rx="29" ry="2.5" fill="#601f44" opacity="0.45"/>
+        <ellipse cx="35" cy="44" rx="29" ry="3" fill="#8a2a5a" opacity="0.4"/>
+        <circle cx="35" cy="35" r="29" filter="url(#discogsClouds)" opacity="0.35"/>
+      </g>
+      <circle cx="35" cy="35" r="29" fill="black" opacity="0.35" style="mix-blend-mode:multiply"/>
+      <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(255,220,235,0.28)"/>
+    </svg>
+    <div class="node-label" data-fr="Discogs Scraper" data-en="Discogs Scraper">Discogs Scraper</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+
+  <div class="system-node" id="node-mirakl" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/hackathon-mirakl.html'">
+    <svg class="planet-svg" width="90" height="90" viewBox="0 0 80 80">
+      <defs>
+        <radialGradient id="neptuneBody" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#a0d8ff"/><stop offset="40%" stop-color="#2870c8"/>
+          <stop offset="80%" stop-color="#0a2868"/><stop offset="100%" stop-color="#000820"/>
+        </radialGradient>
+        <clipPath id="neptuneClip"><circle cx="40" cy="40" r="34"/></clipPath>
+        <filter id="neptuneStorms">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="17"/>
+          <feColorMatrix values="0 0 0 0 0.6  0 0 0 0 0.85  0 0 0 0 1  0 0 0 0.6 0"/>
+        </filter>
+      </defs>
+      <circle cx="40" cy="40" r="34" fill="url(#neptuneBody)"/>
+      <g clip-path="url(#neptuneClip)">
+        <ellipse cx="40" cy="30" rx="34" ry="2" fill="#1a5098" opacity="0.5"/>
+        <ellipse cx="40" cy="42" rx="34" ry="2.5" fill="#7ac0f0" opacity="0.45"/>
+        <ellipse cx="32" cy="42" rx="6" ry="3.5" fill="#0a1e4a" opacity="0.7"/>
+        <circle cx="40" cy="40" r="34" filter="url(#neptuneStorms)" opacity="0.3"/>
+      </g>
+      <circle cx="40" cy="40" r="34" fill="black" opacity="0.35" style="mix-blend-mode:multiply"/>
+      <ellipse cx="30" cy="30" rx="13" ry="13" fill="rgba(200,230,255,0.3)"/>
+    </svg>
+    <div class="node-label" data-fr="Hackathon Mirakl" data-en="Mirakl Hackathon">Hackathon Mirakl</div>
+    <span class="open-hint">Ouvrir →</span>
+  </div>
+</div>
+
+<div id="hint" data-fr="Cliquer sur la galaxie pour explorer"
+                data-en="Click the galaxy to explore">
+  Cliquer sur la galaxie pour explorer
 </div>
 
 <!-- About panel -->
@@ -356,8 +648,8 @@
         </div>
       </div>
       <div class="stats-row">
-        <div class="stat"><span class="stat-v">6</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
-        <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
+        <div class="stat"><span class="stat-v">8</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
+        <div class="stat"><span class="stat-v">10</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
         <div class="stat"><span class="stat-v">1</span><span class="stat-l" data-fr="Hackathon gagné" data-en="Hackathon won">Hackathon gagné</span></div>
         <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
       </div>
@@ -444,7 +736,7 @@
     </div>
   </div>
   <div class="stats-row">
-    <div class="stat"><span class="stat-v">6</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
+    <div class="stat"><span class="stat-v">8</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
     <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
     <div class="stat"><span class="stat-v">1</span><span class="stat-l" data-fr="Hackathon gagné" data-en="Hackathon won">Hackathon gagné</span></div>
     <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
@@ -543,7 +835,17 @@ let mouseX = 0, mouseY = 0;
 let lastFrameT = 0;
 
 // ── State ───────────────────────────────────────────────────────────────────
-let view    = 'home';   // 'home' | 'projects' | 'skills'
+let view    = 'home';   // 'home' | 'hub' | 'projects' | 'skills'
+
+// Restaure l'état si on revient depuis une page projet
+(function restoreState() {
+  const saved = sessionStorage.getItem('portfolioReturnState');
+  if (saved === 'projects') {
+    sessionStorage.removeItem('portfolioReturnState');
+    // On attend que le canvas soit initialisé avant de basculer
+    window._restoreProjects = true;
+  }
+}());
 let lang    = 'fr';
 let hovered = null;     // id of hovered body in home view
 
@@ -552,21 +854,23 @@ const IMG_DRAPEAU  = new Image(); IMG_DRAPEAU.src  = 'assets/img/lucas-drapeau.p
 
 // ── World positions ─────────────────────────────────────────────────────────
 const POS = {
-  galaxy:  { x:  210, y: -124 },   // Projets  (galaxie spirale)
+  main:    { x:    0, y:    0 },   // Galaxie centrale — identité Lucas Fouquet
+  nebula:  { x:  320, y:  -90 },   // Nébuleuse (Projets) — droite
   cluster: { x: -202, y: -115 },   // Compétences (amas globulaire)
   pulsar:  { x: -179, y:  162 },   // À Propos · Contact (pulsar)
   egg:     { x: -425, y: -316 },   // Easter egg (caché)
 };
 
 const LABELS = {
-  galaxy:  { fr: 'Projets',            en: 'Projects',        subfr: '6 réalisations', suben: '6 projects'   },
-  cluster: { fr: 'Compétences',        en: 'Skills',          subfr: '9 savoir-faire', suben: '9 skills'     },
-  pulsar:  { fr: 'À Propos · Contact', en: 'About · Contact', subfr: 'Signal reçu',    suben: 'Signal recv.' },
-  egg:     { fr: '???',                en: '???',             subfr: 'Signal inconnu', suben: 'Unknown signal'},
+  main:    { fr: 'Lucas Fouquet',       en: 'Lucas Fouquet',    subfr: 'Étudiant Data & IA', suben: 'Data & AI Student' },
+  nebula:  { fr: 'Projets',             en: 'Projects',         subfr: '8 réalisations',     suben: '8 projects'       },
+  cluster: { fr: 'Compétences',         en: 'Skills',           subfr: '10 savoir-faire',    suben: '10 skills'        },
+  pulsar:  { fr: 'À Propos · Contact',  en: 'About · Contact',  subfr: 'Signal reçu',        suben: 'Signal recv.'     },
+  egg:     { fr: '???',                 en: '???',              subfr: 'Signal inconnu',     suben: 'Unknown signal'   },
 };
 
 // World-space hit radii (scaled by cam.zoom at test time)
-const HIT_WR = { galaxy: 115, cluster: 74, pulsar: 22, egg: 18 };
+const HIT_WR = { main: 115, nebula: 88, cluster: 74, pulsar: 22, egg: 18 };
 
 // ── Coordinate helpers ──────────────────────────────────────────────────────
 function w2s(wx, wy) {
@@ -640,6 +944,26 @@ const CL_PTS = (() => {
   return p;
 })();
 
+// ── Nebula star particles (Projets) ──────────────────────────────────────────
+const NEB_PTS = (() => {
+  const p = [], N = 480, R = 80;
+  for (let i = 0; i < N; i++) {
+    const r = Math.pow(Math.random(), .5) * R;
+    const a = Math.random() * Math.PI * 2;
+    const warm = Math.random() > .4;
+    p.push({
+      lx: Math.cos(a) * r + (Math.random() - .5) * 18,
+      ly: Math.sin(a) * r * .72 + (Math.random() - .5) * 12,
+      sz: .12 + Math.random() * .55,
+      al: (.08 + Math.random() * .55) * (1 - r / R * .5),
+      cr: warm
+        ? [220 + Math.floor(Math.random() * 35), 100 + Math.floor(Math.random() * 80), 180 + Math.floor(Math.random() * 75)]
+        : [120 + Math.floor(Math.random() * 80), 80 + Math.floor(Math.random() * 60), 220 + Math.floor(Math.random() * 35)],
+    });
+  }
+  return p;
+})();
+
 // ── Pulsar rings (spawned at runtime) ─────────────────────────────────────────
 let PRINGS   = [];
 let lastPulse = 0;
@@ -693,84 +1017,89 @@ const PLANETS = [
     id: 'discogs', fr: 'Discogs Scraper', en: 'Discogs Scraper',
     subfr: 'Python · Scraping', suben: 'Python · Scraping',
     href: 'projects/discogs.html',
-    oR: 62, sp: .000195, ph: .3, rad: 10, atmo: 'rgba(55,95,175,.18)',
+    oR: 62, sp: .000195, ph: 0.4, rad: 8, atmo: 'rgba(196,113,237,.35)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(155,188,255,1)', 'rgba(75,115,195,1)', 'rgba(22,52,138,1)', 'rgba(7,16,64,1)');
-      drawBands(x, y, r, 3, 'rgba(180,210,255,.07)');
+      drawSphere(x, y, r, '#c471ed', '#f64f59', '#7a0020', '#1f0033');
     },
   },
   {
     id: 'synapse', fr: 'Synapse', en: 'Synapse',
     subfr: 'RAG · LangChain', suben: 'RAG · LangChain',
     href: 'projects/synapse.html',
-    oR: 93, sp: .00013, ph: 1.8, rad: 14, atmo: 'rgba(125,65,195,.22)',
+    oR: 84, sp: .00013, ph: 1.2, rad: 10, atmo: 'rgba(241,39,17,.38)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(218,178,255,1)', 'rgba(148,75,218,1)', 'rgba(72,22,158,1)', 'rgba(22,7,72,1)');
-      drawBands(x, y, r, 4, 'rgba(188,128,255,.09)');
+      drawSphere(x, y, r, '#f5af19', '#f12711', '#8c1a00', '#330800');
     },
   },
   {
     id: 'accidents', fr: 'Accidents de la route en France', en: 'Road Accidents France',
     subfr: 'SQL · Data Analysis', suben: 'SQL · Data Analysis',
     href: 'projects/accidents.html',
-    oR: 128, sp: .000085, ph: 3.7, rad: 10, atmo: 'rgba(195,72,32,.16)',
+    oR: 106, sp: .000085, ph: 2.0, rad: 8, atmo: 'rgba(255,117,140,.35)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(238,178,128,1)', 'rgba(198,92,52,1)', 'rgba(142,42,22,1)', 'rgba(58,12,6,1)');
-      drawPolarCap(x, y, r);
+      drawSphere(x, y, r, '#ff758c', '#ff7eb3', '#8a0020', '#4a000f');
     },
   },
   {
     id: 'olist', fr: 'Analyse Olist', en: 'Olist Analysis',
     subfr: 'Tableau · Data Viz', suben: 'Tableau · Data Viz',
     href: 'projects/olist.html',
-    oR: 158, sp: .000052, ph: .9, rad: 13, atmo: 'rgba(48,168,178,.22)',
+    oR: 126, sp: .000052, ph: 2.8, rad: 9, atmo: 'rgba(79,172,254,.35)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(178,255,255,1)', 'rgba(48,170,188,1)', 'rgba(15,90,115,1)', 'rgba(3,32,55,1)');
+      drawSphere(x, y, r, '#4facfe', '#00f2fe', '#003d6b', '#001833');
     },
   },
   {
     id: 'paris', fr: 'Paris Sportifs', en: 'Sports Betting',
     subfr: 'Excel · Analyse', suben: 'Excel · Analysis',
     href: 'projects/paris-sportifs.html',
-    oR: 170, sp: .000042, ph: 2.5, rad: 11, atmo: 'rgba(50,200,120,.16)',
+    oR: 144, sp: .000042, ph: 3.6, rad: 8, atmo: 'rgba(178,255,5,.25)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(168,255,210,1)', 'rgba(48,188,118,1)', 'rgba(16,108,62,1)', 'rgba(3,38,20,1)');
-      drawBands(x, y, r, 2, 'rgba(120,255,180,.08)');
+      drawSphere(x, y, r, '#b2ff05', '#009688', '#004d40', '#002b26');
+    },
+  },
+  {
+    id: 'payfit', fr: 'Hackathon Payfit', en: 'Hackathon Payfit',
+    subfr: 'Make · Dust · IA', suben: 'Make · Dust · AI',
+    href: 'projects/payfit-seo.html',
+    oR: 160, sp: .000032, ph: 4.4, rad: 9, atmo: 'rgba(248,181,0,.28)',
+    hasRings: true, ringColor: 'rgba(248,181,0,.55)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, '#fceabb', '#f8b500', '#7a5200', '#332500');
     },
   },
   {
     id: 'together', fr: 'Together', en: 'Together',
     subfr: 'Next.js · Supabase', suben: 'Next.js · Supabase',
     href: 'projects/together.html',
-    oR: 220, sp: .000022, ph: 5.2, rad: 16, atmo: 'rgba(210,150,50,.2)',
-    hasRings: true,
+    oR: 178, sp: .000022, ph: 5.2, rad: 11, atmo: 'rgba(0,78,146,.35)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(255,236,172,1)', 'rgba(218,162,72,1)', 'rgba(152,102,32,1)', 'rgba(62,32,7,1)');
-      drawBands(x, y, r, 5, 'rgba(255,195,95,.09)');
+      drawSphere(x, y, r, '#1a6aaa', '#004e92', '#001530', '#00010a');
     },
   },
   {
-    id: 'payfit', fr: 'Payfit SEO', en: 'Payfit SEO',
-    subfr: 'Make · Dust · IA', suben: 'Make · Dust · AI',
-    href: 'projects/payfit-seo.html',
-    oR: 195, sp: .000032, ph: 0.9, rad: 10, atmo: 'rgba(249,115,22,.2)',
+    id: 'mirakl', fr: 'Hackathon Mirakl', en: 'Mirakl Hackathon',
+    subfr: 'React · Supabase · IA', suben: 'React · Supabase · AI',
+    href: 'projects/hackathon-mirakl.html',
+    oR: 198, sp: .000016, ph: 0.0, rad: 11, atmo: 'rgba(0,198,255,.45)',
     draw(x, y, r) {
-      drawSphere(x, y, r, 'rgba(255,200,140,1)', 'rgba(249,115,22,1)', 'rgba(180,60,10,1)', 'rgba(60,15,2,1)');
+      drawSphere(x, y, r, '#00c6ff', '#0072ff', '#003d99', '#001233');
     },
   },
 ];
 
 // ── Couleur unique par skill (ordre = ordre du tableau SKILLS) ──────────────
 const SKILL_COL = [
-  '#4db8ff', // Python     — bleu
-  '#fbbf24', // SQL        — ambre
-  '#818cf8', // Tableau    — indigo
-  '#a78bfa', // pandas     — violet
-  '#f472b6', // Vibe Coding — rose
-  '#34d399', // Dataiku    — vert
-  '#4ade80', // Excel      — lime
-  '#fb923c', // Make       — orange
-  '#22d3ee', // Dust       — cyan
+  '#4db8ff', // Python       — bleu
+  '#fbbf24', // SQL          — ambre
+  '#10b981', // Supabase     — vert émeraude
+  '#a78bfa', // pandas       — violet
+  '#818cf8', // Tableau      — indigo
+  '#f472b6', // Vibe Coding  — rose
+  '#fb923c', // Dataiku      — orange
+  '#4ade80', // Excel        — lime
+  '#f97316', // Make         — orange foncé
+  '#22d3ee', // Dust.tt      — cyan
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -778,210 +1107,268 @@ const SKILL_COL = [
 // ═══════════════════════════════════════════════════════════════════════════
 const SKILLS = [
   {
-    fr: 'Python', en: 'Python', subfr: 'Data · ML · Script', suben: 'Data · ML',
-    a: 5.93, d: 68,
-    descfr: 'Langage central de ma pratique. Je l\'utilise pour automatiser, analyser, modéliser et construire des pipelines de données end-to-end.',
-    descen: 'Core language of my practice. I use it to automate, analyse, model and build end-to-end data pipelines.',
+    fr: 'Python', en: 'Python', subfr: 'Data · Script · ML', suben: 'Data · Script · ML',
+    a: 0.00, d: 72,
+    descfr: 'Langage central de ma pratique data. Je l\'utilise pour scraper, analyser, modéliser et construire des pipelines end-to-end.',
+    descen: 'Core language of my data practice. I use it to scrape, analyse, model and build end-to-end pipelines.',
     projects: [
       { name: 'Discogs Scraper', href: 'projects/discogs.html',
-        fr: 'Extraction de milliers de vinyles via requests + BeautifulSoup, nettoyage et structuration des données avec pandas.',
-        en: 'Scraped thousands of vinyl records using requests + BeautifulSoup, cleaned and structured data with pandas.' },
+        fr: 'Extraction de milliers de vinyles via requests + BeautifulSoup, nettoyage avec pandas.',
+        en: 'Scraped thousands of vinyl records using requests + BeautifulSoup, cleaned with pandas.' },
       { name: 'Accidents de la route en France', href: 'projects/accidents.html',
-        fr: 'Analyse exploratoire complète d\'un dataset national, détection de patterns et visualisations dynamiques avec Plotly.',
-        en: 'Full exploratory analysis of a national dataset, pattern detection and dynamic visualisations with Plotly.' },
+        fr: 'Analyse exploratoire d\'un dataset national, visualisations dynamiques avec Plotly.',
+        en: 'Exploratory analysis of a national dataset, dynamic visualisations with Plotly.' },
       { name: 'Synapse', href: 'projects/synapse.html',
-        fr: 'Pipeline RAG : ingestion de documents PDF, génération d\'embeddings, orchestration LangChain et interface de questions-réponses.',
-        en: 'RAG pipeline: PDF ingestion, embedding generation, LangChain orchestration and Q&A interface.' },
+        fr: 'Pipeline RAG complet : ingestion PDF, embeddings, orchestration LLM, interface Q&A.',
+        en: 'Full RAG pipeline: PDF ingestion, embeddings, LLM orchestration, Q&A interface.' },
     ],
   },
   {
     fr: 'SQL', en: 'SQL', subfr: 'Bases de données', suben: 'Databases',
-    a: 0.35, d: 60,
-    descfr: 'Indispensable pour interroger et manipuler des données structurées. Je l\'utilise aussi bien pour l\'exploration rapide que pour des requêtes analytiques complexes.',
-    descen: 'Essential for querying and manipulating structured data. I use it for quick exploration as well as complex analytical queries.',
+    a: 0.63, d: 66,
+    descfr: 'Indispensable pour interroger et manipuler des données structurées, des jointures analytiques aux RPC PostgreSQL avancées.',
+    descen: 'Essential for querying structured data, from analytical joins to advanced PostgreSQL RPCs.',
     projects: [
       { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Jointures multi-tables sur le dataset e-commerce brésilien pour reconstruire les parcours clients et calculer des KPIs business.',
-        en: 'Multi-table joins on the Brazilian e-commerce dataset to reconstruct customer journeys and compute business KPIs.' },
+        fr: 'Jointures multi-tables sur 100 000+ commandes pour reconstruire les parcours clients et calculer des KPIs.',
+        en: 'Multi-table joins on 100,000+ orders to reconstruct customer journeys and compute KPIs.' },
       { name: 'Together', href: 'projects/together.html',
-        fr: 'Requêtes et mutations Supabase (PostgreSQL) pour la gestion des utilisateurs, événements et participations en temps réel.',
-        en: 'Supabase (PostgreSQL) queries and mutations for managing users, events and real-time participation.' },
+        fr: 'Requêtes et mutations Supabase (PostgreSQL) pour la gestion des utilisateurs et événements.',
+        en: 'Supabase (PostgreSQL) queries and mutations for user and event management.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: '8 tables Supabase, RPC safe_query() pour NL2SQL sécurisé et get_oversells() pour la détection de ruptures.',
+        en: '8 Supabase tables, safe_query() RPC for secure NL2SQL and get_oversells() for stock-out detection.' },
     ],
   },
   {
-    fr: 'Tableau', en: 'Tableau', subfr: 'Data Viz', suben: 'Data Viz',
-    a: 1.05, d: 65,
-    descfr: 'Outil de référence pour la visualisation de données décisionnelles. Je l\'utilise pour créer des dashboards interactifs lisibles par des profils non-techniques.',
-    descen: 'Reference tool for business intelligence visualisation. I use it to build interactive dashboards readable by non-technical profiles.',
+    fr: 'Supabase', en: 'Supabase', subfr: 'PostgreSQL · Auth · BDD', suben: 'PostgreSQL · Auth · DB',
+    a: 1.26, d: 70,
+    descfr: 'Backend-as-a-service PostgreSQL utilisé pour la base de données, l\'authentification et les fonctions RPC dans mes projets web.',
+    descen: 'PostgreSQL backend-as-a-service used for database, authentication and RPC functions in my web projects.',
     projects: [
-      { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Tableau de bord complet sur les performances vendeurs, délais de livraison, satisfaction client et géographie des ventes.',
-        en: 'Full dashboard on seller performance, delivery times, customer satisfaction and sales geography.' },
+      { name: 'Together', href: 'projects/together.html',
+        fr: 'Auth Supabase, tables utilisateurs/événements/participations, queries temps réel.',
+        en: 'Supabase auth, users/events/participations tables, real-time queries.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: '8 tables, 2 RPC stockées (safe_query, get_oversells), polling automatique toutes les 30s.',
+        en: '8 tables, 2 stored RPCs (safe_query, get_oversells), automatic 30s polling.' },
     ],
   },
   {
     fr: 'pandas', en: 'pandas', subfr: 'Data Wrangling', suben: 'Data Wrangling',
-    a: 1.75, d: 58,
-    descfr: 'La bibliothèque que j\'utilise systématiquement dès qu\'il y a des données tabulaires. Nettoyage, transformation, agrégation : pandas est mon couteau suisse.',
-    descen: 'The library I use systematically whenever there is tabular data. Cleaning, transforming, aggregating: pandas is my Swiss army knife.',
+    a: 1.88, d: 62,
+    descfr: 'Bibliothèque incontournable pour le traitement de données tabulaires : nettoyage, transformation et agrégation.',
+    descen: 'Essential library for tabular data processing: cleaning, transforming and aggregating.',
     projects: [
       { name: 'Discogs Scraper', href: 'projects/discogs.html',
-        fr: 'Dédoublonnage, normalisation des formats (prix, dates, labels) et export CSV propre depuis les données brutes scrapées.',
-        en: 'Deduplication, format normalisation (prices, dates, labels) and clean CSV export from raw scraped data.' },
+        fr: 'Dédoublonnage, normalisation des formats (prix, dates, labels) et export CSV propre.',
+        en: 'Deduplication, format normalisation (prices, dates, labels) and clean CSV export.' },
       { name: 'Accidents de la route en France', href: 'projects/accidents.html',
-        fr: 'Fusion de plusieurs fichiers CSV annuels, recodage des variables catégorielles et création de features pour l\'analyse.',
-        en: 'Merging multiple annual CSV files, recoding categorical variables and creating features for analysis.' },
+        fr: 'Fusion de plusieurs CSV annuels, recodage des variables catégorielles et feature engineering.',
+        en: 'Merging multiple annual CSVs, recoding categorical variables and feature engineering.' },
       { name: 'Analyse Olist', href: 'projects/olist.html',
         fr: 'Préparation et agrégation d\'un dataset de 100 000+ commandes avant intégration Tableau.',
         en: 'Preparation and aggregation of a 100,000+ orders dataset before Tableau integration.' },
     ],
   },
   {
-    fr: 'Vibe Coding', en: 'Vibe Coding', subfr: 'Dev IA-assisté', suben: 'AI-assisted dev',
-    a: 2.44, d: 66,
-    descfr: 'Ma façon de développer des interfaces et des outils web complexes en m\'appuyant sur l\'IA comme co-pilote. Plus de vitesse, plus d\'ambition, sans sacrifier la qualité.',
-    descen: 'My approach to building complex web interfaces and tools using AI as a co-pilot. More speed, more ambition, without sacrificing quality.',
-    projects: [
-      { name: 'Together', href: 'projects/together.html',
-        fr: 'Application Next.js / Supabase complète — authentification, pages événements, RSVP et UI responsive construite avec assistance IA.',
-        en: 'Full Next.js / Supabase app — authentication, event pages, RSVP and responsive UI built with AI assistance.' },
-      { name: 'Paris Sportifs', href: 'projects/paris-sportifs.html',
-        fr: 'Mise en forme du fichier Excel et structuration des tableaux de synthèse avec assistance IA.',
-        en: 'Excel file formatting and synthesis table structuring with AI assistance.' },
-    ],
-  },
-  {
-    fr: 'Dataiku', en: 'Dataiku', subfr: 'Data Science', suben: 'Data Science',
-    a: 3.14, d: 62,
-    descfr: 'Plateforme MLOps que j\'ai utilisée pour industrialiser des pipelines de données et automatiser des flux de traitement sans écrire chaque étape à la main.',
-    descen: 'MLOps platform I used to industrialise data pipelines and automate processing flows without writing every step manually.',
-    projects: [
-      { name: 'Synapse', href: 'projects/synapse.html',
-        fr: 'Orchestration du pipeline de préparation documentaire et versioning des recettes de transformation avant déploiement du chatbot.',
-        en: 'Orchestration of the document preparation pipeline and versioning of transformation recipes before chatbot deployment.' },
-    ],
-  },
-  {
-    fr: 'Excel', en: 'Excel', subfr: 'Analyse / Sheets', suben: 'Analysis',
-    a: 3.84, d: 56,
-    descfr: 'Toujours présent pour l\'exploration initiale, les quick-wins et la communication de résultats à des interlocuteurs non-techniques.',
-    descen: 'Always present for initial exploration, quick wins and communicating results to non-technical stakeholders.',
+    fr: 'Tableau', en: 'Tableau', subfr: 'Data Viz · BI', suben: 'Data Viz · BI',
+    a: 2.51, d: 64,
+    descfr: 'Outil de référence pour la visualisation décisionnelle. Je l\'utilise pour créer des dashboards interactifs lisibles par des profils non-techniques.',
+    descen: 'Reference tool for business intelligence visualisation, building interactive dashboards for non-technical stakeholders.',
     projects: [
       { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Exploration préliminaire du dataset, validation des agrégations et présentation des résultats sous forme de tableau croisé dynamique.',
-        en: 'Preliminary dataset exploration, aggregation validation and results presentation via pivot tables.' },
+        fr: 'Dashboard complet : performances vendeurs, délais de livraison, satisfaction client et géographie des ventes.',
+        en: 'Full dashboard: seller performance, delivery times, customer satisfaction and sales geography.' },
+    ],
+  },
+  {
+    fr: 'Vibe Coding', en: 'Vibe Coding', subfr: 'Claude · GPT · Cursor', suben: 'Claude · GPT · Cursor',
+    a: 3.14, d: 70,
+    descfr: 'Utiliser les LLMs comme co-pilotes de développement : génération de code, débogage et refactoring guidés par des prompts en langage naturel.',
+    descen: 'Using LLMs as development co-pilots: code generation, debugging and refactoring guided by natural language prompts.',
+    projects: [
+      { name: 'Together', href: 'projects/together.html',
+        fr: 'Application Next.js construite intégralement avec Claude comme assistant de développement principal.',
+        en: 'Next.js application built entirely with Claude as the primary development assistant.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: 'Dashboard React 19 complet développé en 24h avec Claude Code pour itérer rapidement.',
+        en: 'Full React 19 dashboard built in 24h using Claude Code for rapid iteration.' },
+    ],
+  },
+  {
+    fr: 'Dataiku', en: 'Dataiku', subfr: 'ML · Pipelines visuels', suben: 'ML · Visual pipelines',
+    a: 3.77, d: 66,
+    descfr: 'Plateforme de data science end-to-end pour le prototypage visuel de pipelines ML et l\'analyse exploratoire sans code.',
+    descen: 'End-to-end data science platform for visual ML pipeline prototyping and no-code exploratory analysis.',
+    projects: [
+      { name: 'Accidents de la route en France', href: 'projects/accidents.html',
+        fr: 'Prototypage rapide du pipeline de traitement et visualisation des flux de données avant implémentation Python.',
+        en: 'Rapid pipeline prototyping and data flow visualisation before Python implementation.' },
+    ],
+  },
+  {
+    fr: 'Excel', en: 'Excel', subfr: 'Analyse · Sheets', suben: 'Analysis · Sheets',
+    a: 4.40, d: 62,
+    descfr: 'Outil d\'exploration rapide et de communication de résultats, des TCD aux modèles de suivi structurés.',
+    descen: 'Tool for quick exploration and results communication, from pivot tables to structured tracking models.',
+    projects: [
+      { name: 'Analyse Olist', href: 'projects/olist.html',
+        fr: 'Exploration préliminaire du dataset et présentation des résultats via tableau croisé dynamique.',
+        en: 'Preliminary dataset exploration and results presentation via pivot tables.' },
       { name: 'Paris Sportifs', href: 'projects/paris-sportifs.html',
-        fr: 'Collecte, nettoyage et agrégation des résultats des 5 grands championnats pour identifier les patterns de paris rentables.',
-        en: 'Collection, cleaning and aggregation of results from 5 major leagues to identify profitable betting patterns.' },
+        fr: 'Collecte et agrégation des résultats des 5 grands championnats pour identifier les patterns rentables.',
+        en: 'Collection and aggregation of results from 5 major leagues to identify profitable betting patterns.' },
     ],
   },
   {
-    fr: 'Make', en: 'Make', subfr: 'Automatisation', suben: 'Automation',
-    a: 4.54, d: 62,
-    descfr: 'Plateforme no-code d\'automatisation de workflows. Je l\'utilise pour connecter des APIs, déclencher des traitements automatiques et orchestrer des flux entre différents services.',
-    descen: 'No-code workflow automation platform. I use it to connect APIs, trigger automated processing and orchestrate flows between services.',
+    fr: 'Make', en: 'Make', subfr: 'Automatisation no-code', suben: 'No-code automation',
+    a: 5.03, d: 68,
+    descfr: 'Plateforme no-code d\'automatisation de workflows. Je l\'utilise pour connecter des APIs et orchestrer des flux entre différents services.',
+    descen: 'No-code workflow automation platform. I use it to connect APIs and orchestrate flows between services.',
     projects: [
-      { name: 'Payfit SEO', href: 'projects/payfit-seo.html',
-        fr: '3 scénarios Make orchestrant la collecte RSS, l\'extraction IA de mots-clés et l\'injection dans Google Sheets.',
-        en: '3 Make scenarios orchestrating RSS collection, AI keyword extraction and injection into Google Sheets.' },
+      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
+        fr: '3 scénarios chaînés : collecte RSS, extraction IA de mots-clés et injection dans Google Sheets.',
+        en: '3 chained scenarios: RSS collection, AI keyword extraction and injection into Google Sheets.' },
     ],
   },
   {
-    fr: 'Dust', en: 'Dust', subfr: 'IA · Workflows', suben: 'AI · Workflows',
-    a: 5.24, d: 58,
-    descfr: 'Plateforme d\'agents IA et d\'automatisation assistée par LLM. Je l\'utilise pour construire des workflows intelligents combinant modèles de langage et sources de données.',
-    descen: 'AI agent and LLM-assisted automation platform. I use it to build intelligent workflows combining language models and data sources.',
+    fr: 'Dust.tt', en: 'Dust.tt', subfr: 'Agents IA · LLM', suben: 'AI Agents · LLM',
+    a: 5.65, d: 64,
+    descfr: 'Plateforme d\'agents IA avec streaming SSE. Je l\'utilise pour construire des workflows intelligents combinant LLM et données métier.',
+    descen: 'AI agent platform with SSE streaming. I use it to build intelligent workflows combining LLMs and business data.',
     projects: [
-      { name: 'Payfit SEO', href: 'projects/payfit-seo.html',
+      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
         fr: 'Agents Dust pour l\'analyse sémantique des mots-clés RH et la priorisation des opportunités SEO.',
         en: 'Dust agents for semantic analysis of HR keywords and SEO opportunity prioritisation.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: '6 agents spécialisés avec routage automatique par mots-clés et réponses en streaming SSE temps réel.',
+        en: '6 specialised agents with automatic keyword routing and real-time SSE streaming responses.' },
     ],
   },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  DRAW — CENTRAL STAR
+//  [space station supprimée — remplacée par la galaxie centrale]
 // ═══════════════════════════════════════════════════════════════════════════
-function drawCentralStar(t) {
-  const s = w2s(0, 0), r = 36 * cam.zoom;
+function drawSpaceStation(t) {
+  const s = w2s(0, 0), zf = cam.zoom;
+  const rot = t * .00008; // rotation très lente
 
-  // Far atmosphere
-  const atmo = ctx.createRadialGradient(s.x, s.y, r * .4, s.x, s.y, r * 8);
-  atmo.addColorStop(0,  'rgba(255,200,80,.055)');
-  atmo.addColorStop(.45,'rgba(255,155,35,.022)');
-  atmo.addColorStop(1,  'transparent');
-  ctx.fillStyle = atmo;
-  ctx.beginPath(); ctx.arc(s.x, s.y, r * 8, 0, Math.PI * 2); ctx.fill();
+  // Halo ambiant bleu-cyan autour de la station
+  const halo = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, 80 * zf);
+  halo.addColorStop(0,   'rgba(80,160,255,.08)');
+  halo.addColorStop(.5,  'rgba(60,120,220,.03)');
+  halo.addColorStop(1,   'transparent');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(s.x, s.y, 80 * zf, 0, Math.PI * 2); ctx.fill();
 
-  // Corona rays
-  for (let i = 0; i < 20; i++) {
-    const ang   = (Math.PI * 2 / 20) * i + .04 * Math.sin(t * .0007 + i * 1.4);
-    const inner = r * 1.1;
-    const outer = r * (1.95 + .5 * Math.sin(t * .0006 + i * .8));
-    const al    = (.06 + .04 * Math.sin(t * .001 + i * .9)).toFixed(3);
-    const rg    = ctx.createLinearGradient(
-      s.x + Math.cos(ang) * inner, s.y + Math.sin(ang) * inner,
-      s.x + Math.cos(ang) * outer, s.y + Math.sin(ang) * outer
-    );
-    rg.addColorStop(0, `rgba(255,210,100,${al})`);
-    rg.addColorStop(1, 'transparent');
-    ctx.strokeStyle = rg;
-    ctx.lineWidth   = 1.5 + 2.5 * Math.sin(t * .0005 + i);
-    ctx.lineCap     = 'round';
-    ctx.beginPath();
-    ctx.moveTo(s.x + Math.cos(ang) * inner, s.y + Math.sin(ang) * inner);
-    ctx.lineTo(s.x + Math.cos(ang) * outer, s.y + Math.sin(ang) * outer);
-    ctx.stroke();
+  ctx.save();
+  ctx.translate(s.x, s.y);
+  ctx.rotate(rot);
+
+  const u = zf; // unité de base
+
+  // ── Poutre centrale horizontale ──
+  ctx.fillStyle = 'rgba(180,195,215,.85)';
+  ctx.fillRect(-38 * u, -3.5 * u, 76 * u, 7 * u);
+
+  // ── Panneaux solaires gauche (2 paires) ──
+  const panelColors = ['rgba(30,60,120,.9)', 'rgba(25,50,105,.85)'];
+  for (let i = 0; i < 2; i++) {
+    const ox = (-38 - 6 - i * 22) * u;
+    ctx.fillStyle = panelColors[i % 2];
+    ctx.fillRect(ox - 18 * u, -8 * u, 18 * u, 16 * u);
+    // Grille cellules solaires
+    ctx.strokeStyle = 'rgba(100,160,255,.25)';
+    ctx.lineWidth = .5 * u;
+    for (let g = 1; g < 3; g++) {
+      ctx.beginPath(); ctx.moveTo(ox - 18 * u, (-8 + g * 5.33) * u);
+      ctx.lineTo(ox, (-8 + g * 5.33) * u); ctx.stroke();
+    }
+    for (let g = 1; g < 3; g++) {
+      ctx.beginPath(); ctx.moveTo((ox - 12 + g * 6) * u, -8 * u);
+      ctx.lineTo((ox - 12 + g * 6) * u,  8 * u); ctx.stroke();
+    }
   }
 
-  // Mid glow
-  const mg = ctx.createRadialGradient(s.x, s.y, r * .2, s.x, s.y, r * 2.2);
-  mg.addColorStop(0,   'rgba(255,228,138,.24)');
-  mg.addColorStop(.45, 'rgba(255,172,52,.09)');
-  mg.addColorStop(1,   'transparent');
-  ctx.fillStyle = mg;
-  ctx.beginPath(); ctx.arc(s.x, s.y, r * 2.2, 0, Math.PI * 2); ctx.fill();
+  // ── Panneaux solaires droite (2 paires) ──
+  for (let i = 0; i < 2; i++) {
+    const ox = (38 + 6 + i * 22) * u;
+    ctx.fillStyle = panelColors[i % 2];
+    ctx.fillRect(ox, -8 * u, 18 * u, 16 * u);
+    ctx.strokeStyle = 'rgba(100,160,255,.25)';
+    ctx.lineWidth = .5 * u;
+    for (let g = 1; g < 3; g++) {
+      ctx.beginPath(); ctx.moveTo(ox, (-8 + g * 5.33) * u);
+      ctx.lineTo(ox + 18 * u, (-8 + g * 5.33) * u); ctx.stroke();
+    }
+    for (let g = 1; g < 3; g++) {
+      ctx.beginPath(); ctx.moveTo((ox + 6 + g * 6) * u, -8 * u);
+      ctx.lineTo((ox + 6 + g * 6) * u,  8 * u); ctx.stroke();
+    }
+  }
 
-  // Solar disk
-  const dk = ctx.createRadialGradient(s.x - r * .25, s.y - r * .25, r * .05, s.x, s.y, r);
-  dk.addColorStop(0,   'rgba(255,255,218,1)');
-  dk.addColorStop(.35, 'rgba(255,228,118,1)');
-  dk.addColorStop(.7,  'rgba(255,175,36,1)');
-  dk.addColorStop(1,   'rgba(215,95,16,.92)');
-  ctx.fillStyle  = dk;
-  ctx.shadowBlur = 48; ctx.shadowColor = 'rgba(255,172,55,.72)';
-  ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fill();
+  // ── Module central (hub) ──
+  const hubGrad = ctx.createRadialGradient(-4 * u, -4 * u, 1 * u, 0, 0, 16 * u);
+  hubGrad.addColorStop(0,   'rgba(230,240,255,1)');
+  hubGrad.addColorStop(.55, 'rgba(155,175,210,1)');
+  hubGrad.addColorStop(1,   'rgba(80,100,140,1)');
+  ctx.fillStyle = hubGrad;
+  ctx.shadowBlur = 18 * u; ctx.shadowColor = 'rgba(120,200,255,.55)';
+  ctx.beginPath(); ctx.arc(0, 0, 16 * u, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0;
 
-  // Limb darkening
-  const lb = ctx.createRadialGradient(s.x, s.y, r * .55, s.x, s.y, r);
-  lb.addColorStop(0, 'transparent'); lb.addColorStop(1, 'rgba(145,46,0,.42)');
-  ctx.fillStyle = lb;
-  ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fill();
+  // Anneau du hub
+  ctx.strokeStyle = 'rgba(200,220,255,.45)';
+  ctx.lineWidth = 1.5 * u;
+  ctx.beginPath(); ctx.arc(0, 0, 18 * u, 0, Math.PI * 2); ctx.stroke();
 
-  // Name label (home view only)
+  // ── Modules latéraux (petits cylindres) ──
+  for (const ox of [-26, 26]) {
+    const mg = ctx.createRadialGradient(ox * u - 2 * u, -2 * u, 1 * u, ox * u, 0, 8 * u);
+    mg.addColorStop(0,   'rgba(210,225,245,.95)');
+    mg.addColorStop(1,   'rgba(90,110,150,.85)');
+    ctx.fillStyle = mg;
+    ctx.beginPath(); ctx.arc(ox * u, 0, 8 * u, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // ── Feux de navigation (clignotants) ──
+  const blink = .5 + .5 * Math.sin(t * .003);
+  ctx.fillStyle = `rgba(255,80,80,${(.6 * blink).toFixed(2)})`;
+  ctx.shadowBlur = 6 * u; ctx.shadowColor = 'rgba(255,60,60,.8)';
+  ctx.beginPath(); ctx.arc(-78 * u, 0, 2 * u, 0, Math.PI * 2); ctx.fill();
+  const blink2 = .5 + .5 * Math.sin(t * .003 + Math.PI);
+  ctx.fillStyle = `rgba(80,255,120,${(.6 * blink2).toFixed(2)})`;
+  ctx.shadowColor = 'rgba(60,255,100,.8)';
+  ctx.beginPath(); ctx.arc(78 * u, 0, 2 * u, 0, Math.PI * 2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.restore();
+
+  // ── Label "Lucas Fouquet" au-dessus ──
   if (view === 'home') {
-    const fz = Math.max(11, 16 * cam.zoom);
+    const fz = Math.max(11, 16 * zf);
     ctx.save();
     ctx.textAlign  = 'center';
     ctx.font       = `800 ${fz}px 'Segoe UI',system-ui,sans-serif`;
-    ctx.fillStyle  = 'rgba(255,255,255,.88)';
-    ctx.shadowBlur = 16; ctx.shadowColor = 'rgba(255,255,255,.25)';
-    ctx.fillText('Lucas Fouquet', s.x, s.y + r * 1.95 + 17 * cam.zoom);
+    ctx.fillStyle  = 'rgba(255,255,255,.92)';
+    ctx.shadowBlur = 14; ctx.shadowColor = 'rgba(140,200,255,.40)';
+    ctx.fillText('Lucas Fouquet', s.x, s.y - 32 * zf - 14 * zf);
     ctx.shadowBlur = 0;
-    ctx.font      = `600 ${Math.max(7, 9 * cam.zoom)}px 'Segoe UI',system-ui,sans-serif`;
-    ctx.fillStyle = 'rgba(255,255,255,.28)';
+    ctx.font      = `600 ${Math.max(7, 9 * zf)}px 'Segoe UI',system-ui,sans-serif`;
+    ctx.fillStyle = 'rgba(255,255,255,.30)';
     ctx.fillText(lang === 'fr' ? 'ÉTUDIANT DATA & IA' : 'DATA & AI STUDENT',
-                 s.x, s.y + r * 1.95 + 31 * cam.zoom);
+                 s.x, s.y - 32 * zf - 1 * zf);
     ctx.restore();
   }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  DRAW — GALAXY (Projets)
+//  DRAW — GALAXIE PRINCIPALE (identité — centre)
 // ═══════════════════════════════════════════════════════════════════════════
 function drawGalaxy(t) {
-  const gw = POS.galaxy, gs = w2s(gw.x, gw.y), zf = cam.zoom;
+  const gw = POS.main, gs = w2s(gw.x, gw.y), zf = cam.zoom;
   const rot = t * .000032;
   const maxR = 112;
 
@@ -1020,12 +1407,12 @@ function drawGalaxy(t) {
   ctx.globalAlpha = 1;
 
   // Hover ring
-  if (view === 'home' && hovered === 'galaxy') {
+  if (hovered === 'main') {
     ctx.strokeStyle = 'rgba(255,255,255,.13)'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.arc(gs.x, gs.y, maxR * zf * .85 + 8, 0, Math.PI * 2); ctx.stroke();
   }
 
-  if (view === 'home') drawBodyLabel(gs, 'galaxy', maxR * zf * .3 + 26 * zf);
+  if (view === 'home') drawBodyLabel(gs, 'main', maxR * zf * .3 + 26 * zf);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1035,13 +1422,29 @@ function drawCluster() {
   const cw = POS.cluster, cs = w2s(cw.x, cw.y), zf = cam.zoom;
   const maxR = 72;
 
-  // Overall spherical glow
-  const og = ctx.createRadialGradient(cs.x, cs.y, 0, cs.x, cs.y, maxR * zf * 1.45);
-  og.addColorStop(0,   'rgba(178,198,255,.2)');
-  og.addColorStop(.38, 'rgba(138,168,255,.07)');
-  og.addColorStop(1,   'transparent');
-  ctx.fillStyle = og;
-  ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * 1.45, 0, Math.PI * 2); ctx.fill();
+  // Halo extérieur diffus bleu-violet
+  const halo = ctx.createRadialGradient(cs.x, cs.y, 0, cs.x, cs.y, maxR * zf * 2.4);
+  halo.addColorStop(0,   'rgba(100,140,255,.10)');
+  halo.addColorStop(.35, 'rgba(80,110,220,.04)');
+  halo.addColorStop(1,   'transparent');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * 2.4, 0, Math.PI * 2); ctx.fill();
+
+  // Glow sphérique intermédiaire
+  const mg = ctx.createRadialGradient(cs.x, cs.y, 0, cs.x, cs.y, maxR * zf * 1.3);
+  mg.addColorStop(0,   'rgba(190,215,255,.28)');
+  mg.addColorStop(.42, 'rgba(140,175,255,.10)');
+  mg.addColorStop(1,   'transparent');
+  ctx.fillStyle = mg;
+  ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * 1.3, 0, Math.PI * 2); ctx.fill();
+
+  // Noyau dense lumineux
+  const cg = ctx.createRadialGradient(cs.x, cs.y, 0, cs.x, cs.y, maxR * zf * .55);
+  cg.addColorStop(0,   'rgba(235,245,255,.60)');
+  cg.addColorStop(.45, 'rgba(170,205,255,.22)');
+  cg.addColorStop(1,   'transparent');
+  ctx.fillStyle = cg;
+  ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * .55, 0, Math.PI * 2); ctx.fill();
 
   // Star particles
   for (const p of CL_PTS) {
@@ -1056,7 +1459,7 @@ function drawCluster() {
 
   // Hover ring
   if (view === 'home' && hovered === 'cluster') {
-    ctx.strokeStyle = 'rgba(255,255,255,.13)'; ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(160,190,255,.22)'; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * .9 + 8, 0, Math.PI * 2); ctx.stroke();
   }
 
@@ -1064,62 +1467,139 @@ function drawCluster() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  DRAW — NEBULA (Projets)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawNebula(t) {
+  const nw = POS.nebula, ns = w2s(nw.x, nw.y), zf = cam.zoom;
+  const p1 = .97 + .03 * Math.sin(t * .0007);
+  const p2 = .97 + .03 * Math.sin(t * .0005 + 1.2);
+
+  // Halo extérieur très diffus
+  const outerG = ctx.createRadialGradient(ns.x, ns.y, 0, ns.x, ns.y, 160 * zf);
+  outerG.addColorStop(0,   'rgba(180,60,255,.12)');
+  outerG.addColorStop(.45, 'rgba(255,80,160,.06)');
+  outerG.addColorStop(1,   'transparent');
+  ctx.fillStyle = outerG;
+  ctx.beginPath(); ctx.arc(ns.x, ns.y, 160 * zf, 0, Math.PI * 2); ctx.fill();
+
+  // Nuages de gaz — bien opaques et grands
+  const clouds = [
+    { dx:   0, dy:   0, r: 95, a0: .55, a1: .22, col: '200,60,255' },
+    { dx:  22, dy: -18, r: 75, a0: .50, a1: .18, col: '255,100,40' },
+    { dx: -26, dy:  22, r: 68, a0: .45, a1: .16, col: '60,90,255'  },
+    { dx:  14, dy:  32, r: 60, a0: .48, a1: .15, col: '255,40,110' },
+    { dx: -12, dy: -30, r: 52, a0: .35, a1: .10, col: '120,40,220' },
+  ];
+  for (const cl of clouds) {
+    const cx = ns.x + cl.dx * zf * p2;
+    const cy = ns.y + cl.dy * zf * p1;
+    const rr = cl.r * zf * p1;
+    const g  = ctx.createRadialGradient(cx, cy, rr * .08, cx, cy, rr);
+    g.addColorStop(0,   `rgba(${cl.col},${cl.a0})`);
+    g.addColorStop(.38, `rgba(${cl.col},${cl.a1})`);
+    g.addColorStop(.72, `rgba(${cl.col},.04)`);
+    g.addColorStop(1,   'transparent');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2); ctx.fill();
+  }
+
+  // Noyau brillant central (cœur chaud de la nébuleuse)
+  const core = ctx.createRadialGradient(ns.x, ns.y, 0, ns.x, ns.y, 30 * zf);
+  core.addColorStop(0,   'rgba(255,200,255,.90)');
+  core.addColorStop(.3,  'rgba(220,100,255,.55)');
+  core.addColorStop(.7,  'rgba(180,60,220,.20)');
+  core.addColorStop(1,   'transparent');
+  ctx.fillStyle = core;
+  ctx.beginPath(); ctx.arc(ns.x, ns.y, 30 * zf, 0, Math.PI * 2); ctx.fill();
+
+  // Étoiles dans la nébuleuse
+  for (const p of NEB_PTS) {
+    const sx = ns.x + p.lx * zf, sy = ns.y + p.ly * zf;
+    if (sx < -4 || sx > W + 4 || sy < -4 || sy > H + 4) continue;
+    const [r, g, b] = p.cr;
+    ctx.globalAlpha = Math.min(1, p.al * 1.8);
+    ctx.fillStyle   = `rgb(${r},${g},${b})`;
+    ctx.beginPath(); ctx.arc(sx, sy, p.sz * 1.2, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Hover ring
+  if (view === 'hub' && hovered === 'nebula') {
+    ctx.strokeStyle = 'rgba(220,100,255,.38)'; ctx.lineWidth = 1.5;
+    ctx.shadowBlur  = 10; ctx.shadowColor = 'rgba(200,80,255,.5)';
+    ctx.beginPath(); ctx.arc(ns.x, ns.y, 100 * zf + 8, 0, Math.PI * 2); ctx.stroke();
+    ctx.shadowBlur = 0;
+  }
+
+  if (view === 'hub') drawBodyLabel(ns, 'nebula', 102 * zf + 14 * zf);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  DRAW — PULSAR (À Propos · Contact)
 // ═══════════════════════════════════════════════════════════════════════════
 function drawPulsar(t) {
   const pw = POS.pulsar, ps = w2s(pw.x, pw.y), zf = cam.zoom;
-  const r  = 4.5 * zf;
+  const r  = 9 * zf;
 
   // Spawn new ring
   if (t - lastPulse > PULSE_INT) {
-    PRINGS.push({ birth: t, maxWR: 82 });
+    PRINGS.push({ birth: t, maxWR: 90 });
     lastPulse = t;
   }
 
-  // Draw & age rings
+  // Draw & age rings (plus épaisses et visibles)
   PRINGS = PRINGS.filter(ring => {
-    const age    = (t - ring.birth) / PULSE_INT;
+    const age   = (t - ring.birth) / PULSE_INT;
     if (age >= 1) return false;
-    const ringR  = Math.pow(age, .68) * ring.maxWR * zf;
-    const al     = (1 - age) * .3;
-    ctx.strokeStyle = `rgba(100,200,255,${al.toFixed(3)})`; ctx.lineWidth = .8;
+    const ringR = Math.pow(age, .65) * ring.maxWR * zf;
+    const al    = (1 - age) * .45;
+    ctx.strokeStyle = `rgba(80,210,255,${al.toFixed(3)})`; ctx.lineWidth = 1.2;
     ctx.beginPath(); ctx.arc(ps.x, ps.y, ringR, 0, Math.PI * 2); ctx.stroke();
     return true;
   });
 
-  // Polar jets
+  // Halo extérieur diffus cyan
+  const halo = ctx.createRadialGradient(ps.x, ps.y, 0, ps.x, ps.y, r * 8);
+  halo.addColorStop(0,   'rgba(60,200,255,.08)');
+  halo.addColorStop(.4,  'rgba(40,160,220,.03)');
+  halo.addColorStop(1,   'transparent');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 8, 0, Math.PI * 2); ctx.fill();
+
+  // Polar jets (plus larges)
   const jA = Math.PI / 2.4;
   for (const dir of [1, -1]) {
-    const jL  = 95 * zf;
+    const jL  = 110 * zf;
     const jEx = ps.x + Math.cos(jA) * dir * jL;
     const jEy = ps.y + Math.sin(jA) * dir * jL;
     const jg  = ctx.createLinearGradient(ps.x, ps.y, jEx, jEy);
-    jg.addColorStop(0, 'rgba(130,215,255,.52)');
+    jg.addColorStop(0, 'rgba(120,220,255,.70)');
+    jg.addColorStop(.5,'rgba(80,190,255,.35)');
     jg.addColorStop(1, 'transparent');
     ctx.save();
-    ctx.strokeStyle = jg; ctx.lineWidth = Math.max(.8, 1.6 * zf);
-    ctx.lineCap = 'round'; ctx.globalAlpha = .7;
+    ctx.strokeStyle = jg; ctx.lineWidth = Math.max(1.5, 2.8 * zf);
+    ctx.lineCap = 'round'; ctx.globalAlpha = .85;
     ctx.beginPath(); ctx.moveTo(ps.x, ps.y); ctx.lineTo(jEx, jEy); ctx.stroke();
     ctx.restore();
   }
 
-  // Core glow
-  const cg = ctx.createRadialGradient(ps.x, ps.y, 0, ps.x, ps.y, r * 5);
-  cg.addColorStop(0,  'rgba(198,238,255,.95)');
-  cg.addColorStop(.3, 'rgba(98,198,255,.42)');
-  cg.addColorStop(1,  'transparent');
-  ctx.fillStyle = cg;
-  ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 5, 0, Math.PI * 2); ctx.fill();
+  // Glow intermédiaire
+  const mg = ctx.createRadialGradient(ps.x, ps.y, 0, ps.x, ps.y, r * 3.5);
+  mg.addColorStop(0,   'rgba(180,235,255,.50)');
+  mg.addColorStop(.45, 'rgba(80,200,255,.18)');
+  mg.addColorStop(1,   'transparent');
+  ctx.fillStyle = mg;
+  ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 3.5, 0, Math.PI * 2); ctx.fill();
 
   // Hover ring
   if (view === 'home' && hovered === 'pulsar') {
-    ctx.strokeStyle = 'rgba(100,200,255,.22)'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 6 + 12 * zf, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(80,200,255,.28)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(ps.x, ps.y, r * 4.5 + 8 * zf, 0, Math.PI * 2); ctx.stroke();
   }
 
-  // Neutron star core
-  ctx.shadowBlur = 22 * zf; ctx.shadowColor = 'rgba(128,212,255,1)';
-  ctx.fillStyle = 'white';
+  // Noyau étoile à neutrons
+  ctx.shadowBlur = 30 * zf; ctx.shadowColor = 'rgba(140,225,255,1)';
+  ctx.fillStyle = 'rgba(230,248,255,1)';
   ctx.beginPath(); ctx.arc(ps.x, ps.y, r, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0;
 
@@ -1132,17 +1612,73 @@ function drawPulsar(t) {
 function drawEasterEgg() {
   const ew = POS.egg, es = w2s(ew.x, ew.y), zf = cam.zoom;
   const r  = 13 * zf;
-  if (es.x < -r * 3 || es.x > W + r * 3 || es.y < -r * 3 || es.y > H + r * 3) return;
+  if (es.x < -r * 5 || es.x > W + r * 5 || es.y < -r * 5 || es.y > H + r * 5) return;
 
-  drawAtmoGlow(es.x, es.y, r, 'rgba(50,195,100,.18)');
-  drawSphere(es.x, es.y, r,
-    'rgba(168,255,188,1)', 'rgba(48,192,95,1)', 'rgba(16,118,50,1)', 'rgba(3,40,16,1)');
-  drawBands(es.x, es.y, r, 3, 'rgba(100,255,140,.1)');
+  const rot = lastFrameT * 0.00022;
+  const u   = zf;
+
+  // Soft green glow
+  const halo = ctx.createRadialGradient(es.x, es.y, 0, es.x, es.y, r * 3);
+  halo.addColorStop(0,  'rgba(80,220,130,.10)');
+  halo.addColorStop(1,  'transparent');
+  ctx.fillStyle = halo;
+  ctx.beginPath(); ctx.arc(es.x, es.y, r * 3, 0, Math.PI * 2); ctx.fill();
+
+  ctx.save();
+  ctx.translate(es.x, es.y);
+  ctx.rotate(rot);
+  ctx.shadowBlur  = 10 * zf;
+  ctx.shadowColor = 'rgba(80,220,120,.55)';
+
+  // Fuselage
+  ctx.fillStyle = 'rgba(180,198,215,.90)';
+  ctx.beginPath(); ctx.roundRect(-7 * u, -4.5 * u, 14 * u, 9 * u, 2 * u); ctx.fill();
+
+  // Solar panels — left
+  ctx.fillStyle = 'rgba(28,58,118,.92)';
+  ctx.fillRect(-24 * u, -3.5 * u, 15 * u, 7 * u);
+  ctx.strokeStyle = 'rgba(100,165,255,.30)';
+  ctx.lineWidth   = 0.45 * u;
+  for (let g = 1; g < 3; g++) {
+    ctx.beginPath(); ctx.moveTo(-24 * u, (-3.5 + g * 2.33) * u);
+    ctx.lineTo(-9 * u, (-3.5 + g * 2.33) * u); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(-16.5 * u, -3.5 * u); ctx.lineTo(-16.5 * u, 3.5 * u); ctx.stroke();
+
+  // Solar panels — right
+  ctx.fillStyle = 'rgba(28,58,118,.92)';
+  ctx.fillRect(9 * u, -3.5 * u, 15 * u, 7 * u);
+  for (let g = 1; g < 3; g++) {
+    ctx.beginPath(); ctx.moveTo(9 * u, (-3.5 + g * 2.33) * u);
+    ctx.lineTo(24 * u, (-3.5 + g * 2.33) * u); ctx.stroke();
+  }
+  ctx.beginPath(); ctx.moveTo(16.5 * u, -3.5 * u); ctx.lineTo(16.5 * u, 3.5 * u); ctx.stroke();
+
+  // Antenna
+  ctx.strokeStyle = 'rgba(200,220,240,.75)';
+  ctx.lineWidth   = 0.7 * u;
+  ctx.beginPath(); ctx.moveTo(0, -4.5 * u); ctx.lineTo(0, -11 * u); ctx.stroke();
+  ctx.fillStyle   = 'rgba(255,210,70,.95)';
+  ctx.shadowBlur  = 6 * zf;
+  ctx.shadowColor = 'rgba(255,200,60,.8)';
+  ctx.beginPath(); ctx.arc(0, -11 * u, 1.8 * u, 0, Math.PI * 2); ctx.fill();
+
+  // Nav light — blinking green
+  const blink = Math.sin(lastFrameT * 0.003) > 0;
+  if (blink) {
+    ctx.shadowColor = 'rgba(80,255,120,.9)';
+    ctx.shadowBlur  = 5 * zf;
+    ctx.fillStyle   = '#50ff78';
+    ctx.beginPath(); ctx.arc(-7 * u, 0, 1.2 * u, 0, Math.PI * 2); ctx.fill();
+  }
+
+  ctx.shadowBlur = 0;
+  ctx.restore();
 
   if (hovered === 'egg') {
     ctx.strokeStyle = 'rgba(80,255,120,.28)'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.arc(es.x, es.y, r * 1.9 + 4, 0, Math.PI * 2); ctx.stroke();
-    if (view === 'home') drawBodyLabel(es, 'egg', r * 2 + 14 * zf);
+    ctx.beginPath(); ctx.arc(es.x, es.y, r * 2.2 + 4, 0, Math.PI * 2); ctx.stroke();
+    if (view === 'home') drawBodyLabel(es, 'egg', r * 2.5 + 12 * zf);
   }
 }
 
@@ -1202,30 +1738,36 @@ function drawPlanets(t) {
 
     // Ring system (before sphere so sphere overlaps front rings)
     if (p.hasRings) {
+      const rc = p.ringColor || 'rgba(198,158,98,.55)';
+      const rcFaint = p.ringColor ? p.ringColor.replace(/[\d.]+\)$/, '.15)') : 'rgba(198,158,98,.15)';
       ctx.save(); ctx.translate(ps.x, ps.y); ctx.scale(1, .32);
-      ctx.strokeStyle = 'rgba(198,158,98,.28)'; ctx.lineWidth = r * .42;
+      ctx.strokeStyle = rc;    ctx.lineWidth = r * .38;
       ctx.beginPath(); ctx.arc(0, 0, r * 2.2, 0, Math.PI * 2); ctx.stroke();
-      ctx.strokeStyle = 'rgba(198,158,98,.1)';  ctx.lineWidth = r * .5;
-      ctx.beginPath(); ctx.arc(0, 0, r * 2.85, 0, Math.PI * 2); ctx.stroke();
+      ctx.strokeStyle = rcFaint; ctx.lineWidth = r * .55;
+      ctx.beginPath(); ctx.arc(0, 0, r * 1.65, 0, Math.PI * 2); ctx.stroke();
       ctx.restore();
     }
 
     drawAtmoGlow(ps.x, ps.y, r, p.atmo);
     p.draw(ps.x, ps.y, r);
 
-    // Hover label
+    // Label permanent (discret) + lumineux au survol
     const dx  = mouseX - ps.x, dy = mouseY - ps.y;
-    const hit = Math.sqrt(dx * dx + dy * dy) < r * 2.8;
+    const hit = Math.sqrt(dx * dx + dy * dy) < r * 1.6;
+    ctx.save();
+    ctx.textAlign = 'center';
+    const labelY = ps.y + r * 1.65 + 12;
     if (hit) {
-      ctx.save();
-      ctx.textAlign = 'center';
       ctx.font      = `700 ${Math.max(10, 12 * zf)}px 'Segoe UI',system-ui,sans-serif`;
-      ctx.fillStyle = 'rgba(255,255,255,.92)';
+      ctx.fillStyle  = 'rgba(255,255,255,.92)';
       ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(255,255,255,.3)';
-      ctx.fillText(p[lang === 'fr' ? 'fr' : 'en'], ps.x, ps.y + r * 2.85 + 12);
-      ctx.shadowBlur = 0;
-      ctx.restore();
+    } else {
+      ctx.font      = `600 ${Math.max(8, 9 * zf)}px 'Segoe UI',system-ui,sans-serif`;
+      ctx.fillStyle  = 'rgba(255,255,255,.32)';
     }
+    ctx.fillText(p[lang === 'fr' ? 'fr' : 'en'], ps.x, labelY);
+    ctx.shadowBlur = 0;
+    ctx.restore();
   }
 }
 
@@ -1309,9 +1851,15 @@ function drawSkillStars(t) {
 //  HIT DETECTION
 // ═══════════════════════════════════════════════════════════════════════════
 function hitTest(mx, my) {
-  for (const [id, pos] of Object.entries(POS)) {
-    const s  = w2s(pos.x, pos.y);
-    const dx = mx - s.x, dy = my - s.y;
+  // En home : seulement la galaxie principale + easter egg
+  // En hub  : nebula + cluster + pulsar + easter egg
+  const targets = view === 'home'
+    ? ['main', 'egg']
+    : ['nebula', 'cluster', 'pulsar', 'egg'];
+  for (const id of targets) {
+    const pos = POS[id];
+    const s   = w2s(pos.x, pos.y);
+    const dx  = mx - s.x, dy = my - s.y;
     if (Math.sqrt(dx * dx + dy * dy) < HIT_WR[id] * cam.zoom + 18) return id;
   }
   return null;
@@ -1336,7 +1884,7 @@ function hitTestPlanet(mx, my, t) {
     const wy    = POS.galaxy.y + Math.sin(angle) * p.oR * .55;
     const ps    = w2s(wx, wy), r = p.rad * cam.zoom;
     const dx    = mx - ps.x, dy = my - ps.y;
-    if (Math.sqrt(dx * dx + dy * dy) < r * 2.8) return p;
+    if (Math.sqrt(dx * dx + dy * dy) < r * 1.6) return p;
   }
   return null;
 }
@@ -1368,7 +1916,7 @@ UC.addEventListener('mousemove', e => {
     cam.y  = drag.cy - dy / cam.zoom;
     camT.x = cam.x; camT.y = cam.y;
     vel.x  = cam.x - prevX; vel.y = cam.y - prevY;
-  } else if (view === 'home') {
+  } else if (view === 'home' || view === 'hub') {
     hovered = hitTest(x, y);
     UC.style.cursor = hovered ? 'pointer' : 'grab';
   }
@@ -1426,17 +1974,34 @@ UC.addEventListener('touchend', e => {
 function handleClick(mx, my) {
   if (view === 'home') {
     const hit = hitTest(mx, my);
-    if (hit === 'galaxy')  zoomTo('galaxy',  3.4, () => { view = 'projects'; });
+    if (hit === 'main') enterHub();
+    if (hit === 'egg')  triggerEasterEgg();
+  } else if (view === 'hub') {
+    const hit = hitTest(mx, my);
+    if (hit === 'nebula')  { view = 'projects'; showOverlayWithWarp(); }
     if (hit === 'cluster') zoomTo('cluster', 3.0, () => { view = 'skills';   });
     if (hit === 'pulsar')  triggerTransmission();
     if (hit === 'egg')     triggerEasterEgg();
-  } else if (view === 'projects') {
-    const p = hitTestPlanet(mx, my, lastFrameT);
-    if (p) window.location.href = p.href;
   } else if (view === 'skills') {
     const sk = hitTestSkill(mx, my);
     if (sk) openSkillPanel(sk);
   }
+}
+
+let _hubEnterT = 0; // timestamp quand hub démarre (pour fade-in/out)
+
+function enterHub() {
+  // 1. Zoom vers le centre
+  camT.x = 0; camT.y = 0; camT.zoom = 2.2;
+  document.getElementById('backBtn').style.display = 'flex';
+  document.getElementById('hint').style.opacity    = '0';
+
+  // 2. Après le zoom (~900ms) : basculer en hub + dézoomer pour voir les 3 objets
+  setTimeout(() => {
+    view       = 'hub';
+    _hubEnterT = performance.now();
+    camT.x = 0; camT.y = 0; camT.zoom = 1.5;
+  }, 900);
 }
 
 function zoomTo(id, targetZoom, cb) {
@@ -1444,16 +2009,36 @@ function zoomTo(id, targetZoom, cb) {
   camT.x = pos.x; camT.y = pos.y; camT.zoom = targetZoom;
   document.getElementById('backBtn').style.display = 'flex';
   document.getElementById('hint').style.opacity   = '0';
-  setTimeout(() => { if (cb) cb(); }, 1000);
+  setTimeout(() => {
+    if (cb) cb();
+    if (id === 'nebula') showOverlayWithWarp();
+  }, 1000);
 }
 
-window.goHome = function () {
-  view   = 'home';
-  camT.x = 0; camT.y = 0; camT.zoom = 1.5;
-  document.getElementById('backBtn').style.display = 'none';
-  document.getElementById('hint').style.opacity   = '1';
-  hovered = null;
-  window.closeSkillPanel && window.closeSkillPanel();
+window.goBack = window.goHome = function () {
+  if (view === 'projects' || view === 'skills') {
+    view = 'hub';
+    _hubEnterT = performance.now();
+    camT.x = 0; camT.y = 0; camT.zoom = 1.5;
+    hideOverlay();
+    hovered = null;
+    window.closeSkillPanel && window.closeSkillPanel();
+    // bouton retour reste visible (on est en hub)
+    return;
+  }
+  if (view === 'hub') {
+    view       = 'home';
+    _hubEnterT = 0;
+    camT.x = 0; camT.y = 0; camT.zoom = 1.5;
+    hideOverlay();
+    hovered = null;
+    document.getElementById('backBtn').style.display = 'none';
+    const hint = document.getElementById('hint');
+    hint.style.opacity = '1';
+    hint.textContent   = lang === 'fr'
+      ? 'Cliquer sur la galaxie pour explorer'
+      : 'Click the galaxy to explore';
+  }
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1534,7 +2119,7 @@ function startTypingSound() {
   try {
     const a = new Audio('assets/audio/among-us-eject-sound-effect.mp3');
     a.loop   = true;
-    a.volume = 0.38;
+    a.volume = 1.0;
     a.play().catch(() => {});
     _typingAudio = a;
   } catch(e) {}
@@ -1727,7 +2312,7 @@ window.closeTransmission = function () {
 function playStarboy() {
   const a = document.getElementById('starboy-audio');
   if (!a) return;
-  a.volume = 0.45; a.currentTime = 0;
+  a.volume = 1.0; a.currentTime = 0;
   a.play().catch(() => {});
 }
 function stopStarboy() {
@@ -2168,12 +2753,11 @@ function startEasterEggGame() {
 //  INTRO TRANSMISSION
 // ═══════════════════════════════════════════════════════════════════════════
 function showIntro() {
-  // N'afficher qu'une seule fois par session de navigation
-  if (sessionStorage.getItem('introSeen')) {
-    document.getElementById('intro').classList.add('hidden');
-    return;
+  if (sessionStorage.getItem('introSeen') || window._restoreProjects) {
+    return; // reste invisible (opacity:0 par défaut)
   }
   sessionStorage.setItem('introSeen', '1');
+  document.getElementById('intro').classList.add('visible');
   const con = document.getElementById('intro-content');
   const btn = document.getElementById('intro-close');
   con.innerHTML = '';
@@ -2227,6 +2811,7 @@ function showIntro() {
 
 window.dismissIntro = function () {
   stopTypingSound();
+  document.getElementById('intro').classList.remove('visible');
   document.getElementById('intro').classList.add('hidden');
 };
 
@@ -2289,6 +2874,257 @@ window.addEventListener('resize', resize);
 resize();
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  PLANET ORBIT ROTATION (HTML overlay)
+// ═══════════════════════════════════════════════════════════════════════════
+// Initial angles match the CSS positions (clockwise from top = -π/2)
+const PLANET_NODES = [
+  { id: 'node-payfit',    a0: -Math.PI / 2        },  // top
+  { id: 'node-together',  a0: -Math.PI / 4        },  // top-right
+  { id: 'node-mirakl',    a0:  0                  },  // right
+  { id: 'node-discogs',   a0:  Math.PI / 4        },  // bottom-right
+  { id: 'node-synapse',   a0:  Math.PI / 2        },  // bottom
+  { id: 'node-accidents', a0:  Math.PI * 3 / 4    },  // bottom-left
+  { id: 'node-olist',     a0:  Math.PI            },  // left
+  { id: 'node-sportifs',  a0: -Math.PI * 3 / 4   },  // top-left
+].map(p => ({ ...p, el: document.getElementById(p.id) }));
+
+const ORBIT_RX   = 38;   // % of viewport width
+const ORBIT_RY   = 33;   // % of viewport height
+const ORBIT_SPD  = (2 * Math.PI) / 120000; // 1 tour / 120 s
+
+let _hoveredPlanet = false;
+let _orbitAngle    = 0;   // angle accumulé — jamais de saut
+let _lastOrbitT    = 0;
+
+// Slow rotation when hovering any planet
+PLANET_NODES.forEach(p => {
+  p.el.addEventListener('mouseenter', () => { _hoveredPlanet = true;  });
+  p.el.addEventListener('mouseleave', () => { _hoveredPlanet = false; });
+});
+
+function rotatePlanets(t) {
+  const ov = document.getElementById('planets-overlay');
+  const dt = _lastOrbitT ? t - _lastOrbitT : 0;
+  _lastOrbitT = t;
+  if (!ov.classList.contains('visible')) return;
+
+  // Accumulate angle with current speed — no jump on speed change
+  const spd = _hoveredPlanet ? ORBIT_SPD * 0.15 : ORBIT_SPD;
+  _orbitAngle += spd * dt;
+
+  for (const p of PLANET_NODES) {
+    const a = p.a0 + _orbitAngle;
+    p.el.style.left = (50 + ORBIT_RX * Math.cos(a)) + '%';
+    p.el.style.top  = (50 + ORBIT_RY * Math.sin(a)) + '%';
+  }
+}
+
+// ── Warp-in: flash + planets pop in from center ─────────────────────────────
+let _warpGen = 0; // génération courante — invalide les setTimeout en vol si on quitte
+
+function showOverlayWithWarp() {
+  const overlay = document.getElementById('planets-overlay');
+  const flashEl = document.getElementById('warp-flash');
+  const gen     = ++_warpGen;
+
+  // 1. Flash blanc-bleu
+  flashEl.style.transition = 'none';
+  flashEl.style.opacity    = '0.72';
+  requestAnimationFrame(() => {
+    flashEl.style.transition = 'opacity .55s ease';
+    flashEl.style.opacity    = '0';
+  });
+
+  // 2. Show overlay
+  overlay.classList.add('visible');
+
+  // 3. Each planet pops in from scale(0) with stagger
+  PLANET_NODES.forEach((p, i) => {
+    p.el.style.transform  = 'translate(-50%,-50%) scale(0)';
+    p.el.style.opacity    = '0';
+    p.el.style.transition = 'none';
+    setTimeout(() => {
+      if (gen !== _warpGen) return; // annulé par hideOverlay
+      p.el.style.transition = 'transform .45s cubic-bezier(.34,1.45,.64,1), opacity .3s ease';
+      p.el.style.transform  = 'translate(-50%,-50%) scale(1)';
+      p.el.style.opacity    = '1';
+      setTimeout(() => {
+        if (gen !== _warpGen) return;
+        p.el.style.transition = '';
+        p.el.style.transform  = '';
+        p.el.style.opacity    = '';
+      }, 500);
+    }, 60 + i * 65);
+  });
+}
+
+function hideOverlay() {
+  _warpGen++; // invalide tous les setTimeout en vol
+  const overlay = document.getElementById('planets-overlay');
+  overlay.classList.remove('visible');
+  PLANET_NODES.forEach(p => {
+    p.el.style.transition = '';
+    p.el.style.transform  = '';
+    p.el.style.opacity    = '';
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  COMETS
+// ═══════════════════════════════════════════════════════════════════════════
+const COMETS = [];
+let lastComet = 0;
+
+function drawComets(t) {
+  // Spawn one periodically (screen-space, independent of camera)
+  if (lastComet === 0 || t - lastComet > 14000 + Math.random() * 8000) {
+    const fromLeft  = Math.random() < 0.5;
+    const sx = fromLeft ? -80 : W + 80;
+    const sy = Math.random() * H * 0.6 + H * 0.05;
+    const spd   = 0.18 + Math.random() * 0.14;
+    const angle = fromLeft
+      ? (Math.PI / 5) + (Math.random() - 0.5) * 0.5
+      : Math.PI - (Math.PI / 5) + (Math.random() - 0.5) * 0.5;
+    COMETS.push({
+      x: sx, y: sy,
+      vx: Math.cos(angle) * spd, vy: Math.sin(angle) * spd,
+      start: t, life: 5500 + Math.random() * 3000,
+      len: 110 + Math.random() * 70,
+    });
+    lastComet = t;
+  }
+  for (let i = COMETS.length - 1; i >= 0; i--) {
+    const c   = COMETS[i];
+    const age = t - c.start;
+    if (age > c.life) { COMETS.splice(i, 1); continue; }
+    const p   = age / c.life;
+    const al  = Math.min(p * 6, 1) * Math.max(0, 1 - p * 1.2);
+    const cx  = c.x + c.vx * age;
+    const cy  = c.y + c.vy * age;
+    const tx  = cx - c.vx * c.len;
+    const ty  = cy - c.vy * c.len;
+
+    const tg = ctx.createLinearGradient(cx, cy, tx, ty);
+    tg.addColorStop(0,   `rgba(255,255,240,${(al * .95).toFixed(2)})`);
+    tg.addColorStop(0.4, `rgba(180,220,255,${(al * .35).toFixed(2)})`);
+    tg.addColorStop(1,   'transparent');
+
+    ctx.save();
+    ctx.strokeStyle = tg; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(210,235,255,.9)';
+    ctx.fillStyle  = `rgba(255,255,255,${al.toFixed(2)})`;
+    ctx.beginPath(); ctx.arc(cx, cy, 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  ASTEROIDS (world-space drifting rocks)
+// ═══════════════════════════════════════════════════════════════════════════
+const ASTEROIDS = (() => {
+  const list = [];
+  const configs = [
+    { wx: -280, wy:  140, vx: .0018, vy: -.0012, spin: .00055, sz: 7 },
+    { wx:  190, wy:  220, vx:-.0022, vy:  .0009,  spin:-.00042, sz: 5 },
+    { wx: -120, wy: -280, vx: .0010, vy:  .0016,  spin: .00070, sz: 6 },
+    { wx:  350, wy: -180, vx:-.0015, vy: -.0008,  spin:-.00048, sz: 4 },
+  ];
+  for (const c of configs) {
+    const verts  = 7 + Math.floor(Math.random() * 4);
+    const pts = [];
+    for (let j = 0; j < verts; j++) {
+      const a = (j / verts) * Math.PI * 2 + (Math.random() - .5) * .7;
+      const r = c.sz * (.72 + Math.random() * .55);
+      pts.push({ a, r });
+    }
+    list.push({ ...c, pts, phase: Math.random() * Math.PI * 2 });
+  }
+  return list;
+})();
+
+function drawAsteroids(t) {
+  for (const a of ASTEROIDS) {
+    const wx = a.wx + a.vx * t;
+    const wy = a.wy + a.vy * t;
+    const s  = w2s(wx, wy);
+    if (s.x < -80 || s.x > W + 80 || s.y < -80 || s.y > H + 80) continue;
+    const rot = a.spin * t + a.phase;
+    const zf  = cam.zoom;
+
+    ctx.save();
+    ctx.translate(s.x, s.y);
+    ctx.rotate(rot);
+    ctx.globalAlpha = 0.40;
+    ctx.beginPath();
+    for (let i = 0; i < a.pts.length; i++) {
+      const p = a.pts[i];
+      const x = Math.cos(p.a) * p.r * zf;
+      const y = Math.sin(p.a) * p.r * zf;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle   = 'rgba(118,100,84,.62)';
+    ctx.strokeStyle = 'rgba(170,148,128,.32)';
+    ctx.lineWidth   = .5;
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  BLACK HOLE (world-space decorative, near easter egg quadrant)
+// ═══════════════════════════════════════════════════════════════════════════
+function drawBlackHole(t) {
+  const BH = { x: -520, y: 260 };
+  const s  = w2s(BH.x, BH.y), zf = cam.zoom;
+  const r  = 18 * zf;
+  if (s.x < -r * 6 || s.x > W + r * 6 || s.y < -r * 6 || s.y > H + r * 6) return;
+
+  const spin = t * .00014;
+
+  // Outer diffuse gravitational lensing glow
+  const og = ctx.createRadialGradient(s.x, s.y, r * .85, s.x, s.y, r * 4.5);
+  og.addColorStop(0,   'rgba(60,20,80,.22)');
+  og.addColorStop(.35, 'rgba(40,10,60,.10)');
+  og.addColorStop(1,   'transparent');
+  ctx.fillStyle = og;
+  ctx.beginPath(); ctx.arc(s.x, s.y, r * 4.5, 0, Math.PI * 2); ctx.fill();
+
+  // Accretion disk (ellipse, perspective-tilted)
+  ctx.save();
+  ctx.translate(s.x, s.y);
+  ctx.scale(1, .32);
+  for (let ring = 0; ring < 3; ring++) {
+    const rr = (1.8 + ring * 0.7) * r;
+    const al = [.55, .35, .18][ring];
+    const col1 = ring === 0
+      ? `rgba(255,140,40,${al})`
+      : ring === 1 ? `rgba(200,80,160,${al})` : `rgba(120,60,200,${al})`;
+    ctx.beginPath();
+    ctx.arc(0, 0, rr, spin, spin + Math.PI * 1.6);
+    ctx.strokeStyle = col1;
+    ctx.lineWidth   = (.55 - ring * .12) * r;
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // Event horizon (pure black disk)
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI * 2); ctx.fill();
+
+  // Photon sphere ring
+  ctx.strokeStyle = 'rgba(255,180,60,.5)';
+  ctx.lineWidth   = .7;
+  ctx.shadowBlur  = 8 * zf;
+  ctx.shadowColor = 'rgba(255,140,40,.6)';
+  ctx.beginPath(); ctx.arc(s.x, s.y, r * 1.22, 0, Math.PI * 2); ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  MAIN LOOP
 // ═══════════════════════════════════════════════════════════════════════════
 function loop(t) {
@@ -2296,24 +3132,55 @@ function loop(t) {
   updateCamera();
   ctx.clearRect(0, 0, W, H);
 
-  if (view === 'home') drawOrbits();
+  if (view === 'hub') drawOrbits();
 
-  drawCentralStar(t);
-  drawGalaxy(t);
-  drawCluster();
-  drawPulsar(t);
+  rotatePlanets(t);
+  drawBlackHole(t);
+  drawAsteroids(t);
+  drawComets(t);
+
+  // Galaxie : visible en home, et brièvement en fondu à l'entrée du hub
+  if (view === 'home') {
+    drawGalaxy(t);
+  } else if (view === 'hub' && _hubEnterT) {
+    const fadeOut = 1 - Math.min(1, (t - _hubEnterT) / 380);
+    if (fadeOut > 0) {
+      ctx.globalAlpha = fadeOut;
+      drawGalaxy(t);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // Hub/sous-vues : station + 3 destinations, avec fade-in au démarrage
+  if (view === 'hub' || view === 'skills') {
+    const fadeIn = _hubEnterT
+      ? Math.min(1, (t - _hubEnterT) / 550)
+      : 1;
+    ctx.globalAlpha = fadeIn;
+    drawSpaceStation(t);
+    drawNebula(t);
+    drawCluster();
+    drawPulsar(t);
+    ctx.globalAlpha = 1;
+  }
+
   drawEasterEgg();
 
   if (view === 'projects') {
-    drawPlanets(t);
-    const hit = hitTestPlanet(mouseX, mouseY, t);
-    UC.style.cursor = drag.on ? 'grabbing' : hit ? 'pointer' : 'grab';
+    UC.style.cursor = 'default';
+  }
+
+  if (view === 'hub') {
+    const hint = document.getElementById('hint');
+    hint.style.opacity = '1';
+    hint.textContent   = lang === 'fr'
+      ? 'Choisir une destination'
+      : 'Choose a destination';
   }
 
   if (view === 'skills') {
     const hitSk = hitTestSkill(mouseX, mouseY);
     UC.style.cursor = drag.on ? 'grabbing' : hitSk ? 'pointer' : 'grab';
-    // Hint "cliquer pour en savoir plus"
     const hint = document.getElementById('hint');
     if (!drag.on) {
       hint.style.opacity = '1';
@@ -2328,6 +3195,17 @@ function loop(t) {
 
 requestAnimationFrame(loop);
 showIntro();
+
+// Restauration après retour depuis une page projet (après showIntro pour que le flag soit encore lisible)
+if (window._restoreProjects) {
+  delete window._restoreProjects;
+  view = 'projects';
+  _hubEnterT = 0;
+  camT.x = 0; camT.y = 0; camT.zoom = 1.5;
+  document.getElementById('backBtn').style.display = 'flex';
+  document.getElementById('hint').style.opacity = '0';
+  setTimeout(() => showOverlayWithWarp(), 100);
+}
 
 })(); // end IIFE
 </script>

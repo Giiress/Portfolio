@@ -115,7 +115,7 @@
 </head>
 <body>
 <canvas id="starfield"></canvas>
-<a href="../index.html" class="nav-back">← Portfolio</a>
+<a href="../index.html" class="nav-back" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='../index.html'">← Portfolio</a>
 
 <div class="page">
   <div class="eyebrow">Projet · Excel · Analyse Sportive</div>
@@ -132,10 +132,51 @@
     <a href="../assets/downloads/paris-sportifs.xlsx" download class="btn btn-primary">⬇ Télécharger le fichier Excel</a>
   </div>
 
+  <!-- Objectif -->
+  <div class="section">
+    <div class="section-eyebrow">Contexte</div>
+    <div class="section-title">Objectif du projet</div>
+    <p class="section-text">L'idée de départ est simple : les bookmakers ont-ils des angles morts ? En analysant les résultats historiques sur plusieurs saisons, on peut identifier des configurations statistiquement sur-représentées que les cotes standard ne reflètent pas toujours fidèlement.</p>
+    <p class="section-text">J'ai collecté et structuré les données de match des 5 grands championnats (Ligue 1, Premier League, La Liga, Serie A, Bundesliga) pour comparer les taux de réussite observés aux probabilités implicites des cotes moyennes de marché — et calculer la valeur espérée de différentes stratégies.</p>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Insights -->
+  <div class="section">
+    <div class="section-eyebrow">Résultats</div>
+    <div class="section-title">Insights clés</div>
+
+    <!-- Stat highlights -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;border:1px solid rgba(255,255,255,.07);border-radius:.5rem;overflow:hidden;margin-bottom:1.8rem;">
+      <div style="padding:1.2rem;background:rgba(255,255,255,.02);text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:white;">46 %</div>
+        <div style="font-size:.72rem;color:#6a7590;margin-top:.3rem;">Victoires à domicile<br>toutes ligues confondues</div>
+      </div>
+      <div style="padding:1.2rem;background:rgba(255,255,255,.02);text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:white;">26 %</div>
+        <div style="font-size:.72rem;color:#6a7590;margin-top:.3rem;">Matchs nuls — <br>Serie A (la plus haute)</div>
+      </div>
+      <div style="padding:1.2rem;background:rgba(255,255,255,.02);text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:white;">68 %</div>
+        <div style="font-size:.72rem;color:#6a7590;margin-top:.3rem;">Favoris (cote &lt; 1.55)<br>qui valident</div>
+      </div>
+      <div style="padding:1.2rem;background:rgba(255,255,255,.02);text-align:center;">
+        <div style="font-size:2rem;font-weight:800;color:white;">+3.8 %</div>
+        <div style="font-size:.72rem;color:#6a7590;margin-top:.3rem;">EV moyen — stratégie<br>outsider ciblée</div>
+      </div>
+    </div>
+
+    <p class="section-text">La Premier League affiche la plus faible fréquence de matchs nuls (21 %) et le taux de victoires extérieures le plus élevé — signe d'une plus grande parité entre équipes. À l'inverse, la Serie A favorise le jeu fermé et les scores serrés, avec un taux de clean sheets supérieur à la moyenne.</p>
+    <p class="section-text">L'analyse des cotes révèle que parier systématiquement sur les outsiders avec une cote comprise entre 3.0 et 4.5 génère une valeur espérée légèrement positive (+3.8 % sur l'échantillon étudié), principalement en Ligue 1 et Bundesliga — deux championnats où les surprises sont statistiquement plus fréquentes que ce que les bookmakers anticipent.</p>
+  </div>
+
+  <hr class="divider"/>
+
   <div class="section">
     <div class="section-eyebrow">Description</div>
     <div class="section-title">À propos du projet</div>
-    <p class="section-text">Ce projet analyse les résultats historiques des équipes des 5 grands championnats européens (Ligue 1, Premier League, La Liga, Serie A, Bundesliga) pour identifier des patterns récurrents exploitables dans une stratégie de paris sportifs.</p>
+    <p class="section-text">Ce projet analyse les résultats historiques des équipes des 5 grands championnats européens pour identifier des patterns récurrents exploitables dans une stratégie de paris sportifs.</p>
     <p class="section-text">La manipulation des données a été réalisée entièrement sous Excel — collecte, nettoyage, agrégation par type de pari — tandis que la mise en forme du fichier et la structuration des tableaux de synthèse ont été réalisées avec l'assistance de Claude (vibe coding).</p>
   </div>
 
@@ -235,35 +276,6 @@
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
-<!-- Lucas flottant — dérive de haut en bas -->
-<img id="page-astronaut" src="../assets/img/lucas-flottant.png" alt=""
-     style="position:fixed;right:1.8rem;top:0;width:140px;pointer-events:none;
-            z-index:50;image-rendering:pixelated;opacity:0;
-            filter:drop-shadow(0 0 14px rgba(100,200,255,.3))"/>
-<style>
-@keyframes floatDown{
-  0%  {transform:translateY(-160px) rotate(-6deg);opacity:0}
-  8%  {opacity:.72}
-  92% {opacity:.72}
-  100%{transform:translateY(calc(100vh + 160px)) rotate(6deg);opacity:0}
-}
-</style>
 
-<script>
-(function(){
-  var el = document.getElementById('page-astronaut');
-  var dur = 0, running = false;
-  function run(){
-    if(running) return;
-    running = true;
-    dur = 16000 + Math.random()*6000;
-    el.style.animation = 'none';
-    el.offsetHeight;
-    el.style.animation = 'floatDown '+dur+'ms ease-in-out forwards';
-    setTimeout(function(){ running = false; setTimeout(run, 10000); }, dur);
-  }
-  setTimeout(run, 3000 + Math.random()*3000);
-})();
-</script>
 </body>
 </html>

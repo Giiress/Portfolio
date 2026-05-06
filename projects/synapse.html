@@ -29,32 +29,24 @@
     .btn { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem 1.1rem; border-radius: .35rem; font-size: .8rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; text-decoration: none; border: 1px solid rgba(255,255,255,.15); background: rgba(255,255,255,.04); color: rgba(255,255,255,.55); transition: color .2s, border-color .2s, background .2s; }
     .btn:hover { color: white; border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.08); }
 
-    /* ── Iframe landing ── */
-    .landing-frame-wrap {
+    /* ── Video demo ── */
+    .video-wrap {
       position: relative; border-radius: .5rem; overflow: hidden;
       border: 1px solid rgba(139,92,246,.2);
       margin-bottom: 3.5rem;
       box-shadow: 0 8px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(139,92,246,.08);
+      background: #000;
     }
-    .landing-frame-wrap iframe {
-      display: block; width: 100%; height: 600px; border: none;
-      border-radius: .5rem;
+    .video-wrap video {
+      display: block; width: 100%; max-height: 600px; border-radius: .5rem;
+      object-fit: contain;
     }
-    .frame-label {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .5rem 1rem;
+    .video-label {
+      display: flex; align-items: center; padding: .5rem 1rem;
       background: rgba(139,92,246,.07); border-top: 1px solid rgba(139,92,246,.12);
       font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-      color: rgba(139,92,246,.55);
+      color: rgba(139,92,246,.55); gap: .5rem;
     }
-    .frame-expand-btn {
-      display: inline-flex; align-items: center; gap: .35rem;
-      font-size: .65rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-      color: rgba(139,92,246,.6); background: none; border: none; cursor: pointer;
-      transition: color .2s;
-    }
-    .frame-expand-btn:hover { color: #a78bfa; }
-    .landing-frame-wrap.expanded iframe { height: 100vh; }
 
     /* ── Sections ── */
     .section { margin-bottom: 3rem; }
@@ -139,7 +131,7 @@
 </head>
 <body>
 <canvas id="starfield"></canvas>
-<a href="../index.html" class="nav-back">← Portfolio</a>
+<a href="../index.html" class="nav-back" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='../index.html'">← Portfolio</a>
 
 <div class="page">
 
@@ -177,15 +169,14 @@
 
   <hr class="divider"/>
 
-  <!-- Landing Synapse intégrée -->
-  <div class="landing-frame-wrap" id="frame-wrap">
-    <iframe src="../synapse-landing/landing.html" title="Synapse — Landing page"></iframe>
-    <div class="frame-label">
-      <span>Synapse — Landing page interactive</span>
-      <button class="frame-expand-btn" onclick="toggleExpand()">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-        <span id="expand-label">Agrandir</span>
-      </button>
+  <!-- Démo vidéo -->
+  <div class="video-wrap">
+    <video controls preload="metadata">
+      <source src="../assets/video/synapse-demo.mp4" type="video/mp4">
+    </video>
+    <div class="video-label">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Démo — Synapse en action
     </div>
   </div>
 
@@ -353,44 +344,6 @@
 </div>
 
 <script src="../space.js"></script>
-<script>
-function toggleExpand() {
-  const wrap  = document.getElementById('frame-wrap');
-  const label = document.getElementById('expand-label');
-  const expanded = wrap.classList.toggle('expanded');
-  label.textContent = expanded ? 'Réduire' : 'Agrandir';
-  if (expanded) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
-</script>
-<!-- Lucas flottant — dérive de haut en bas -->
-<img id="page-astronaut" src="../assets/img/lucas-flottant.png" alt=""
-     style="position:fixed;right:1.8rem;top:0;width:140px;pointer-events:none;
-            z-index:50;image-rendering:pixelated;opacity:0;
-            filter:drop-shadow(0 0 14px rgba(100,200,255,.3))"/>
-<style>
-@keyframes floatDown{
-  0%  {transform:translateY(-160px) rotate(-6deg);opacity:0}
-  8%  {opacity:.72}
-  92% {opacity:.72}
-  100%{transform:translateY(calc(100vh + 160px)) rotate(6deg);opacity:0}
-}
-</style>
 
-<script>
-(function(){
-  var el = document.getElementById('page-astronaut');
-  var dur = 0, running = false;
-  function run(){
-    if(running) return;
-    running = true;
-    dur = 16000 + Math.random()*6000;
-    el.style.animation = 'none';
-    el.offsetHeight;
-    el.style.animation = 'floatDown '+dur+'ms ease-in-out forwards';
-    setTimeout(function(){ running = false; setTimeout(run, 10000); }, dur);
-  }
-  setTimeout(run, 3000 + Math.random()*3000);
-})();
-</script>
 </body>
 </html>

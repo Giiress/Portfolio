@@ -124,11 +124,11 @@
 </head>
 <body>
 <canvas id="starfield"></canvas>
-<a href="../index.html" class="nav-back">← Portfolio</a>
+<a href="../index.html" class="nav-back" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='../index.html'">← Portfolio</a>
 
 <div class="page">
-  <div class="eyebrow">Projet · SEO · Automatisation IA · Payfit</div>
-  <h1 class="project-title"><span>Veille SEO automatisée</span></h1>
+  <div class="eyebrow">Hackathon · SEO · Automatisation IA · Payfit</div>
+  <h1 class="project-title"><span>Hackathon Payfit</span></h1>
   <div class="rule"></div>
   <p class="project-sub">Système d'automatisation no-code pour Payfit — génération automatique de mots-clés SEO depuis l'actualité RH, extraction d'URLs par mot-clé, et veille concurrentielle (Factorial, Cegid, Sage). Piloté par 3 scénarios Make chaînés et des agents Dust.</p>
 
@@ -144,12 +144,24 @@
     <span class="tag">RH · Paie · SIRH</span>
   </div>
 
+  <div style="display:inline-flex;align-items:center;gap:.45rem;font-size:.75rem;font-weight:700;letter-spacing:.05em;color:rgba(255,200,80,.85);background:rgba(255,200,80,.07);border:1px solid rgba(255,200,80,.25);padding:.35rem .9rem;border-radius:.35rem;margin-bottom:2rem;">
+    🏆 &nbsp;Finaliste · Hackathon Payfit « Build the Future » · Mars 2026
+  </div>
+
   <!-- Contexte -->
   <div class="section">
     <div class="section-eyebrow">Contexte</div>
     <div class="section-title">Objectif du projet</div>
     <p class="section-text">Dans le cadre d'une mission SEO pour Payfit — plateforme SaaS RH et paie — l'enjeu était d'identifier automatiquement les mots-clés émergeants dans l'actualité RH française et dans les contenus publiés par les concurrents directs.</p>
     <p class="section-text">Plutôt qu'une veille manuelle chronophage, j'ai conçu un système entièrement automatisé : les scénarios Make collectent l'actualité via Google News RSS, GPT-4o-mini extrait la sémantique, les agents Dust analysent et priorisent, et Google Sheets centralise les outputs pour l'équipe SEO.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.8rem;">
+      <div style="border-radius:.5rem;overflow:hidden;border:1px solid rgba(255,255,255,.07);cursor:zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
+        <img src="../assets/img/IMG_7747.JPG" alt="Hackathon Payfit" style="display:block;width:100%;height:220px;object-fit:cover;"/>
+      </div>
+      <div style="border-radius:.5rem;overflow:hidden;border:1px solid rgba(255,255,255,.07);cursor:zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
+        <img src="../assets/img/IMG_7748.JPG" alt="Hackathon Payfit" style="display:block;width:100%;height:220px;object-fit:cover;"/>
+      </div>
+    </div>
   </div>
 
   <hr class="divider"/>
@@ -334,6 +346,7 @@
     </div>
   </div>
 
+
 </div>
 
 <!-- Lightbox -->
@@ -359,35 +372,6 @@ function closeLightbox() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
-<!-- Lucas flottant — dérive de haut en bas -->
-<img id="page-astronaut" src="../assets/img/lucas-flottant.png" alt=""
-     style="position:fixed;right:1.8rem;top:0;width:140px;pointer-events:none;
-            z-index:50;image-rendering:pixelated;opacity:0;
-            filter:drop-shadow(0 0 14px rgba(100,200,255,.3))"/>
-<style>
-@keyframes floatDown{
-  0%  {transform:translateY(-160px) rotate(-6deg);opacity:0}
-  8%  {opacity:.72}
-  92% {opacity:.72}
-  100%{transform:translateY(calc(100vh + 160px)) rotate(6deg);opacity:0}
-}
-</style>
 
-<script>
-(function(){
-  var el = document.getElementById('page-astronaut');
-  var dur = 0, running = false;
-  function run(){
-    if(running) return;
-    running = true;
-    dur = 16000 + Math.random()*6000;
-    el.style.animation = 'none';
-    el.offsetHeight;
-    el.style.animation = 'floatDown '+dur+'ms ease-in-out forwards';
-    setTimeout(function(){ running = false; setTimeout(run, 10000); }, dur);
-  }
-  setTimeout(run, 3000 + Math.random()*3000);
-})();
-</script>
 </body>
 </html>
