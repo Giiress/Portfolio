@@ -41,8 +41,11 @@
       box-shadow: 0 8px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(39,100,255,.08);
       aspect-ratio: 16/9;
     }
-    .video-wrap iframe, .video-wrap video {
-      display: block; width: 100%; height: 100%; border: none;
+    .video-wrap .yt-ratio {
+      position: relative; padding-bottom: 56.25%; height: 0;
+    }
+    .video-wrap .yt-ratio iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
     }
     .video-label {
       display: flex; align-items: center; gap: .5rem;
@@ -210,9 +213,9 @@
 
   <!-- Vidéo de démo -->
   <div class="video-wrap">
-    <video controls muted preload="metadata" poster="">
-      <source src="../assets/video/mirakl-demo.mp4" type="video/mp4">
-    </video>
+    <div class="yt-ratio">
+      <iframe src="https://www.youtube.com/embed/Yk4M4iAXtg8?si=cTp93MsnGvQ2KGnt" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
   </div>
   <div class="video-label">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
