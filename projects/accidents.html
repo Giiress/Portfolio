@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65H9NJS598"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65H9NJS598');</script>
+  <script src="../consent.js" defer></script>
   <title>Accidents de la Route France — Lucas Fouquet</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,9 +11,9 @@
     #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .page { position: relative; z-index: 1; max-width: 1400px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
     .page-text { max-width: 960px; margin: 0 auto; }
-    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
     .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
-    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; line-height: 1.1; margin-bottom: .4rem; }
     .project-title span { background: linear-gradient(120deg,#f87171,#fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
@@ -27,20 +26,21 @@
     .preview-block { border: 1px solid rgba(255,255,255,.08); border-radius: .5rem; overflow: hidden; margin-bottom: 3.5rem; background: rgba(255,255,255,.015); }
     .preview-bar { display: flex; align-items: center; gap: .5rem; padding: .65rem 1rem; border-bottom: 1px solid rgba(255,255,255,.07); background: rgba(255,255,255,.02); }
     .dot { width: 9px; height: 9px; border-radius: 50%; }
-    .preview-bar span { font-size: .7rem; color: rgba(255,255,255,.25); margin-left: .4rem; letter-spacing: .04em; }
+    .preview-bar span { font-size: .7rem; color: rgba(255,255,255,.5); margin-left: .4rem; letter-spacing: .04em; }
     .report-frame { width: 100%; height: 1100px; border: none; display: block; background: #f1f5f9; }
     .section { margin-bottom: 3rem; }
-    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .5rem; }
     .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
     .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
     .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
     .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 140px 1fr; gap: 1rem; align-items: start; }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); padding-top: .1rem; }
     .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
     .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
     hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
   </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -104,5 +104,32 @@
 </div>
 <script src="../space.js"></script>
 
+<script type="application/json" id="i18n-en">{
+"Accidents de la Route France — Lucas Fouquet": "Road Accidents in France — Lucas Fouquet",
+"Projet · SQL · Data Analysis": "Project · SQL · Data Analysis",
+"Accidents de la Route France 2020–2024": "Road Accidents in France 2020–2024",
+"Analyse des données d'accidents corporels en France sur 5 ans. Tendances, zones à risque et profils d'accidentés à partir des données officielles.": "Analysis of injury road accidents in France over 5 years. Trends, high-risk areas and victim profiles based on official data.",
+"À propos du projet": "About the project",
+"Ce projet analyse les données officielles des accidents corporels de la circulation routière en France entre 2020 et 2024, issues du fichier BAAC (Bulletin d'Analyse des Accidents Corporels) de la Sécurité Routière.": "This project analyses official data on injury road accidents in France between 2020 and 2024, from the BAAC file (Bulletin d'Analyse des Accidents Corporels) published by the French Road Safety agency.",
+"L'analyse explore les tendances temporelles, l'identification des zones et tronçons à risque, les profils des usagers impliqués et les facteurs environnementaux.": "The analysis explores trends over time, identifies high-risk areas and road sections, and examines the profiles of road users involved and environmental factors.",
+"Rapport d'analyse — Accidents de la route France 2020–2024": "Analysis report — Road accidents in France 2020–2024",
+"Résultats": "Results",
+"Principaux enseignements": "Key findings",
+"Paradoxe urbain": "Urban paradox",
+"63 % des accidents ont lieu en agglomération, mais la mortalité est inverse — hors agglomération est bien plus létale (routes sans séparateur, vitesses élevées).": "63% of accidents happen in built-up areas, but fatality is the reverse — outside built-up areas is far deadlier (undivided roads, higher speeds).",
+"Facteur nuit": "Night factor",
+"Sur les routes rurales non éclairées, 80 % des décès nocturnes hors agglomération surviennent. Le crépuscule présente lui aussi un taux de blessés hospitalisés anormalement élevé.": "80% of night-time deaths outside built-up areas occur on unlit rural roads. Dusk also shows an abnormally high rate of hospitalised injuries.",
+"Géographie": "Geography",
+"Paris et les Bouches-du-Rhône dominent en volume brut. Mais rapportés à la population, les départements ruraux du sud et du centre affichent les taux de mortalité les plus forts. L'outre-mer (Guyane, Réunion) ressort comme point noir de létalité.": "Paris and Bouches-du-Rhône lead in raw volume. But relative to population, rural departments in the south and centre have the highest fatality rates. Overseas territories (French Guiana, Réunion) stand out as fatality hotspots.",
+"Tendance 2020–2024": "Trend 2020–2024",
+"La crise COVID a provoqué une chute de −17 % des accidents en 2020. Dès 2021, retour à 54 000–57 000 accidents/an. Les décès remontent de 2 780 (2020) à 3 432 (2024) — l'objectif Vision Zero 2030 de l'UE semble compromis.": "The COVID crisis caused a −17% drop in accidents in 2020. From 2021, back to 54,000–57,000 accidents/year. Deaths rose from 2,780 (2020) to 3,432 (2024) — the EU's Vision Zero 2030 target looks out of reach.",
+"Létalité globale": "Overall fatality",
+"Sur 611 762 usagers impliqués : 42 % indemnes, 40 % blessés légers, 15 % hospitalisés, 2,7 % décédés — taux cohérent avec la moyenne européenne, mais masquant de fortes disparités selon le type de route.": "Out of 611,762 road users involved: 42% unharmed, 40% slightly injured, 15% hospitalised, 2.7% killed — in line with the European average, but hiding large differences by road type.",
+"Stack & analyses": "Stack & analyses",
+"Données ouvertes Sécurité Routière (data.gouv.fr) — fichiers BAAC 2020 à 2024": "French Road Safety open data (data.gouv.fr) — BAAC files 2020 to 2024",
+"Évolution accidents/blessés/tués · Cartographie sinistralité · Profils victimes · Facteurs de risque (météo, heure, voie)": "Accidents/injuries/deaths over time · Accident mapping · Victim profiles · Risk factors (weather, time, road)",
+"— vibe coding pour la génération du rapport HTML": "— vibe coding to generate the HTML report"
+}</script>
+<script src="../i18n.js" defer></script>
 </body>
 </html>

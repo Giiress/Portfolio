@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65H9NJS598"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65H9NJS598');</script>
+  <script src="../consent.js" defer></script>
   <title>Discogs Scraper — Lucas Fouquet</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -18,14 +17,14 @@
       display: flex; align-items: center; gap: .45rem;
       background: rgba(2,2,14,.8); backdrop-filter: blur(10px);
       border: 1px solid rgba(255,255,255,.1); border-radius: .35rem;
-      color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700;
+      color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700;
       padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em;
       transition: color .2s, border-color .2s;
     }
     .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
 
     /* HERO */
-    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; line-height: 1.1; margin-bottom: .4rem; }
     .project-title span {
       background: linear-gradient(120deg,#f472b6,#a855f7);
@@ -65,7 +64,7 @@
       background: rgba(255,255,255,.02);
     }
     .dot { width: 9px; height: 9px; border-radius: 50%; }
-    .preview-bar span { font-size: .7rem; color: rgba(255,255,255,.25); margin-left: .4rem; letter-spacing: .04em; }
+    .preview-bar span { font-size: .7rem; color: rgba(255,255,255,.5); margin-left: .4rem; letter-spacing: .04em; }
     .preview-area {
       min-height: 300px; display: flex; align-items: center; justify-content: center;
       padding: 2rem;
@@ -75,7 +74,7 @@
 
     /* SECTIONS */
     .section { margin-bottom: 3rem; }
-    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .5rem; }
     .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
     .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
 
@@ -89,7 +88,7 @@
       display: grid; grid-template-columns: 140px 1fr; gap: 1rem; align-items: start;
     }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); padding-top: .1rem; }
     .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
     .info-val ul { padding-left: 1.1rem; }
     .info-val li { margin-bottom: .3rem; }
@@ -101,6 +100,7 @@
 
     hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
   </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -204,5 +204,37 @@
 
 <script src="../space.js"></script>
 
+<script type="application/json" id="i18n-en">{
+"Projet · Python": "Project · Python",
+"Web scraper Python en deux étapes qui extrait les données d'albums populaires depuis Discogs — statistiques, labels, genres, ratings, prix.": "Two-step Python web scraper that extracts data on popular albums from Discogs — stats, labels, genres, ratings, prices.",
+"Présentation — Discogs Scraper": "Presentation — Discogs Scraper",
+"À propos du projet": "About the project",
+"Ce projet est un scraper Python conçu pour extraire en masse les données d'albums populaires depuis la plateforme Discogs, la plus grande base de données musicale au monde.": "This project is a Python scraper built to extract data at scale on popular albums from Discogs, the world's largest music database.",
+"Le scraping se déroule en deux étapes : la première collecte les informations de base sur plusieurs pages de listings, la seconde enrichit chaque album avec des données détaillées (labels, formats, genres, ratings, pricing historique).": "Scraping runs in two steps: the first collects basic information across several listing pages, the second enriches each album with detailed data (labels, formats, genres, ratings, price history).",
+"Les données collectées nous ont permis d'analyser le marché du disque physique et de répondre sereinement à notre problématique centrale :": "The data we collected let us analyse the physical record market and confidently answer our central question:",
+"Pourquoi le matérialisme musical — posséder des objets physiques comme des vinyles — est-il précieux aujourd'hui, à l'ère du tout-numérique ?": "Why is musical materialism — owning physical objects like vinyl records — valuable today, in an all-digital era?",
+"En croisant prix de revente, volumes de collections et dynamiques de genres, les données Discogs offrent une réponse quantitative à cette question culturelle.": "By combining resale prices, collection volumes and genre trends, Discogs data provides a quantitative answer to this cultural question.",
+"Pipeline technique": "Technical pipeline",
+"Étape 1 — Catalogue": "Step 1 — Catalogue",
+"Navigation page par page sur Discogs (trié par popularité) via": "Page-by-page navigation on Discogs (sorted by popularity) with",
+"— extraction de l'artiste, du titre et de l'URL pour ~50 albums / page. Vitesse : ~150–200 albums/min.": "— extracts artist, title and URL for ~50 albums per page. Speed: ~150–200 albums/min.",
+"Étape 2 — Enrichissement": "Step 2 — Enrichment",
+"Visite de chaque page album pour extraire labels, formats, pays, genres, notes, wantlists, historique de prix. Sauvegardes intermédiaires automatiques tous les 50 albums. Vitesse : ~40 albums/min (~13 s/album).": "Visits each album page to extract labels, formats, country, genres, ratings, wantlists and price history. Automatic checkpoints every 50 albums. Speed: ~40 albums/min (~13 s/album).",
+"— navigation JS async ·": "— async JS navigation ·",
+"— structuration & export CSV ·": "— structuring & CSV export ·",
+"— rate limiting anti-détection": "— rate limiting to avoid detection",
+"Robustesse": "Robustness",
+"Système de retry (3 tentatives, backoff 5 s) · validation contenu (500 car. min) · version renforcée": "Retry system (3 attempts, 5 s backoff) · content validation (500 chars min) · hardened version",
+"avec délais aléatoires 2–5 s pour IP red-flagged": "with random 2–5 s delays for red-flagged IPs",
+"(enrichi) ·": "(enriched) ·",
+"Jusqu'à 10 000 albums sur 200 pages · 17 colonnes par album · ~36h pour un run complet enrichi": "Up to 10,000 albums over 200 pages · 17 columns per album · ~36h for a full enriched run",
+"Stack & fonctionnement": "Stack & how it works",
+"Étape 1": "Step 1",
+"Extraction des albums (150–200/min) : titre, artiste, année, URL": "Album extraction (150–200/min): title, artist, year, URL",
+"Étape 2": "Step 2",
+"Enrichissement (40/min) : labels, formats, genres, ratings, prix. Backup auto pour reprendre en cas d'interruption.": "Enrichment (40/min): labels, formats, genres, ratings, prices. Auto backup to resume after an interruption.",
+"Lancement": "Getting started"
+}</script>
+<script src="../i18n.js" defer></script>
 </body>
 </html>

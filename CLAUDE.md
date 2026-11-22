@@ -6,6 +6,7 @@
 Portfolio/
 ├── index.html          ← page principale uniquement
 ├── space.js            ← moteur partagé (NE PAS dupliquer)
+├── consent.js          ← bandeau cookies + chargement Google Analytics (partagé)
 ├── photo.jpg           ← photo de profil
 ├── assets/
 │   ├── audio/          ← tous les fichiers .mp3 / .ogg / .wav

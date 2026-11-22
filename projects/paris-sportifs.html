@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65H9NJS598"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65H9NJS598');</script>
+  <script src="../consent.js" defer></script>
   <title>Paris Sportifs — Lucas Fouquet</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,10 +11,10 @@
     #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .page { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
 
-    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
     .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
 
-    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white; line-height: 1.1; margin-bottom: .4rem; }
     .project-title span { background: linear-gradient(120deg,#4ade80,#22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
@@ -103,17 +102,18 @@
 
     /* Sections texte */
     .section { margin-bottom: 3rem; }
-    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .5rem; }
     .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
     .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
     .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
     .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); padding-top: .1rem; }
     .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
     .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
     hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
   </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -203,13 +203,13 @@
     </div>
 
     <div class="excel-sheet active" id="sheet-0">
-      <img src="../assets/img/paris-sportifs-dashboard-pro.png"
+      <img loading="lazy" decoding="async" src="../assets/img/paris-sportifs-dashboard-pro.png"
            alt="Dashboard Pro — Paris Sportifs"
            onclick="openLightbox(this.src)">
     </div>
 
     <div class="excel-sheet" id="sheet-1">
-      <img src="../assets/img/paris-sportifs-dashboard.png"
+      <img loading="lazy" decoding="async" src="../assets/img/paris-sportifs-dashboard.png"
            alt="Dashboard interactif — Paris Sportifs"
            onclick="openLightbox(this.src)">
     </div>
@@ -224,7 +224,7 @@
   <!-- Lightbox -->
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
     <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-    <img id="lightbox-img" src="" alt="">
+    <img loading="lazy" decoding="async" id="lightbox-img" src="" alt="">
   </div>
 
   <div class="section">
@@ -279,5 +279,47 @@
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
 
+<script type="application/json" id="i18n-en">{
+"Paris Sportifs — Lucas Fouquet": "Sports Betting — Lucas Fouquet",
+"Projet · Excel · Analyse Sportive": "Project · Excel · Sports Analytics",
+"Paris Sportifs — Top 5 Ligues": "Sports Betting — Top 5 Leagues",
+"Analyse des résultats des 5 grands championnats européens de football pour identifier les stratégies de paris les plus rentables.": "Analysis of results from Europe's top 5 football leagues to identify the most profitable betting strategies.",
+"Analyse de données": "Data analysis",
+"⬇ Télécharger le fichier Excel": "⬇ Download the Excel file",
+"Contexte": "Context",
+"Objectif du projet": "Project goal",
+"L'idée de départ est simple : les bookmakers ont-ils des angles morts ? En analysant les résultats historiques sur plusieurs saisons, on peut identifier des configurations statistiquement sur-représentées que les cotes standard ne reflètent pas toujours fidèlement.": "The starting idea is simple: do bookmakers have blind spots? By analysing historical results over several seasons, we can identify statistically over-represented situations that standard odds don't always reflect accurately.",
+"J'ai collecté et structuré les données de match des 5 grands championnats (Ligue 1, Premier League, La Liga, Serie A, Bundesliga) pour comparer les taux de réussite observés aux probabilités implicites des cotes moyennes de marché — et calculer la valeur espérée de différentes stratégies.": "I collected and structured match data from the top 5 leagues (Ligue 1, Premier League, La Liga, Serie A, Bundesliga) to compare observed success rates with the implied probabilities of average market odds — and compute the expected value of different strategies.",
+"Résultats": "Results",
+"Insights clés": "Key insights",
+"Victoires à domicile": "Home wins",
+"toutes ligues confondues": "across all leagues",
+"Matchs nuls —": "Draws —",
+"Serie A (la plus haute)": "Serie A (the highest)",
+"Favoris (cote < 1.55)": "Favourites (odds < 1.55)",
+"qui valident": "that win",
+"EV moyen — stratégie": "Average EV — targeted",
+"outsider ciblée": "underdog strategy",
+"La Premier League affiche la plus faible fréquence de matchs nuls (21 %) et le taux de victoires extérieures le plus élevé — signe d'une plus grande parité entre équipes. À l'inverse, la Serie A favorise le jeu fermé et les scores serrés, avec un taux de clean sheets supérieur à la moyenne.": "The Premier League has the lowest draw rate (21%) and the highest away-win rate — a sign of greater parity between teams. Serie A, on the other hand, favours tight play and close scores, with an above-average clean sheet rate.",
+"L'analyse des cotes révèle que parier systématiquement sur les outsiders avec une cote comprise entre 3.0 et 4.5 génère une valeur espérée légèrement positive (+3.8 % sur l'échantillon étudié), principalement en Ligue 1 et Bundesliga — deux championnats où les surprises sont statistiquement plus fréquentes que ce que les bookmakers anticipent.": "The odds analysis shows that systematically betting on underdogs with odds between 3.0 and 4.5 yields a slightly positive expected value (+3.8% on the sample studied), mainly in Ligue 1 and the Bundesliga — two leagues where upsets are statistically more frequent than bookmakers expect.",
+"À propos du projet": "About the project",
+"Ce projet analyse les résultats historiques des équipes des 5 grands championnats européens pour identifier des patterns récurrents exploitables dans une stratégie de paris sportifs.": "This project analyses the historical results of teams in Europe's top 5 leagues to identify recurring patterns that can be used in a sports betting strategy.",
+"La manipulation des données a été réalisée entièrement sous Excel — collecte, nettoyage, agrégation par type de pari — tandis que la mise en forme du fichier et la structuration des tableaux de synthèse ont été réalisées avec l'assistance de Claude (vibe coding).": "All data work was done in Excel — collection, cleaning, aggregation by bet type — while the file formatting and summary tables were built with help from Claude (vibe coding).",
+"Dashboard interactif — Paris Sportifs": "Interactive dashboard — Sports Betting",
+"Dashboard Pro — Paris Sportifs": "Pro Dashboard — Sports Betting",
+"Cliquer sur l'image pour agrandir": "Click the image to enlarge",
+"Méthodologie": "Methodology",
+"Approche d'analyse": "Analysis approach",
+"Données": "Data",
+"Résultats des matchs sur les dernières saisons complètes pour chaque championnat · Score à domicile et à l'extérieur": "Match results over the last complete seasons for each league · Home and away scores",
+"Calculs": "Calculations",
+"Taux de victoire domicile/extérieur par tier d'équipe · Fréquence des scores par type (buts, nuls) · Corrélation classement / résultat": "Home/away win rate by team tier · Score frequency by type (goals, draws) · Ranking / result correlation",
+"Comparaison": "Comparison",
+"Taux de réussite historique croisé avec les cotes moyennes de bookmakers pour estimer la rentabilité espérée": "Historical success rates compared with average bookmaker odds to estimate expected profitability",
+"Outils": "Tools",
+"— tableaux croisés dynamiques, formules conditionnelles ·": "— pivot tables, conditional formulas ·",
+"— mise en forme et structuration": "— formatting and structuring"
+}</script>
+<script src="../i18n.js" defer></script>
 </body>
 </html>

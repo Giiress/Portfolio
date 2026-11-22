@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65H9NJS598"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65H9NJS598');</script>
+  <script src="../consent.js" defer></script>
   <title>Synapse — Lucas Fouquet</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,10 +11,10 @@
     #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .page { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
 
-    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
     .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
 
-    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; line-height: 1.1; margin-bottom: .4rem; }
     .project-title span {
       background: linear-gradient(135deg, #a78bfa 0%, #22d3ee 50%, #8b5cf6 100%);
@@ -54,7 +53,7 @@
 
     /* ── Sections ── */
     .section { margin-bottom: 3rem; }
-    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .5rem; }
     .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
     .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
     hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
@@ -120,7 +119,7 @@
     .tech-pill {
       padding: .3rem .8rem; border-radius: 999px; font-size: .75rem; font-weight: 500;
       background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09);
-      color: rgba(255,255,255,.45); transition: all .2s;
+      color: rgba(255,255,255,.5); transition: all .2s;
     }
     .tech-pill:hover { border-color: rgba(139,92,246,.3); color: rgba(255,255,255,.75); background: rgba(139,92,246,.06); }
 
@@ -128,10 +127,11 @@
     .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
     .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: start; }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); padding-top: .1rem; }
     .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
     .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
   </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -349,5 +349,49 @@
 
 <script src="../space.js"></script>
 
+<script type="application/json" id="i18n-en">{
+"Projet · RAG · IA · LangChain": "Project · RAG · AI · LangChain",
+"Assistant IA qui analyse les thèses scientifiques en temps réel. Recherche vectorielle hybride, compréhension contextuelle et réponses sourcées connectées aux archives HAL.": "AI assistant that analyses scientific theses in real time. Hybrid vector search, contextual understanding and sourced answers connected to the HAL archives.",
+"À propos du projet": "About the project",
+"Synapse est un assistant IA conçu pour la recherche scientifique. Il permet d'interroger en langage naturel des thèses académiques issues des archives HAL, avec un pipeline RAG complet qui transforme des documents PDF bruts en connaissances exploitables et sourcées.": "Synapse is an AI assistant built for scientific research. It lets you query academic theses from the HAL archives in natural language, with a full RAG pipeline that turns raw PDF documents into usable, sourced knowledge.",
+"L'architecture combine recherche vectorielle (FAISS) et recherche lexicale (BM25) via un EnsembleRetriever pour maximiser la pertinence des résultats. Chaque réponse est accompagnée des passages sources avec numéros de page pour une vérification immédiate.": "The architecture combines vector search (FAISS) and lexical search (BM25) through an EnsembleRetriever to maximise relevance. Every answer comes with the source passages and page numbers for immediate verification.",
+"Synapse — Démo": "Synapse — Demo",
+"Démo — Synapse en action": "Demo — Synapse in action",
+"Fonctionnalités": "Features",
+"Intelligence au service de la recherche": "Intelligence for research",
+"Recherche Hybride": "Hybrid Search",
+"Combine FAISS (similarité vectorielle) et BM25 (correspondance lexicale) pour des résultats précis et pertinents à chaque requête.": "Combines FAISS (vector similarity) and BM25 (lexical matching) for precise, relevant results on every query.",
+"Analyse Multi-Index": "Multi-Index Analysis",
+"4 index spécialisés (chapitre, section, paragraphe, complet) avec routage intelligent selon le type de question posée.": "4 specialised indexes (chapter, section, paragraph, full) with smart routing based on the type of question.",
+"Dialogue Contextuel": "Contextual Dialogue",
+"Mémoire conversationnelle qui maintient le contexte entre les questions pour des échanges naturels et fluides.": "Conversational memory that keeps context between questions for natural, smooth exchanges.",
+"Sources Vérifiables": "Verifiable Sources",
+"Chaque réponse est accompagnée des passages sources avec numéros de pages pour une vérification immédiate.": "Every answer comes with the source passages and page numbers for immediate verification.",
+"Parsing Hiérarchique": "Hierarchical Parsing",
+"Détection automatique de la structure (chapitres, sections, paragraphes) pour un découpage intelligent des thèses.": "Automatic structure detection (chapters, sections, paragraphs) for smart splitting of theses.",
+"Connexion directe à l'API HAL pour rechercher et analyser n'importe quelle thèse du portail en temps réel.": "Direct connection to the HAL API to search and analyse any thesis on the portal in real time.",
+"Du PDF à la réponse — 6 étapes": "From PDF to answer — 6 steps",
+"Recherche HAL": "HAL Search",
+"Interrogation de l'API HAL Science pour trouver les thèses correspondant à la requête utilisateur.": "Queries the HAL Science API to find theses matching the user's request.",
+"Extraction PDF": "PDF Extraction",
+"Téléchargement et extraction du texte page par page avec PyMuPDF (fitz) pour une fidélité maximale.": "Downloads and extracts text page by page with PyMuPDF (fitz) for maximum fidelity.",
+"Parsing Structurel": "Structural Parsing",
+"Analyse de la table des matières et détection hiérarchique des chapitres, sections et paragraphes.": "Analyses the table of contents and detects the hierarchy of chapters, sections and paragraphs.",
+"Chunking Hiérarchique": "Hierarchical Chunking",
+"Découpage intelligent en chunks de 1500/1000/500 caractères selon le niveau structurel détecté.": "Smart splitting into 1500/1000/500-character chunks depending on the detected structural level.",
+"Vectorisation": "Vectorisation",
+"Transformation des chunks en vecteurs via OpenAI Embeddings et indexation dans 4 index FAISS spécialisés.": "Turns chunks into vectors with OpenAI Embeddings and indexes them in 4 specialised FAISS indexes.",
+"Réponse Augmentée": "Augmented Answer",
+"Recherche hybride FAISS+BM25, expansion de contexte, et génération de réponse avec sources via LLM.": "Hybrid FAISS+BM25 search, context expansion and sourced answer generation via an LLM.",
+"Stack Technique": "Tech Stack",
+"Technologies utilisées": "Technologies used",
+"Détails Techniques": "Technical Details",
+"· mémoire conversationnelle": "· conversational memory",
+"FAISS + BM25 · 4 index hiérarchiques ·": "FAISS + BM25 · 4 hierarchical indexes ·",
+"pour la diversité": "for diversity",
+"· chunks 1500 / 1000 / 500 chars selon niveau structurel": "· 1500 / 1000 / 500-char chunks depending on structural level",
+"· recherche et téléchargement en temps réel": "· real-time search and download"
+}</script>
+<script src="../i18n.js" defer></script>
 </body>
 </html>

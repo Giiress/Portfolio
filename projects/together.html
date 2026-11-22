@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65H9NJS598"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65H9NJS598');</script>
+  <script src="../consent.js" defer></script>
   <title>Together — Lucas Fouquet</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -12,10 +11,10 @@
     #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .page { position: relative; z-index: 1; max-width: 1060px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
 
-    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
     .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
 
-    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; line-height: 1.1; margin-bottom: .4rem; }
     .project-title span { background: linear-gradient(120deg,#00d4ff,#ff6b35); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
@@ -37,7 +36,7 @@
        PHONE FRAME
     ══════════════════════════════════════════════════════ */
     .phone-outer { position: sticky; top: 5rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; }
-    .phone-hint  { font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.18); }
+    .phone-hint  { font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.5); }
 
     .phone {
       width: 310px;
@@ -103,8 +102,8 @@
       transition: background .18s;
     }
     .nav-item:hover { background: rgba(255,255,255,.04); }
-    .nav-item svg   { color: rgba(255,255,255,.25); transition: color .18s; }
-    .nav-item span  { font-size: .55rem; font-weight: 600; letter-spacing: .02em; color: rgba(255,255,255,.25); transition: color .18s; }
+    .nav-item svg   { color: rgba(255,255,255,.5); transition: color .18s; }
+    .nav-item span  { font-size: .55rem; font-weight: 600; letter-spacing: .02em; color: rgba(255,255,255,.5); transition: color .18s; }
     .nav-item.active svg  { color: #00d4ff; }
     .nav-item.active span { color: #00d4ff; }
 
@@ -123,7 +122,7 @@
     .app-title  { font-size: 1rem; font-weight: 800; background: linear-gradient(90deg,#00d4ff,#0096c7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .app-title.warm { background: linear-gradient(90deg,#ff6b35,#e85a25); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
     .hdr-actions { display: flex; gap: .35rem; }
-    .hdr-btn { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.45); cursor: pointer; }
+    .hdr-btn { width: 26px; height: 26px; border-radius: 8px; background: rgba(255,255,255,.06); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.5); cursor: pointer; }
     .hdr-back { display: flex; align-items: center; gap: .25rem; font-size: .72rem; font-weight: 600; color: #00d4ff; cursor: pointer; }
 
     /* Scroll container inside each screen */
@@ -140,12 +139,12 @@
     .g-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
     .g-info { flex: 1; min-width: 0; }
     .g-name { font-size: .78rem; font-weight: 700; color: rgba(255,255,255,.88); }
-    .g-meta { font-size: .64rem; color: rgba(255,255,255,.32); margin-top: 1px; }
+    .g-meta { font-size: .64rem; color: rgba(255,255,255,.5); margin-top: 1px; }
     .g-badge { display: inline-block; margin-top: .28rem; padding: .14rem .5rem; border-radius: 999px; font-size: .6rem; font-weight: 600; border: 1px solid; }
     .b-green { background:rgba(52,211,153,.1);  color:#34d399; border-color:rgba(52,211,153,.2); }
     .b-blue  { background:rgba(0,212,255,.08);  color:#00d4ff; border-color:rgba(0,212,255,.18);}
     .b-amber { background:rgba(251,191,36,.08); color:#fbbf24; border-color:rgba(251,191,36,.18);}
-    .g-arr { color: rgba(255,255,255,.16); font-size: .9rem; }
+    .g-arr { color: rgba(255,255,255,.5); font-size: .9rem; }
 
     /* ── Stories ── */
     .stories-row { display:flex; gap:.5rem; padding:.55rem .8rem .3rem; overflow-x:auto; flex-shrink:0; }
@@ -154,11 +153,11 @@
     .s-ring { width:46px; height:46px; border-radius:50%; padding:2px; background:linear-gradient(135deg,#00d4ff,#ff6b35); }
     .s-ring.seen { background:rgba(255,255,255,.14); }
     .s-av { width:100%; height:100%; border-radius:50%; background:#191828; border:2px solid #0a0912; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; }
-    .s-name { font-size:.52rem; color:rgba(255,255,255,.4); max-width:50px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .s-name { font-size:.52rem; color:rgba(255,255,255,.5); max-width:50px; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
     /* ── Feed tabs ── */
     .feed-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,.06); padding:0 .8rem; flex-shrink:0; }
-    .feed-tab { padding:.45rem .8rem; font-size:.68rem; font-weight:600; color:rgba(255,255,255,.3); cursor:pointer; border-bottom:2px solid transparent; transition:all .18s; }
+    .feed-tab { padding:.45rem .8rem; font-size:.68rem; font-weight:600; color:rgba(255,255,255,.5); cursor:pointer; border-bottom:2px solid transparent; transition:all .18s; }
     .feed-tab.active { color:#00d4ff; border-bottom-color:#00d4ff; }
 
     /* ── Moment card ── */
@@ -166,11 +165,11 @@
     .m-hdr { display:flex; align-items:center; gap:.5rem; padding:.6rem .7rem .35rem; }
     .av { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.65rem; font-weight:700; flex-shrink:0; }
     .m-user { font-size:.72rem; font-weight:700; color:rgba(255,255,255,.85); }
-    .m-time { font-size:.58rem; color:rgba(255,255,255,.28); }
+    .m-time { font-size:.58rem; color:rgba(255,255,255,.5); }
     .m-photo { width:100%; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; font-size:1.8rem; }
     .m-caption { padding:.45rem .7rem; font-size:.7rem; color:rgba(255,255,255,.62); line-height:1.5; }
     .m-actions { display:flex; gap:.4rem; padding:.25rem .7rem .6rem; }
-    .act { display:flex; align-items:center; gap:.28rem; font-size:.62rem; color:rgba(255,255,255,.38); cursor:pointer; padding:.22rem .4rem; border-radius:7px; transition:all .18s; }
+    .act { display:flex; align-items:center; gap:.28rem; font-size:.62rem; color:rgba(255,255,255,.5); cursor:pointer; padding:.22rem .4rem; border-radius:7px; transition:all .18s; }
     .act:hover { color:rgba(255,255,255,.7); background:rgba(255,255,255,.04); }
     .act.liked { color:#f87171; }
 
@@ -178,13 +177,13 @@
     .activity { background:rgba(0,212,255,.04); border:1px solid rgba(0,212,255,.1); border-radius:12px; padding:.65rem .75rem; display:flex; align-items:center; gap:.6rem; }
     .act-ico { width:34px; height:34px; border-radius:10px; background:rgba(0,212,255,.1); display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; }
     .act-pl { font-size:.74rem; font-weight:700; color:rgba(255,255,255,.85); }
-    .act-dt { font-size:.6rem; color:rgba(255,255,255,.32); margin-top:1px; }
+    .act-dt { font-size:.6rem; color:rgba(255,255,255,.5); margin-top:1px; }
     .act-go { font-size:.62rem; font-weight:700; color:#00d4ff; white-space:nowrap; cursor:pointer; margin-left:auto; }
 
     /* ── Group detail ── */
     .outing-card { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07); border-radius:12px; padding:.75rem; }
     .oc-title { font-size:.78rem; font-weight:700; color:rgba(255,255,255,.9); margin-bottom:.45rem; }
-    .oc-line { display:flex; align-items:center; gap:.35rem; font-size:.64rem; color:rgba(255,255,255,.38); margin-bottom:.22rem; }
+    .oc-line { display:flex; align-items:center; gap:.35rem; font-size:.64rem; color:rgba(255,255,255,.5); margin-bottom:.22rem; }
     .chips { display:flex; flex-wrap:wrap; gap:.3rem; margin:.55rem 0; }
     .chip { padding:.15rem .45rem; border-radius:999px; font-size:.58rem; font-weight:600; }
     .cy { background:rgba(52,211,153,.1);  color:#34d399; }
@@ -198,13 +197,13 @@
     .vn { background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.22); color:#f87171; }
 
     /* ── Chat ── */
-    .sec-lbl { font-size:.58rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.18); padding:.3rem 0 .15rem; }
+    .sec-lbl { font-size:.58rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5); padding:.3rem 0 .15rem; }
     .chat-msg { display:flex; gap:.45rem; align-items:flex-end; }
     .chat-msg.me { flex-direction:row-reverse; }
     .bubble { max-width:72%; padding:.42rem .6rem; border-radius:10px; font-size:.68rem; line-height:1.45; }
     .b-them { background:rgba(255,255,255,.07); color:rgba(255,255,255,.8); border-radius:10px 10px 10px 2px; }
     .b-me   { background:linear-gradient(135deg,#007aaa,#005f88); color:white; border-radius:10px 10px 2px 10px; }
-    .chat-who { font-size:.55rem; color:rgba(255,255,255,.28); margin-bottom:2px; }
+    .chat-who { font-size:.55rem; color:rgba(255,255,255,.5); margin-bottom:2px; }
 
     /* Chat input bar — at the bottom of group screen, not sticky, just last element */
     .chat-bar { display:flex; align-items:center; gap:.45rem; padding:.5rem .75rem .65rem; background:rgba(8,7,16,.95); border-top:1px solid rgba(255,255,255,.05); flex-shrink:0; position:sticky; bottom:0; }
@@ -219,13 +218,13 @@
     .profile-top { display:flex; flex-direction:column; align-items:center; padding:1.1rem .8rem .65rem; }
     .p-av { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#00d4ff,#0096c7); display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800; color:white; margin-bottom:.55rem; box-shadow:0 0 22px rgba(0,212,255,.28); }
     .p-name { font-size:.9rem; font-weight:800; color:rgba(255,255,255,.9); }
-    .p-handle { font-size:.65rem; color:rgba(255,255,255,.32); margin-top:1px; }
-    .p-bio { font-size:.65rem; color:rgba(255,255,255,.42); margin-top:.4rem; text-align:center; max-width:200px; line-height:1.45; }
+    .p-handle { font-size:.65rem; color:rgba(255,255,255,.5); margin-top:1px; }
+    .p-bio { font-size:.65rem; color:rgba(255,255,255,.5); margin-top:.4rem; text-align:center; max-width:200px; line-height:1.45; }
     .p-stats { display:flex; justify-content:center; gap:1.4rem; margin-top:.8rem; padding-top:.7rem; border-top:1px solid rgba(255,255,255,.06); width:100%; }
     .ps-item { display:flex; flex-direction:column; align-items:center; gap:1px; }
     .ps-v { font-size:.85rem; font-weight:800; color:rgba(255,255,255,.88); }
-    .ps-l { font-size:.54rem; color:rgba(255,255,255,.28); font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
-    .moments-lbl { padding:0 .8rem; font-size:.58rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.2); margin-bottom:.35rem; flex-shrink:0; }
+    .ps-l { font-size:.54rem; color:rgba(255,255,255,.5); font-weight:600; text-transform:uppercase; letter-spacing:.06em; }
+    .moments-lbl { padding:0 .8rem; font-size:.58rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5); margin-bottom:.35rem; flex-shrink:0; }
     .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; padding:0 .8rem .8rem; }
     .gc { aspect-ratio:1; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; }
 
@@ -239,15 +238,16 @@
     .feat-item  { display:flex; gap:.7rem; align-items:flex-start; }
     .feat-dot   { width:6px; height:6px; border-radius:50%; background:#00d4ff; margin-top:.42rem; flex-shrink:0; }
     .feat-dot.warm { background:#ff6b35; }
-    .feat-text  { font-size:.84rem; color:rgba(255,255,255,.48); line-height:1.55; }
+    .feat-text  { font-size:.84rem; color:rgba(255,255,255,.5); line-height:1.55; }
     .feat-text strong { color:rgba(255,255,255,.78); font-weight:600; }
     .info-block { border:1px solid rgba(255,255,255,.07); border-radius:.5rem; overflow:hidden; }
     .info-row   { padding:.8rem 1.05rem; border-bottom:1px solid rgba(255,255,255,.05); display:grid; grid-template-columns:120px 1fr; gap:.8rem; align-items:start; }
     .info-row:last-child { border-bottom:none; }
-    .info-lbl { font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.22); padding-top:.1rem; }
-    .info-val { font-size:.82rem; color:rgba(255,255,255,.48); line-height:1.6; }
+    .info-lbl { font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,.5); padding-top:.1rem; }
+    .info-val { font-size:.82rem; color:rgba(255,255,255,.5); line-height:1.6; }
     .info-val code { font-family:'Consolas',monospace; font-size:.76rem; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); padding:.1rem .32rem; border-radius:.2rem; color:rgba(255,255,255,.6); }
   </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -300,7 +300,7 @@
               </div>
             </div>
             <div class="scroll-pad">
-              <div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2)">Mes groupes</div>
+              <div style="font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.5)">Mes groupes</div>
 
               <div class="group-card" onclick="goGroup()">
                 <div class="g-icon" style="background:rgba(139,92,246,.12)">🎳</div>
@@ -333,7 +333,7 @@
               </div>
 
               <div class="group-card" style="border-style:dashed;justify-content:center;border-color:rgba(255,255,255,.09)">
-                <div style="font-size:.68rem;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:.35rem">
+                <div style="font-size:.68rem;color:rgba(255,255,255,.5);display:flex;align-items:center;gap:.35rem">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                   Créer un groupe
                 </div>
@@ -364,7 +364,7 @@
                   <div class="av" style="background:linear-gradient(135deg,#2d1a4e,#1a0d2b);color:#a78bfa">M</div>
                   <div><div class="m-user">Marie</div><div class="m-time">il y a 2h</div></div>
                 </div>
-                <div class="m-photo" style="background:#0a0520;padding:0"><img src="../assets/img/photo test Marie Together.jpg" alt="Soirée avec les Copains" style="width:100%;height:100%;object-fit:cover;display:block"></div>
+                <div class="m-photo" style="background:#0a0520;padding:0"><img loading="lazy" decoding="async" src="../assets/img/photo test Marie Together.jpg" alt="Soirée avec les Copains" style="width:100%;height:100%;object-fit:cover;display:block"></div>
                 <div class="m-caption">Soirée inoubliable avec les Copains 🎳✨</div>
                 <div class="m-actions">
                   <div class="act liked">
@@ -411,7 +411,7 @@
               <div style="display:flex;gap:.3rem">
                 <div class="av" style="width:20px;height:20px;font-size:.52rem;background:linear-gradient(135deg,#1e1a3e,#160d2b);color:#a78bfa">M</div>
                 <div class="av" style="width:20px;height:20px;font-size:.52rem;background:linear-gradient(135deg,#0a2e1a,#051a0d);color:#34d399">A</div>
-                <div class="av" style="width:20px;height:20px;font-size:.52rem;background:rgba(255,255,255,.06);color:rgba(255,255,255,.3)">+2</div>
+                <div class="av" style="width:20px;height:20px;font-size:.52rem;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5)">+2</div>
               </div>
             </div>
             <div class="scroll-pad">
@@ -574,5 +574,75 @@ function goGroup() {
 }
 </script>
 
+<script type="application/json" id="i18n-en">{
+"Projet · Mobile · Social": "Project · Mobile · Social",
+"Application mobile-first pour organiser des sorties entre amis. Groupes, votes, RSVP, feed de moments et profils sociaux — propulsé par Next.js et Supabase.": "Mobile-first app to plan outings with friends. Groups, votes, RSVPs, a moments feed and social profiles — powered by Next.js and Supabase.",
+"Démo interactive — Supabase requis en production": "Interactive demo — Supabase required in production",
+"Mes groupes": "My groups",
+"Les Copains": "The Buddies",
+"4 membres · Actif hier": "4 members · Active yesterday",
+"Sortie confirmée ✓": "Outing confirmed ✓",
+"Famille": "Family",
+"6 membres · Actif aujourd'hui": "6 members · Active today",
+"Idée : dîner dimanche": "Idea: Sunday dinner",
+"Collègues Paris": "Paris colleagues",
+"3 membres · Il y a 2h": "3 members · 2h ago",
+"Vote en cours 🗳️": "Vote in progress 🗳️",
+"Créer un groupe": "Create a group",
+"Pour toi": "For you",
+"Découvrir": "Discover",
+"Moi": "Me",
+"il y a 2h": "2h ago",
+"Soirée avec les Copains": "Night out with the Buddies",
+"Soirée inoubliable avec les Copains 🎳✨": "Unforgettable night with the Buddies 🎳✨",
+"10 av du Maine · Vendredi 20h": "10 av du Maine · Friday 8pm",
+"Voir →": "View →",
+"hier": "yesterday",
+"Vue incroyable depuis le sommet ! Prochaine sortie randonnée ? 🥾": "Amazing view from the top! Next hike? 🥾",
+"Retour": "Back",
+"Vendredi 15 nov · 20h00": "Friday 15 Nov · 8:00pm",
+"✓ Je viens": "✓ Going",
+"~ Peut-être": "~ Maybe",
+"✗ Non": "✗ No",
+"Super idée le bowling ! 🎳": "Great idea, bowling! 🎳",
+"Je suis partant, j'essaie de venir 🤞": "I'm in, I'll try to make it 🤞",
+"J'ai réservé pour 4 ✅🎳": "I booked for 4 ✅🎳",
+"Carte": "Map",
+"Carte de Paris": "Map of Paris",
+"Profil": "Profile",
+"Étudiant Data & IA · Paris 🗼 Amateur de sorties improvisées": "Data & AI student · Paris 🗼 Fan of spontaneous outings",
+"Sorties": "Outings",
+"Abonnés": "Followers",
+"Suivis": "Following",
+"Mes moments": "My moments",
+"Groupes": "Groups",
+"← Cliquer pour naviguer": "← Click to navigate",
+"Together résout un problème concret : organiser une sortie entre amis sans jongler avec dix fils de messages. L'app centralise la proposition, le vote, la confirmation, le RSVP et le partage de souvenirs dans une interface mobile cohérente.": "Together solves a real problem: planning an outing with friends without juggling ten message threads. The app brings the proposal, vote, confirmation, RSVP and memory sharing together in one consistent mobile interface.",
+"Conçu mobile-first avec un rendu proche d'une application native iOS/Android — navigation par onglets, stories, feed social et cartes.": "Designed mobile-first to feel close to a native iOS/Android app — tab navigation, stories, social feed and maps.",
+"Fonctionnalités": "Features",
+"— Messages en temps réel via Supabase Realtime, historique persisté en PostgreSQL": "— Real-time messages via Supabase Realtime, history stored in PostgreSQL",
+"Workflow de sortie": "Outing workflow",
+"— Proposition → vote → confirmation → RSVP → partage de moments": "— Proposal → vote → confirmation → RSVP → sharing moments",
+"— Publications photos, likes, commentaires, partage": "— Photo posts, likes, comments, sharing",
+"— Visualisation des sorties planifiées et suggestions géolocalisées": "— View planned outings and location-based suggestions",
+"Profils sociaux": "Social profiles",
+"— Public/privé, abonnements, historique de sorties": "— Public/private, follows, outing history",
+"— Suggestions de lieux selon les préférences du groupe": "— Place suggestions based on the group's preferences",
+"Composants": "Components",
+"· thème sombre natif · accessibilité aria ·": "· native dark theme · aria accessibility ·",
+"Auth & BDD": "Auth & DB",
+"— Auth email/téléphone · PostgreSQL · RLS (Row Level Security) · Storage": "— Email/phone auth · PostgreSQL · RLS (Row Level Security) · Storage",
+"Temps réel": "Real time",
+"— chat instantané · notifications · présence des membres": "— instant chat · notifications · member presence",
+"IA": "AI",
+"(fallback 429) — proposition de lieu, vote multi-options, filtre budget": "(fallback 429) — place proposal, multi-option vote, budget filter",
+"— restaurants, bars, activités Paris · filtre \"Ouverts uniquement\" · prix/pers · partage vers groupe": "— Paris restaurants, bars, activities · \"Open now\" filter · price/person · share to group",
+"Données Paris": "Paris data",
+"— seed via Overpass API ou CSV": "— seeded via Overpass API or CSV",
+"Déploiement": "Deployment",
+"· CI/CD auto sur push main · variables d'env Supabase + IA requises": "· auto CI/CD on push to main · Supabase + AI env variables required",
+"Langage": "Language"
+}</script>
+<script src="../i18n.js" defer></script>
 </body>
 </html>

@@ -605,6 +605,7 @@
             footer { flex-direction: column; gap: 1rem; text-align: center; }
         }
     </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 
@@ -824,7 +825,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 Lancer Synapse
             </a>
-            <p id="unavail-msg" style="display:none;margin-top:1rem;font-size:.85rem;color:rgba(255,255,255,.45);">⚠️ L'application nécessite un serveur Next.js + Supabase — non disponible en démo statique.</p>
+            <p id="unavail-msg" style="display:none;margin-top:1rem;font-size:.85rem;color:rgba(255,255,255,.5);">⚠️ L'application nécessite un serveur Next.js + Supabase — non disponible en démo statique.</p>
             <script>
             function showUnavail(e) {
                 e.preventDefault();

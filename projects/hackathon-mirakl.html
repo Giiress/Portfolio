@@ -10,10 +10,10 @@
     #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
     .page { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
 
-    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
     .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
 
-    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; line-height: 1.1; margin-bottom: .4rem; }
     .project-title span {
       background: linear-gradient(135deg, #2764FF 0%, #00d4ff 60%, #2764FF 100%);
@@ -84,7 +84,7 @@
 
     /* ── Sections ── */
     .section { margin-bottom: 3rem; }
-    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.25); margin-bottom: .5rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .5rem; }
     .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
     .section-text { color: #6a7590; font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
     hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
@@ -169,7 +169,7 @@
     .tech-pill {
       padding: .3rem .8rem; border-radius: 999px; font-size: .75rem; font-weight: 500;
       background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09);
-      color: rgba(255,255,255,.45); transition: all .2s;
+      color: rgba(255,255,255,.5); transition: all .2s;
     }
     .tech-pill:hover { border-color: rgba(39,100,255,.3); color: rgba(255,255,255,.75); background: rgba(39,100,255,.06); }
 
@@ -177,10 +177,12 @@
     .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
     .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
     .info-row:last-child { border-bottom: none; }
-    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.25); padding-top: .1rem; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); padding-top: .1rem; }
     .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
     .info-val code { font-family: 'Consolas', monospace; font-size: .82rem; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); padding: .1rem .4rem; border-radius: .25rem; color: rgba(255,255,255,.6); }
   </style>
+  <script src="../consent.js" defer></script>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -233,10 +235,10 @@
     <p class="section-text">Le dashboard supporte deux langues (FR/EN) et s'actualise automatiquement toutes les 30 secondes. L'interface permet également de générer à la demande un dashboard personnalisé par rôle métier (CEO, Supply, Marketing, Financier, Éco, Vendeur) en parallélisant 4 à 5 requêtes Supabase simultanées.</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.8rem;">
       <div style="border-radius:.5rem;overflow:hidden;border:1px solid rgba(39,100,255,.15);cursor:zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="../assets/img/IMG_3355.jpeg" alt="Hackathon Mirakl" style="display:block;width:100%;height:220px;object-fit:cover;"/>
+        <img loading="lazy" decoding="async" src="../assets/img/IMG_3355.jpeg" alt="Hackathon Mirakl" style="display:block;width:100%;height:220px;object-fit:cover;"/>
       </div>
       <div style="border-radius:.5rem;overflow:hidden;border:1px solid rgba(39,100,255,.15);cursor:zoom-in;" onclick="openLightbox(this.querySelector('img').src)">
-        <img src="../assets/img/IMG_3369.jpeg" alt="Hackathon Mirakl" style="display:block;width:100%;height:220px;object-fit:cover;"/>
+        <img loading="lazy" decoding="async" src="../assets/img/IMG_3369.jpeg" alt="Hackathon Mirakl" style="display:block;width:100%;height:220px;object-fit:cover;"/>
       </div>
     </div>
   </div>
@@ -395,24 +397,6 @@
 
   <hr class="divider"/>
 
-  <!-- Présentation pitch deck -->
-  <div class="section">
-    <div class="section-eyebrow">Pitch Deck</div>
-    <div class="section-title">Présentation Hackathon</div>
-  </div>
-  <div class="deck-frame-wrap" id="deck-wrap">
-    <iframe src="mirakl-presentation.html" title="Supply Brain — Pitch Deck Hackathon Mirakl"></iframe>
-    <div class="frame-label">
-      <span>Nordika Pulse — Executive Pitch · Hackathon Mirakl Connect</span>
-      <button class="frame-expand-btn" onclick="toggleDeck()">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
-        <span id="deck-label">Agrandir</span>
-      </button>
-    </div>
-  </div>
-
-  <hr class="divider"/>
-
   <!-- Tech stack -->
   <div class="section">
     <div class="section-eyebrow">Stack Technique</div>
@@ -476,7 +460,7 @@
 <!-- Lightbox -->
 <div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:2rem;">
   <button onclick="closeLightbox()" style="position:fixed;top:1.5rem;right:2rem;color:rgba(255,255,255,.5);font-size:1.5rem;cursor:pointer;background:none;border:none;">✕</button>
-  <img id="lightbox-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:.3rem;box-shadow:0 0 80px rgba(0,0,0,.8);"/>
+  <img loading="lazy" decoding="async" id="lightbox-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:.3rem;box-shadow:0 0 80px rgba(0,0,0,.8);"/>
 </div>
 
 <script src="../space.js"></script>
@@ -491,15 +475,63 @@ function closeLightbox() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
-function toggleDeck() {
-  const wrap  = document.getElementById('deck-wrap');
-  const label = document.getElementById('deck-label');
-  const expanded = wrap.classList.toggle('expanded');
-  label.textContent = expanded ? 'Réduire' : 'Agrandir';
-  if (expanded) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
 </script>
 
 
+<script type="application/json" id="i18n-en">{
+"Hackathon · Mirakl Connect · IA Supply Chain": "Hackathon · Mirakl Connect · Supply Chain AI",
+"Dashboard d'intelligence supply chain pour l'écosystème Mirakl Connect — analyse en temps réel des ventes, stocks et empreinte CO₂, avec 6 agents IA spécialisés et un chat NL2SQL intégré. Projet réalisé lors du Hackathon Mirakl Avril 2026.": "Supply chain intelligence dashboard for the Mirakl Connect ecosystem — real-time analysis of sales, stock and CO₂ footprint, with 6 specialised AI agents and a built-in NL2SQL chat. Built during the Mirakl Hackathon, April 2026.",
+"🏆 Finaliste · Hackathon Mirakl Connect « Build the Future » · Avril 2026": "🏆 Finalist · Mirakl Connect Hackathon “Build the Future” · April 2026",
+"Hackathon Mirakl — Démo": "Mirakl Hackathon — Demo",
+"Démo complète — Hackathon Mirakl Connect": "Full demo — Mirakl Connect Hackathon",
+"À propos du projet": "About the project",
+"Supply Brain est un tableau de bord IA complet pensé pour les équipes supply chain opérant sur la marketplace Mirakl Connect. Il agrège en temps réel les données de commandes, stocks, géographie et empreinte carbone issues de Supabase, et les rend exploitables via 6 vues métier distinctes.": "Supply Brain is a complete AI dashboard designed for supply chain teams working on the Mirakl Connect marketplace. It aggregates real-time order, stock, geography and carbon footprint data from Supabase and makes it actionable through 6 distinct business views.",
+"Le cœur du produit est un ChatPanel intelligent : il classe automatiquement chaque question utilisateur, détecte les intentions graphiques, génère du SQL à partir du langage naturel (NL2SQL via GPT-4o) et route vers l'agent Dust.tt le plus adapté parmi les 6 agents spécialisés disponibles — tout en streamant les réponses en temps réel via SSE.": "At the heart of the product is a smart ChatPanel: it automatically classifies each user question, detects chart intents, generates SQL from natural language (NL2SQL with GPT-4o) and routes to the most suitable of the 6 specialised Dust.tt agents — while streaming answers in real time via SSE.",
+"Le dashboard supporte deux langues (FR/EN) et s'actualise automatiquement toutes les 30 secondes. L'interface permet également de générer à la demande un dashboard personnalisé par rôle métier (CEO, Supply, Marketing, Financier, Éco, Vendeur) en parallélisant 4 à 5 requêtes Supabase simultanées.": "The dashboard supports two languages (FR/EN) and refreshes automatically every 30 seconds. It can also generate on demand a dashboard tailored to a business role (CEO, Supply, Marketing, Finance, Eco, Seller) by running 4 to 5 Supabase queries in parallel.",
+"Hackathon Mirakl": "Mirakl Hackathon",
+"Vues métier": "Business views",
+"6 modules analytics intégrés": "6 built-in analytics modules",
+"5 KPIs en temps réel (CA, commandes, retours, panier moyen, délai moyen), carte choroplèthe FR/DE/IT, feed d'alertes et recommandations actionnables.": "5 real-time KPIs (revenue, orders, returns, average basket, average lead time), FR/DE/IT choropleth map, alert feed and actionable recommendations.",
+"Table produits enrichie avec classification ABC, score HHI de concentration, détection des oversells et analyse d'allocation par SKU.": "Enriched product table with ABC classification, HHI concentration score, oversell detection and allocation analysis by SKU.",
+"Analyse de rotation stock, DSI, panier moyen et produits dormants. Graphiques composés sur la performance financière par période et marché.": "Analysis of stock turnover, DSI, average basket and dormant products. Combined charts of financial performance by period and market.",
+"Suivi de l'empreinte carbone par commande et par entrepôt. Carte Leaflet des émissions par ville avec bulles proportionnelles.": "Carbon footprint tracking by order and by warehouse. Leaflet map of emissions by city with proportional bubbles.",
+"Prévisions de rupture de stock, velocity produit et alertes prédictives. Projection des ventes sur 3 mois avec intervalles de confiance ±15%.": "Stock-out forecasts, product velocity and predictive alerts. 3-month sales projection with ±15% confidence intervals.",
+"Dashboard généré dynamiquement à partir d'une requête en langage naturel. Jusqu'à 5 graphiques Recharts produits en parallèle selon le rôle métier détecté.": "Dashboard generated dynamically from a natural-language request. Up to 5 Recharts charts produced in parallel depending on the detected business role.",
+"Agents IA": "AI agents",
+"6 agents Dust.tt spécialisés": "6 specialised Dust.tt agents",
+"Chaque message utilisateur est automatiquement classifié puis routé vers l'agent le plus pertinent grâce au système": "Each user message is automatically classified, then routed to the most relevant agent by the",
+". Les réponses sont streamées via SSE en temps réel.": "system. Answers are streamed in real time via SSE.",
+"Analyse des ventes, commandes et tendances marketplace": "Analysis of sales, orders and marketplace trends",
+"Allocation produit, classification ABC, concentration HHI": "Product allocation, ABC classification, HHI concentration",
+"Rotation stock, DSI, panier moyen, produits dormants": "Stock turnover, DSI, average basket, dormant products",
+"CO₂, empreinte carbone, score logistique par entrepôt": "CO₂, carbon footprint, logistics score by warehouse",
+"IA Predictive": "Predictive AI",
+"Prévisions rupture, velocity produit, alertes anticipées": "Stock-out forecasts, product velocity, early alerts",
+"Orchestrateur": "Orchestrator",
+"Délègue à 5 sous-agents n8n en parallèle (2–5 min) pour les requêtes cross-domaine": "Delegates to 5 n8n sub-agents in parallel (2–5 min) for cross-domain requests",
+"Pipeline IA": "AI pipeline",
+"ChatPanel — du message à la réponse": "ChatPanel — from message to answer",
+"Détection de dashboard": "Dashboard detection",
+"Si le message déclenche un rôle métier (supply, CEO, marketing…), 4–5 charts sont générés en parallèle via des templates prédéfinis.": "If the message matches a business role (supply, CEO, marketing…), 4–5 charts are generated in parallel from predefined templates.",
+"Vérification que la question est dans le domaine supply chain. Si hors-sujet, GPT-4o-mini tranche en 3 tokens max.": "Checks that the question is within the supply chain domain. If off-topic, GPT-4o-mini decides in 3 tokens max.",
+"Détection d'intention graphique": "Chart intent detection",
+"Regex sur le message pour détecter un besoin de visualisation. Si trouvé, requête Supabase directe sans passer par Dust.": "Regex on the message to detect a visualisation need. If found, a direct Supabase query without going through Dust.",
+"Questions de données libres → GPT-4o génère un SELECT sécurisé, exécuté via la RPC Supabase": "Free-form data questions → GPT-4o generates a safe SELECT, run through the Supabase RPC",
+"L'agent Dust ciblé répond en streaming token par token. Routage automatique selon mots-clés du message.": "The targeted Dust agent streams its answer token by token. Automatic routing based on message keywords.",
+"UI Action & rendu": "UI Action & rendering",
+"Extraction des actions JSON": "Extracts the JSON",
+"depuis la réponse Dust pour mettre à jour le dashboard en temps réel.": "actions from the Dust response to update the dashboard in real time.",
+"Stack Technique": "Tech Stack",
+"Technologies utilisées": "Technologies used",
+"Infrastructure technique": "Technical infrastructure",
+"Base de données": "Database",
+"et": "and",
+"· 6 agents spécialisés · SSE streaming · routage automatique par mots-clés": "· 6 specialised agents · SSE streaming · automatic keyword routing",
+"RPC → rendu": "RPC → dynamic",
+"dynamique": "rendering",
+"Automatisation": "Automation",
+"cloud · proxy déclaré · sous-agents parallèles pour l'Orchestrateur cross-domaine": "cloud · declared proxy · parallel sub-agents for the cross-domain Orchestrator"
+}</script>
+<script src="../i18n.js" defer></script>
 </body>
 </html>

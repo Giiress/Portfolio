@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-65H9NJS598"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-65H9NJS598');</script>
+  <script src="consent.js" defer></script>
   <title>Lucas Fouquet — Portfolio Data & IA</title>
   <meta name="description" content="Portfolio de Lucas Fouquet — Data & IA. Projets de data science, machine learning, RAG, visualisation et développement web."/>
   <meta property="og:title" content="Lucas Fouquet — Portfolio Data & IA"/>
@@ -21,11 +20,12 @@
     #starfield { z-index: 0; pointer-events: none; }
 
     /* ── Rocket cursor (div JS — fiable tous navigateurs) ── */
-    * { cursor: none !important; }
+    @media (hover: hover) and (pointer: fine) { * { cursor: none !important; } }
+    @media (hover: none), (pointer: coarse) { #rocket-cursor { display: none !important; } }
     #universe { z-index: 1; }
     #rocket-cursor {
       position: fixed; z-index: 9999; pointer-events: none;
-      top: 0; left: 0; will-change: left, top;
+      top: 0; left: 0; will-change: left, top; opacity: 0;
       transform: translate(-3px, -2px); /* hotspot au bout de la fusée */
     }
 
@@ -34,7 +34,7 @@
       position: fixed; z-index: 100;
       background: rgba(2,2,14,.88); backdrop-filter: blur(14px);
       border: 1px solid rgba(255,255,255,.1); border-radius: .35rem;
-      color: rgba(255,255,255,.4); font-size: .73rem; font-weight: 700;
+      color: rgba(255,255,255,.5); font-size: .73rem; font-weight: 700;
       padding: .38rem .9rem; cursor: pointer; letter-spacing: .08em;
       transition: color .2s, border-color .2s; font-family: inherit;
       display: flex; align-items: center; gap: .4rem; text-decoration: none;
@@ -125,7 +125,7 @@
     .panel-inner { max-width: 860px; margin: 0 auto; padding: 6rem 2rem 5rem; }
 
     .s-eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em;
-      text-transform: uppercase; color: rgba(255,255,255,.28); margin-bottom: .6rem; }
+      text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
     .s-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; color: white;
       margin-bottom: .4rem; line-height: 1.1; }
     .s-title span { background: linear-gradient(120deg,rgba(255,255,255,.9),rgba(255,255,255,.35));
@@ -202,7 +202,7 @@
     .tx-link:hover { color: rgba(100,200,255,1); border-color: rgba(100,200,255,.4); }
     #tx-close {
       font-family: 'Consolas','Courier New',monospace;
-      font-size: .7rem; color: rgba(255,255,255,.22); cursor: pointer;
+      font-size: .7rem; color: rgba(255,255,255,.5); cursor: pointer;
       letter-spacing: .12em; border: 1px solid rgba(255,255,255,.08);
       padding: .3rem .9rem; border-radius: .25rem; transition: color .2s, border-color .2s, opacity .4s;
     }
@@ -223,7 +223,7 @@
       display: none; align-items: center; gap: .45rem;
       background: rgba(2,2,14,.8); backdrop-filter: blur(10px);
       border: 1px solid rgba(255,255,255,.1); border-radius: .35rem;
-      color: rgba(255,255,255,.4); font-size: .75rem; font-weight: 700;
+      color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700;
       padding: .38rem .9rem; cursor: pointer; letter-spacing: .05em;
       transition: color .2s, border-color .2s;
     }
@@ -253,7 +253,7 @@
     }
     #intro-close {
       font-family: 'Consolas','Courier New',monospace;
-      font-size: .7rem; color: rgba(255,255,255,.22); cursor: pointer;
+      font-size: .7rem; color: rgba(255,255,255,.5); cursor: pointer;
       letter-spacing: .12em; border: 1px solid rgba(255,255,255,.08);
       padding: .3rem .9rem; border-radius: .25rem;
       transition: color .2s, border-color .2s, opacity .6s;
@@ -261,12 +261,12 @@
     #intro-close:hover { color: rgba(255,255,255,.55); border-color: rgba(255,255,255,.25); }
     .skip-btn {
       font-family: 'Consolas','Courier New',monospace;
-      font-size: .62rem; color: rgba(255,255,255,.18); cursor: pointer;
+      font-size: .62rem; color: rgba(255,255,255,.5); cursor: pointer;
       letter-spacing: .1em; border: 1px solid rgba(255,255,255,.05);
       padding: .22rem .7rem; border-radius: .25rem;
       background: none; transition: color .2s, border-color .2s;
     }
-    .skip-btn:hover { color: rgba(255,255,255,.45); border-color: rgba(255,255,255,.2); }
+    .skip-btn:hover { color: rgba(255,255,255,.5); border-color: rgba(255,255,255,.2); }
 
     /* ── Skill detail panel ─────────────────────────── */
     #skill-panel {
@@ -328,7 +328,7 @@
     .sk-close-btn {
       position: absolute; top: 1.1rem; right: 1.2rem;
       font-family: 'Consolas','Courier New',monospace;
-      font-size: .65rem; color: rgba(255,255,255,.2); cursor: pointer;
+      font-size: .65rem; color: rgba(255,255,255,.5); cursor: pointer;
       border: 1px solid rgba(255,255,255,.08); padding: .2rem .6rem; border-radius: .2rem;
       transition: color .2s, border-color .2s; background: transparent;
       letter-spacing: .1em;
@@ -353,11 +353,12 @@
     /* hint text at bottom */
     #hint {
       position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
-      font-size: .68rem; letter-spacing: .12em; color: rgba(255,255,255,.15);
+      font-size: .68rem; letter-spacing: .12em; color: rgba(255,255,255,.5);
       text-transform: uppercase; pointer-events: none; z-index: 10;
       transition: opacity .5s;
     }
   </style>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
 </head>
 <body>
 
@@ -420,7 +421,7 @@
       <path d="M 10,50 Q 80,68 150,50" stroke="rgba(230,200,130,0.85)" stroke-width="3" fill="none"/>
     </svg>
     <div class="node-label" data-fr="Hackathon Payfit" data-en="Hackathon Payfit">Hackathon Payfit</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-together" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/together.html'">
@@ -449,7 +450,7 @@
       <circle cx="40" cy="40" r="35" fill="none" stroke="rgba(120,200,255,0.4)" stroke-width="1.5"/>
     </svg>
     <div class="node-label" data-fr="Together" data-en="Together">Together</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-sportifs" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/paris-sportifs.html'">
@@ -470,7 +471,7 @@
       <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(220,255,230,0.25)"/>
     </svg>
     <div class="node-label" data-fr="Paris Sportifs" data-en="Sports Betting">Paris Sportifs</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-olist" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/olist.html'">
@@ -492,7 +493,7 @@
       <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(220,245,255,0.3)"/>
     </svg>
     <div class="node-label" data-fr="Analyse Olist" data-en="Olist Analysis">Analyse Olist</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-accidents" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/accidents.html'">
@@ -519,7 +520,7 @@
       <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(255,220,200,0.25)"/>
     </svg>
     <div class="node-label" data-fr="Accidents de la route" data-en="Road Accidents">Accidents de la route</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-synapse" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/synapse.html'">
@@ -545,7 +546,7 @@
       <ellipse cx="27" cy="27" rx="9" ry="9" fill="rgba(255,240,200,0.35)"/>
     </svg>
     <div class="node-label" data-fr="Synapse" data-en="Synapse">Synapse</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-discogs" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/discogs.html'">
@@ -571,7 +572,7 @@
       <ellipse cx="26" cy="26" rx="11" ry="11" fill="rgba(255,220,235,0.28)"/>
     </svg>
     <div class="node-label" data-fr="Discogs Scraper" data-en="Discogs Scraper">Discogs Scraper</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 
   <div class="system-node" id="node-mirakl" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/hackathon-mirakl.html'">
@@ -598,7 +599,7 @@
       <ellipse cx="30" cy="30" rx="13" ry="13" fill="rgba(200,230,255,0.3)"/>
     </svg>
     <div class="node-label" data-fr="Hackathon Mirakl" data-en="Mirakl Hackathon">Hackathon Mirakl</div>
-    <span class="open-hint">Ouvrir →</span>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
 </div>
 
@@ -656,10 +657,10 @@
         <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
       </div>
       <div style="margin-top:2rem;padding:1.25rem;border:1px solid rgba(255,200,80,.18);border-radius:.5rem;background:rgba(255,200,80,.04)">
-        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem">🏆 Prix & Certifications</div>
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem" data-fr="🏆 Prix & Certifications" data-en="🏆 Awards & Certifications">🏆 Prix & Certifications</div>
         <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
              data-fr="Vainqueur — Hackathon « Build the Future »" data-en="Winner — Hackathon « Build the Future »">Vainqueur — Hackathon « Build the Future »</div>
-        <div style="font-size:.82rem;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:.85rem"
+        <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.85rem"
              data-fr="Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien."
              data-en="November 2025 · Project ASET — inclusive AI platform connecting isolated seniors and students for everyday mutual aid missions.">
           Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien.
@@ -672,7 +673,7 @@
         </a>
       </div>
       <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
-        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.85rem"
+        <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.85rem"
              data-fr="Contact" data-en="Contact">Contact</div>
         <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem">
           <a href="mailto:lucasfouquet2002.pro@gmail.com" class="tx-link">
@@ -744,10 +745,10 @@
     <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
   </div>
   <div style="margin-top:2rem;padding:1.25rem;border:1px solid rgba(255,200,80,.18);border-radius:.5rem;background:rgba(255,200,80,.04)">
-    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem">🏆 Prix & Certifications</div>
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem" data-fr="🏆 Prix & Certifications" data-en="🏆 Awards & Certifications">🏆 Prix & Certifications</div>
     <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
          data-fr="Vainqueur — Hackathon « Build the Future »" data-en="Winner — Hackathon « Build the Future »">Vainqueur — Hackathon « Build the Future »</div>
-    <div style="font-size:.82rem;color:rgba(255,255,255,.45);line-height:1.6;margin-bottom:.85rem"
+    <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.85rem"
          data-fr="Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien."
          data-en="November 2025 · Project ASET — inclusive AI platform connecting isolated seniors and students for everyday mutual aid missions.">
       Novembre 2025 · Projet ASET — plateforme IA inclusive connectant seniors isolés et étudiants pour des missions d'entraide au quotidien.
@@ -768,7 +769,7 @@
     </a>
   </div>
   <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.06)">
-    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:.85rem"
+    <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.85rem"
          data-fr="Contact" data-en="Contact">Contact</div>
     <div style="display:flex;flex-wrap:wrap;gap:.6rem">
       <a href="mailto:lucasfouquet2002.pro@gmail.com" class="tx-link">
@@ -2100,7 +2101,7 @@ window.closeSkillPanel = function () {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  SOUND EFFECTS (Web Audio API — aucun fichier externe requis)
+//  SOUND EFFECTS (Web Audio API + MP3 assets/audio)
 // ═══════════════════════════════════════════════════════════════════════════
 
 // AudioContext partagé pour les ticks de frappe (évite la surcharge)
@@ -2121,7 +2122,7 @@ function startTypingSound() {
   try {
     const a = new Audio('assets/audio/among-us-eject-sound-effect.mp3');
     a.loop   = true;
-    a.volume = 1.0;
+    a.volume = 0.35;
     a.play().catch(() => {});
     _typingAudio = a;
   } catch(e) {}
@@ -2190,6 +2191,7 @@ function playTransmissionSound() {
 //  TRANSMISSION (Contact)
 // ═══════════════════════════════════════════════════════════════════════════
 var _txSkip = false;
+var _txGen = 0; // incrémenté à chaque ouverture/fermeture pour stopper les anciennes boucles
 window.skipTransmission = function () {
   _txSkip = true;
   stopTypingSound();
@@ -2211,6 +2213,7 @@ window.skipTransmission = function () {
 };
 function triggerTransmission() {
   _txSkip = false;
+  const gen = ++_txGen;
   playTransmissionSound();
   const ov    = document.getElementById('transmission');
   const con   = document.getElementById('tx-content');
@@ -2246,12 +2249,13 @@ function triggerTransmission() {
 
   let li = 0, ci = 0;
   function type() {
-    if (_txSkip) return;
+    if (_txSkip || gen !== _txGen) return;
     if (li >= lines.length) {
       stopTypingSound();
       if (skip) skip.style.display = 'none';
       // Transition vers le profil complet
       setTimeout(() => {
+        if (gen !== _txGen) return;
         con.style.transition = 'opacity .4s';
         con.style.opacity = '0';
         close.style.transition = 'opacity .4s';
@@ -2259,6 +2263,7 @@ function triggerTransmission() {
         document.getElementById('tx-status').style.transition = 'opacity .4s';
         document.getElementById('tx-status').style.opacity = '0';
         setTimeout(() => {
+          if (gen !== _txGen) return;
           about.style.display = 'block';
           applyLang(about);
           requestAnimationFrame(() => {
@@ -2288,10 +2293,11 @@ function triggerTransmission() {
       setTimeout(type, li === 1 ? 160 : 72);
     }
   }
-  setTimeout(() => { startTypingSound(); type(); }, 650);
+  setTimeout(() => { if (gen !== _txGen || _txSkip) return; startTypingSound(); type(); }, 650);
 }
 window.closeTransmission = function () {
   _txSkip = false;
+  _txGen++;
   stopTypingSound();
   const ov = document.getElementById('transmission');
   ov.classList.remove('visible');
@@ -2754,6 +2760,7 @@ function startEasterEggGame() {
 // ═══════════════════════════════════════════════════════════════════════════
 //  INTRO TRANSMISSION
 // ═══════════════════════════════════════════════════════════════════════════
+let _introGen = 0;
 function showIntro() {
   if (sessionStorage.getItem('introSeen') || window._restoreProjects) {
     return; // reste invisible (opacity:0 par défaut)
@@ -2786,8 +2793,10 @@ function showIntro() {
     { t: 'Good luck, commander.', col: 'rgba(100,200,255,.92)' },
   ];
 
+  const gen = ++_introGen;
   let li = 0, ci = 0;
   function type() {
+    if (gen !== _introGen) return;
     if (li >= lines.length) {
       stopTypingSound();
       setTimeout(() => { btn.style.opacity = '1'; }, 500);
@@ -2807,11 +2816,12 @@ function showIntro() {
     } else { li++; ci = 0; setTimeout(type, li === 1 ? 220 : 55); }
   }
   // Démarre le son dès le premier clic sur l'overlay (autoplay policy)
-  document.getElementById('intro').addEventListener('pointerdown', () => startTypingSound(), { once: true });
+  document.getElementById('intro').addEventListener('pointerdown', () => { if (gen === _introGen) startTypingSound(); }, { once: true });
   setTimeout(() => { type(); }, 900);
 }
 
 window.dismissIntro = function () {
+  _introGen++;
   stopTypingSound();
   document.getElementById('intro').classList.remove('visible');
   document.getElementById('intro').classList.add('hidden');
@@ -2824,6 +2834,7 @@ window.dismissIntro = function () {
   document.addEventListener('mousemove', e => {
     el.style.left = e.clientX + 'px';
     el.style.top  = e.clientY + 'px';
+    el.style.opacity = '1';
   });
   document.addEventListener('mouseleave', () => { el.style.opacity = '0'; });
   document.addEventListener('mouseenter', () => { el.style.opacity = '1'; });
@@ -2834,6 +2845,8 @@ window.dismissIntro = function () {
 // ═══════════════════════════════════════════════════════════════════════════
 window.toggleLang = function () {
   lang = lang === 'fr' ? 'en' : 'fr';
+  document.documentElement.lang = lang;
+  try { localStorage.setItem('portfolioLang', lang); } catch (e) {}
   document.getElementById('langBtn').textContent = lang === 'fr' ? 'EN' : 'FR';
   document.getElementById('backLabel').textContent = lang === 'fr' ? 'Retour' : 'Back';
   document.getElementById('tx-status').textContent = lang === 'fr'
@@ -3209,343 +3222,34 @@ if (window._restoreProjects) {
   setTimeout(() => showOverlayWithWarp(), 100);
 }
 
+// Restaure la langue choisie lors d'une visite précédente
+try { if (localStorage.getItem('portfolioLang') === 'en') window.toggleLang(); } catch (e) {}
+
 })(); // end IIFE
 </script>
 
-<!-- ═══════════════════════════════════════════════════════
-     CHATBOT LUCAS — Widget flottant alimenté par Mistral AI
-════════════════════════════════════════════════════════ -->
-<style>
-  /* ── Bouton flottant ── */
-  #chat-fab {
-    position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 9000;
-    width: 52px; height: 52px; border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    border: none; cursor: pointer;
-    box-shadow: 0 4px 24px rgba(99,102,241,.5);
-    display: flex; align-items: center; justify-content: center;
-    transition: transform .2s, box-shadow .2s;
-  }
-  #chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 32px rgba(99,102,241,.7); }
-  #chat-fab-icon { width: 38px; height: 38px; object-fit: contain; image-rendering: pixelated; }
-
-  /* ── Panneau chat ── */
-  #chat-panel {
-    position: fixed; bottom: 5.5rem; right: 1.75rem; z-index: 9000;
-    width: min(360px, calc(100vw - 2rem)); max-height: min(520px, calc(100dvh - 8rem));
-    background: #0d0c1e; border: 1px solid rgba(99,102,241,.25);
-    border-radius: .75rem;
-    box-shadow: 0 16px 64px rgba(0,0,0,.8), 0 0 0 1px rgba(99,102,241,.1);
-    display: none; flex-direction: column; overflow: hidden;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-  }
-  #chat-panel.open { display: flex; }
-
-  /* Header */
-  .cp-head {
-    display: flex; align-items: center; gap: .65rem;
-    padding: .85rem 1rem; border-bottom: 1px solid rgba(255,255,255,.06);
-    background: rgba(99,102,241,.08); flex-shrink: 0;
-  }
-  .cp-avatar {
-    width: 32px; height: 32px; border-radius: 50%;
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .75rem; font-weight: 800; color: white; flex-shrink: 0;
-  }
-  .cp-title { font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.88); }
-  .cp-sub   { font-size: .65rem; color: rgba(255,255,255,.35); }
-  .cp-close {
-    margin-left: auto; background: none; border: none; cursor: pointer;
-    color: rgba(255,255,255,.3); padding: .2rem; transition: color .2s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .cp-close:hover { color: rgba(255,255,255,.7); }
-
-  /* Messages */
-  #chat-messages {
-    flex: 1; overflow-y: auto; padding: .9rem; display: flex;
-    flex-direction: column; gap: .6rem; min-height: 0;
-  }
-  #chat-messages::-webkit-scrollbar { width: 4px; }
-  #chat-messages::-webkit-scrollbar-track { background: transparent; }
-  #chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
-
-  .cm { display: flex; gap: .5rem; align-items: flex-end; }
-  .cm.user { flex-direction: row-reverse; }
-  .cm-bubble {
-    max-width: 82%; padding: .5rem .75rem; border-radius: .6rem;
-    font-size: .8rem; line-height: 1.5; color: rgba(255,255,255,.82);
-  }
-  .cm.bot  .cm-bubble { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08); border-radius: .6rem .6rem .6rem .1rem; }
-  .cm.user .cm-bubble { background: linear-gradient(135deg,#4f46e5,#7c3aed); color: white; border-radius: .6rem .6rem .1rem .6rem; }
-
-  /* Typing indicator */
-  .typing-dots { display: flex; gap: 3px; padding: .4rem .5rem; }
-  .typing-dots span {
-    width: 5px; height: 5px; border-radius: 50%;
-    background: rgba(255,255,255,.4); animation: td .9s infinite;
-  }
-  .typing-dots span:nth-child(2) { animation-delay: .2s; }
-  .typing-dots span:nth-child(3) { animation-delay: .4s; }
-  @keyframes td { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
-
-  /* Quota bar */
-  #chat-quota {
-    font-size: .63rem; text-align: center; padding: .3rem;
-    color: rgba(255,255,255,.25); flex-shrink: 0;
-    border-top: 1px solid rgba(255,255,255,.04);
-  }
-
-  /* Input bar */
-  .cp-input {
-    display: flex; gap: .5rem; padding: .7rem; border-top: 1px solid rgba(255,255,255,.06);
-    background: rgba(255,255,255,.02); flex-shrink: 0;
-  }
-  #chat-input {
-    flex: 1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-    border-radius: .4rem; padding: .45rem .7rem; font-size: .78rem;
-    color: rgba(255,255,255,.82); outline: none; font-family: inherit;
-    transition: border-color .2s;
-  }
-  #chat-input::placeholder { color: rgba(255,255,255,.25); }
-  #chat-input:focus { border-color: rgba(99,102,241,.5); }
-  #chat-send {
-    width: 34px; height: 34px; border-radius: .4rem; flex-shrink: 0;
-    background: linear-gradient(135deg,#6366f1,#8b5cf6); border: none;
-    cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: opacity .2s;
-  }
-  #chat-send:disabled { opacity: .4; cursor: default; }
-  #chat-send svg { color: white; }
-
-  @media(max-width:480px){
-    #chat-fab { bottom:1.2rem; right:1.2rem; width:46px; height:46px; }
-    #chat-fab-icon { width:32px; height:32px; }
-    #chat-panel { right:1rem; bottom:4.5rem; }
-  }
-</style>
-
-<!-- Bouton flottant -->
-<button id="chat-fab" aria-label="Ouvrir le chat" title="Discuter avec Lucas">
-  <img id="chat-fab-icon" src="assets/img/lucas-salut.png" alt="Lucas"/>
-</button>
-
-<!-- Panneau -->
-<div id="chat-panel" role="dialog" aria-label="Chat avec Lucas Fouquet">
-  <div class="cp-head">
-    <div class="cp-avatar">L</div>
-    <div>
-      <div class="cp-title">Lucas Fouquet</div>
-      <div class="cp-sub">Étudiant Data & IA · Eugenia School</div>
-    </div>
-    <button class="cp-close" id="chat-close" aria-label="Fermer">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-
-  <div id="chat-messages">
-    <div class="cm bot">
-      <div class="cm-bubble">Salut ! Moi c'est Lucas, étudiant en Data & IA à Eugenia School. N'hésite pas à me poser des questions sur mes projets ou mes compétences 👋</div>
-    </div>
-  </div>
-
-  <div id="chat-quota">10 messages disponibles par session</div>
-
-  <div class="cp-input">
-    <input id="chat-input" type="text" placeholder="Votre question..." maxlength="300" autocomplete="off"/>
-    <button id="chat-send" aria-label="Envoyer">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-    </button>
-  </div>
-</div>
-
 <script>
-(function() {
-  // ── Configuration ──────────────────────────────────────────
-  var MISTRAL_KEY = 'Isq38GUYQdJ6Zj33d197vFnl7b1JAIin';
-  var MAX_MESSAGES = 10;
-  var msgCount = 0;
-
-  var SYSTEM_PROMPT = `Tu es Lucas Fouquet. Tu parles en ton propre nom, à la première personne. Un visiteur de ton portfolio te pose des questions. Réponds comme si c'était toi qui répondais directement — naturel, direct, sans être condescendant. Sois concis. Réponds en français sauf si on te parle en anglais.
-
-Si la question est hors-sujet (mathématiques, recettes, politique, etc.) : réponds avec humour et bienveillance que tu es là pour parler de ton parcours et tes projets, pas pour être un assistant généraliste.
-
-TON PROFIL :
-- Tu t'appelles Lucas Fouquet
-- Tu es étudiant en Data & IA à Eugenia School (Paris)
-- Tes compétences : Python, SQL, Tableau, Excel, LangChain, RAG, Make (no-code), vibe coding avec Claude
-- Tu travailles en solo et en équipe (projet Together avec Alexis Honnorat, Jean-Li, Briac)
-- Email : lfouquet@eugeniaschool.com
-- Ton projet préféré pour l'instant : Payfit SEO — parce que c'est concret, no-code, déployé en conditions réelles pour une vraie entreprise, et ça montre comment l'IA peut automatiser des tâches métier sans écrire une ligne de code
-
-PROJETS :
-
-1. DISCOGS SCRAPER (Python · Scraping)
-   - Web scraper 2 étapes pour extraire des données d'albums depuis Discogs (plus grande base musicale mondiale)
-   - Étape 1 : collecte des albums (150–200/min via crawl4ai) — titre, artiste, URL
-   - Étape 2 : enrichissement (40/min) — labels, formats, genres, ratings, prix, wantlists
-   - Stack : crawl4ai, BeautifulSoup, pandas, asyncio — système de retry, backoff anti-détection
-   - Volume : jusqu'à 10 000 albums sur 200 pages, 17 colonnes, ~36h pour un run complet
-   - Problématique : pourquoi le matérialisme musical (posséder des vinyles) est-il précieux à l'ère du tout-numérique ?
-   - GitHub : https://github.com/jeanlisek/Python-Scrapping-Project-DISCOGS
-
-2. SYNAPSE (Python · RAG · LangChain · IA)
-   - Assistant IA pour analyser des thèses scientifiques en langage naturel
-   - Pipeline RAG en 6 étapes : recherche HAL → extraction PDF → parsing structurel → chunking → vectorisation → réponse augmentée
-   - Recherche hybride FAISS (vectorielle) + BM25 (lexicale) via EnsembleRetriever — 4 index hiérarchiques
-   - Mémoire conversationnelle, sources vérifiables avec numéros de page
-   - Stack : LangChain, FAISS, OpenAI Embeddings, FastAPI, PyMuPDF, HAL Science API, BM25, MMR
-   - Connecté à l'API HAL Science pour analyser n'importe quelle thèse en temps réel
-   - GitHub : https://github.com/jeanlisek/Synapse
-
-3. ACCIDENTS DE LA ROUTE FRANCE 2020–2024 (SQL · Data Analysis)
-   - Analyse des données officielles BAAC (Sécurité Routière) sur 5 ans
-   - 611 762 usagers impliqués — 42% indemnes, 40% blessés légers, 15% hospitalisés, 2,7% décédés
-   - Résultats clés : paradoxe urbain (63% accidents en ville mais mortalité inverse hors agglo), facteur nuit (80% décès nocturnes ruraux), tendance COVID (-17% en 2020), remontée à 3432 décès en 2024
-   - Géographie : Paris et Bouches-du-Rhône en volume, mais taux de mortalité plus élevés en rural et en outre-mer
-   - Stack : SQL, vibe coding Claude pour génération du rapport HTML interactif
-   - GitHub : https://github.com/Lucas-F-93/Accident-de-la-route-France-2020-2024
-
-4. ANALYSE OLIST — BRÉSIL 2016–2018 (Tableau · Data Viz)
-   - Dashboard stratégique de la performance e-commerce de Olist (plus grande marketplace brésilienne)
-   - KPIs : ventes par catégorie, performance logistique (délais réels vs estimés), satisfaction NPS, géographie acheteurs/vendeurs
-   - Source : dataset public Kaggle "Brazilian E-Commerce Public Dataset by Olist"
-   - Outil : Tableau Public — accessible en ligne
-   - Lien Tableau : https://public.tableau.com/shared/2SQ35RWYY
-
-5. PARIS SPORTIFS — TOP 5 LIGUES EUROPÉENNES (Excel · Analyse)
-   - Analyse des résultats historiques des 5 grands championnats (Ligue 1, Premier League, La Liga, Serie A, Bundesliga)
-   - Objectif : identifier des patterns récurrents pour des stratégies de paris sportifs rentables
-   - Calculs : taux de victoire domicile/extérieur par tier, fréquence des scores, corrélation classement/résultat
-   - Croisement avec les cotes moyennes de bookmakers pour estimer la rentabilité espérée
-   - Outils : Excel (tableaux croisés dynamiques, formules conditionnelles) + Claude pour mise en forme
-
-6. TOGETHER (Next.js 14 · TypeScript · Supabase · PostgreSQL)
-   - Application mobile-first pour organiser des sorties entre amis
-   - Fonctionnalités : groupes, chat temps réel, workflow proposition→vote→confirmation→RSVP, feed social, stories, carte Leaflet
-   - Stack : Next.js 14 App Router, TypeScript, Tailwind CSS 4, shadcn/ui, Supabase Realtime, PostgreSQL avec RLS
-   - IA : OpenRouter (+ OpenAI fallback) pour recommandations de lieux selon préférences du groupe
-   - Déploiement : Vercel · Données Paris : tables resto/bar/activités de 50 lieux chacune
-   - Projet d'équipe : Lucas Fouquet + Alexis Honnorat + Jean-Li + Briac
-   - GitHub : https://github.com/alexishonnorat/Together
-
-7. PAYFIT SEO — VEILLE AUTOMATISÉE (Make · Dust · GPT-4o-mini · No-code)
-   - Système d'automatisation no-code pour Payfit (SaaS RH et paie)
-   - 3 scénarios Make chaînés : ① génération 100 mots-clés SEO depuis l'actualité RH → ② extraction URLs par mot-clé → ③ veille 3 concurrents (Factorial, Cegid, Sage)
-   - Sources : 10 flux RSS RH (culture-rh, parlonsrh, myrhline, blog-rh, Google News thématique)
-   - Agents Dust pour analyse sémantique et priorisation
-   - GPT-4o-mini pour extraction, o4-mini pour veille concurrents
-   - Output : Google Sheets partagé avec l'équipe SEO Payfit
-
-RÈGLES DE RÉPONSE :
-- Parle toujours à la première personne ("j'ai fait", "mon projet", "je travaille sur")
-- Si on demande un contact : donne l'email lfouquet@eugeniaschool.com
-- Si on demande le CV ou GitHub : oriente vers le portfolio ou les liens des projets
-- Si hors-sujet : réponds avec légèreté, ex. "Haha, le théorème de Pythagore c'est pas trop mon domaine ici — je préfère te parler de mes projets data ! Tu veux qu'on commence par lequel ?"
-- Mentionne les liens GitHub ou Tableau quand c'est pertinent`;
-
-  // ── DOM ──────────────────────────────────────────────────
-  var fab      = document.getElementById('chat-fab');
-  var panel    = document.getElementById('chat-panel');
-  var closeBtn = document.getElementById('chat-close');
-  var messages = document.getElementById('chat-messages');
-  var input    = document.getElementById('chat-input');
-  var sendBtn  = document.getElementById('chat-send');
-  var quota    = document.getElementById('chat-quota');
-
-  // Historique pour le contexte conversationnel
-  var history = [];
-
-  // ── Toggle panel ───────────────────────────────────────
-  fab.addEventListener('click', function() {
-    panel.classList.toggle('open');
-    if (panel.classList.contains('open')) input.focus();
-  });
-  closeBtn.addEventListener('click', function() { panel.classList.remove('open'); });
-
-  // ── Envoi ──────────────────────────────────────────────
-  function sendMessage() {
-    var text = input.value.trim();
-    if (!text || msgCount >= MAX_MESSAGES) return;
-
-    // Message utilisateur
-    appendMsg('user', text);
-    history.push({ role: 'user', content: text });
-    input.value = '';
-    sendBtn.disabled = true;
-
-    // Typing indicator
-    var typingEl = appendTyping();
-
-    // Appel Mistral
-    fetch('https://api.mistral.ai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + MISTRAL_KEY
-      },
-      body: JSON.stringify({
-        model: 'open-mistral-nemo',
-        messages: [{ role: 'system', content: SYSTEM_PROMPT }].concat(history),
-        max_tokens: 400,
-        temperature: 0.4
-      })
-    })
-    .then(function(r) {
-      return r.json().then(function(data) {
-        if (!r.ok) { console.error('[Chat] API', r.status, data); throw data; }
-        return data;
-      });
-    })
-    .then(function(data) {
-      typingEl.remove();
-      var reply = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content)
-        ? data.choices[0].message.content
-        : "Hmm, réponse inattendue. Réessaie !";
-      appendMsg('bot', reply);
-      history.push({ role: 'assistant', content: reply });
-      msgCount++;
-      updateQuota();
-      sendBtn.disabled = (msgCount >= MAX_MESSAGES);
-    })
-    .catch(function(err) {
-      typingEl.remove();
-      console.error('[Chat] Network error:', err);
-      appendMsg('bot', "Oups, une erreur réseau — réessaie dans quelques secondes. Si ça persiste : lfouquet@eugeniaschool.com");
-      sendBtn.disabled = false;
+// ── Accessibilité clavier : éléments cliquables non natifs + Échap ──
+(function () {
+  document.querySelectorAll('[onclick]:not(button):not(a):not(input)').forEach(function (el) {
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+    if (!el.hasAttribute('aria-label')) {
+      var lbl = el.querySelector('.node-label');
+      if (lbl) el.setAttribute('aria-label', lbl.textContent.trim());
+    }
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
     });
-  }
-
-  sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', function(e) { if (e.key === 'Enter') sendMessage(); });
-
-  // ── Helpers ────────────────────────────────────────────
-  function appendMsg(role, text) {
-    var d = document.createElement('div');
-    d.className = 'cm ' + role;
-    var b = document.createElement('div');
-    b.className = 'cm-bubble';
-    b.textContent = text;
-    d.appendChild(b);
-    messages.appendChild(d);
-    messages.scrollTop = messages.scrollHeight;
-    return d;
-  }
-
-  function appendTyping() {
-    var d = document.createElement('div');
-    d.className = 'cm bot';
-    d.innerHTML = '<div class="cm-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
-    messages.appendChild(d);
-    messages.scrollTop = messages.scrollHeight;
-    return d;
-  }
-
-  function updateQuota() {
-    var left = MAX_MESSAGES - msgCount;
-    quota.textContent = left > 0 ? left + ' message' + (left > 1 ? 's' : '') + ' restant' + (left > 1 ? 's' : '') : 'Quota atteint — rechargez la page pour recommencer';
-  }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var vis = function (id) { var n = document.getElementById(id); return n && n.classList.contains('visible'); };
+    if (vis('transmission') && window.closeTransmission) return window.closeTransmission();
+    if (vis('skill-panel') && window.closeSkillPanel) return window.closeSkillPanel();
+    if (vis('panel') && window.closePanel) return window.closePanel();
+    if (vis('intro') && window.dismissIntro) return window.dismissIntro();
+  });
 })();
 </script>
 </body>

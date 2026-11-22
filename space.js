@@ -13,6 +13,9 @@
 
   // On project pages (no universe engine) we allow drag directly on the canvas
   const IS_PROJECT = !document.getElementById('universe');
+  // Respecte le réglage système « réduire les animations » : ciel figé, pas d'étoiles filantes
+  const RM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+  const reduced = () => !!(RM && RM.matches);
   let cam  = { x: 0, y: 0 };
   let vel  = { x: 0, y: 0 };
   let drag = { active: false, sx: 0, sy: 0, cx: 0, cy: 0 };
@@ -300,10 +303,13 @@
     ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
     drawNebulae(c);
-    if (IS_PROJECT) drawSun(t, c);
-    drawLayers(t, c);
-    updateShooters();
-    drawShooters();
+    const tt = reduced() ? 0 : t;
+    if (IS_PROJECT) drawSun(tt, c);
+    drawLayers(tt, c);
+    if (!reduced()) {
+      updateShooters();
+      drawShooters();
+    }
 
     requestAnimationFrame(loop);
   }
@@ -312,4 +318,19 @@
   resize();
   nextShooter = Date.now() + 800;
   requestAnimationFrame(loop);
+})();
+
+// ── Accessibilité clavier sur les pages projet : éléments cliquables non natifs ──
+(function () {
+  if (document.getElementById('universe')) return; // index.html gère déjà ce cas
+  function init() {
+    document.querySelectorAll('[onclick]:not(button):not(a):not(input)').forEach(function (el) {
+      if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+      if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+      el.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+      });
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

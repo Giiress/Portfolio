@@ -17,9 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Inject Mistral API key
-        run: sed -i "s/REMPLACER_PAR_CLE_MISTRAL/${{ secrets.MISTRAL_KEY }}/g" index.html
-
       - uses: actions/configure-pages@v4
 
       - uses: actions/upload-pages-artifact@v3
