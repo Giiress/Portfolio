@@ -24,7 +24,7 @@
     @media (hover: none), (pointer: coarse) { #rocket-cursor { display: none !important; } }
     #universe { z-index: 1; }
     #rocket-cursor {
-      position: fixed; z-index: 9999; pointer-events: none;
+      position: fixed; z-index: 2147483647; pointer-events: none; /* au-dessus de tout, y compris le bandeau cookies (10000) */
       top: 0; left: 0; will-change: left, top; opacity: 0;
       transform: translate(-3px, -2px); /* hotspot au bout de la fusée */
     }
@@ -105,14 +105,15 @@
     }
     .system-node:hover .node-label { color: #ffe696; }
 
-    #node-payfit    { top: 17%; left: 50%; }   /* top */
-    #node-together  { top: 27%; left: 77%; }   /* top-right */
-    #node-mirakl    { top: 50%; left: 88%; }   /* right */
-    #node-discogs   { top: 73%; left: 77%; }   /* bottom-right */
-    #node-synapse   { top: 83%; left: 50%; }   /* bottom */
-    #node-accidents { top: 73%; left: 23%; }   /* bottom-left */
-    #node-olist     { top: 50%; left: 12%; }   /* left */
-    #node-sportifs  { top: 27%; left: 23%; }   /* top-left */
+    #node-payfit    { top: 17%; left: 50%; }   /* -90° */
+    #node-together  { top: 25%; left: 74%; }   /* -50° */
+    #node-mirakl    { top: 44%; left: 87%; }   /* -10° */
+    #node-twiin     { top: 66%; left: 83%; }   /* 30° */
+    #node-discogs   { top: 81%; left: 63%; }   /* 70° */
+    #node-synapse   { top: 81%; left: 37%; }   /* 110° */
+    #node-accidents { top: 67%; left: 17%; }   /* 150° */
+    #node-olist     { top: 44%; left: 13%; }   /* 190° */
+    #node-sportifs  { top: 25%; left: 26%; }   /* 230° */
 
     /* ── Panel (About) ──────────────────────────────── */
     #panel {
@@ -601,6 +602,31 @@
     <div class="node-label" data-fr="Hackathon Mirakl" data-en="Mirakl Hackathon">Hackathon Mirakl</div>
     <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
   </div>
+  <div class="system-node" id="node-twiin" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='projects/hackathon-twiin.html'">
+    <svg class="planet-svg" width="118" height="98" viewBox="0 0 96 80">
+      <defs>
+        <radialGradient id="twiinIris" cx="35%" cy="32%" r="70%">
+          <stop offset="0%" stop-color="#ffffff"/><stop offset="35%" stop-color="#c9d2ff"/>
+          <stop offset="75%" stop-color="#5a68c8"/><stop offset="100%" stop-color="#0d1240"/>
+        </radialGradient>
+        <radialGradient id="twiinIlo" cx="35%" cy="32%" r="70%">
+          <stop offset="0%" stop-color="#ffffff"/><stop offset="35%" stop-color="#ecd6ff"/>
+          <stop offset="75%" stop-color="#9a6fd8"/><stop offset="100%" stop-color="#22103f"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="48" cy="42" rx="42" ry="11" fill="none" stroke="rgba(190,180,255,0.35)" stroke-width="1.2" stroke-dasharray="3 3"/>
+      <circle cx="31" cy="40" r="19" fill="url(#twiinIris)"/>
+      <circle cx="65" cy="40" r="19" fill="url(#twiinIlo)"/>
+      <path d="M 14,42 Q 31,50 48,42" fill="none" stroke="rgba(13,18,64,0.55)" stroke-width="5" stroke-linecap="round"/>
+      <path d="M 48,42 Q 65,50 82,42" fill="none" stroke="rgba(34,16,63,0.55)" stroke-width="5" stroke-linecap="round"/>
+      <ellipse cx="27" cy="40" rx="2" ry="3" fill="#0b0b22"/><ellipse cx="35" cy="40" rx="2" ry="3" fill="#0b0b22"/>
+      <ellipse cx="61" cy="40" rx="2" ry="3" fill="#0b0b22"/><ellipse cx="69" cy="40" rx="2" ry="3" fill="#0b0b22"/>
+      <ellipse cx="25" cy="31" rx="6" ry="4" fill="rgba(255,255,255,0.45)"/>
+      <ellipse cx="59" cy="31" rx="6" ry="4" fill="rgba(255,255,255,0.45)"/>
+    </svg>
+    <div class="node-label" data-fr="Hackathon Twiin" data-en="Twiin Hackathon">Hackathon Twiin</div>
+    <span class="open-hint" data-fr="Ouvrir →" data-en="Open →">Ouvrir →</span>
+  </div>
 </div>
 
 <div id="hint" data-fr="Cliquer sur la galaxie pour explorer"
@@ -644,20 +670,35 @@
              data-en="Data & AI student, passionate about turning data into actionable insights and building intelligent solutions.">
             Étudiant en Data & IA, je suis passionné par la transformation des données en insights actionnables et la construction de solutions intelligentes.
           </p>
-          <p data-fr="J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs."
-             data-en="I have worked on projects ranging from web scraping to large-scale data analysis, RAG chatbots and interactive dashboards.">
-            J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs.
+          <p data-fr="J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG, des dashboards interactifs et des agents IA qui automatisent des tâches."
+             data-en="I have worked on projects ranging from web scraping to large-scale data analysis, RAG chatbots, interactive dashboards and AI agents that automate tasks.">
+            J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG, des dashboards interactifs et des agents IA qui automatisent des tâches.
           </p>
         </div>
       </div>
       <div class="stats-row">
-        <div class="stat"><span class="stat-v">8</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
-        <div class="stat"><span class="stat-v">10</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
-        <div class="stat"><span class="stat-v">1</span><span class="stat-l" data-fr="Hackathon gagné" data-en="Hackathon won">Hackathon gagné</span></div>
+        <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
+        <div class="stat"><span class="stat-v">7</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
+        <div class="stat"><span class="stat-v">2</span><span class="stat-l" data-fr="Hackathons gagnés" data-en="Hackathons won">Hackathons gagnés</span></div>
         <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
       </div>
       <div style="margin-top:2rem;padding:1.25rem;border:1px solid rgba(255,200,80,.18);border-radius:.5rem;background:rgba(255,200,80,.04)">
         <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem" data-fr="🏆 Prix & Certifications" data-en="🏆 Awards & Certifications">🏆 Prix & Certifications</div>
+        <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
+             data-fr="Vainqueur — Hackathon H Company « Build The Future »" data-en="Winner — H Company Hackathon « Build The Future »">Vainqueur — Hackathon H Company « Build The Future »</div>
+        <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.85rem"
+             data-fr="Novembre 2026 · Projet Twiin — agent IA qui apprend une tâche montrée une fois et l'automatise, avec ou sans API. CTO d'une équipe de six."
+             data-en="November 2026 · Project Twiin — AI agent that learns a task shown once and automates it, with or without an API. CTO of a six-person team.">
+          Novembre 2026 · Projet Twiin — agent IA qui apprend une tâche montrée une fois et l'automatise, avec ou sans API. CTO d'une équipe de six.
+        </div>
+        <a href="projects/hackathon-twiin.html" onclick="sessionStorage.setItem('portfolioReturnState','projects')"
+           style="display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:rgba(255,200,80,.7);text-decoration:none;border:1px solid rgba(255,200,80,.22);padding:.3rem .85rem;border-radius:.3rem;transition:color .2s,border-color .2s"
+           onmouseover="this.style.color='rgba(255,200,80,1)';this.style.borderColor='rgba(255,200,80,.5)'"
+           onmouseout="this.style.color='rgba(255,200,80,.7)';this.style.borderColor='rgba(255,200,80,.22)'">
+          ↗ <span data-fr="Voir le projet" data-en="View project">Voir le projet</span>
+        </a>
+        <!-- Certification Twiin : quand elle sera reçue, ajouter ici un lien « Voir le certificat » vers assets/downloads/ -->
+        <div style="height:1px;background:rgba(255,200,80,.12);margin:1.1rem 0"></div>
         <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
              data-fr="Vainqueur — Hackathon « Build the Future »" data-en="Winner — Hackathon « Build the Future »">Vainqueur — Hackathon « Build the Future »</div>
         <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.85rem"
@@ -732,20 +773,35 @@
          data-en="Data & AI student, passionate about turning data into actionable insights and building intelligent solutions.">
         Étudiant en Data & IA, je suis passionné par la transformation des données en insights actionnables et la construction de solutions intelligentes.
       </p>
-      <p data-fr="J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs."
-         data-en="I have worked on projects ranging from web scraping to large-scale data analysis, RAG chatbots and interactive dashboards.">
-        J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG et des dashboards interactifs.
+      <p data-fr="J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG, des dashboards interactifs et des agents IA qui automatisent des tâches."
+         data-en="I have worked on projects ranging from web scraping to large-scale data analysis, RAG chatbots, interactive dashboards and AI agents that automate tasks.">
+        J'ai travaillé sur des projets allant du web scraping à l'analyse de données massives, en passant par des chatbots RAG, des dashboards interactifs et des agents IA qui automatisent des tâches.
       </p>
     </div>
   </div>
   <div class="stats-row">
-    <div class="stat"><span class="stat-v">8</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
-    <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
-    <div class="stat"><span class="stat-v">1</span><span class="stat-l" data-fr="Hackathon gagné" data-en="Hackathon won">Hackathon gagné</span></div>
+    <div class="stat"><span class="stat-v">9</span><span class="stat-l" data-fr="Projets" data-en="Projects">Projets</span></div>
+    <div class="stat"><span class="stat-v">7</span><span class="stat-l" data-fr="Compétences" data-en="Skills">Compétences</span></div>
+    <div class="stat"><span class="stat-v">2</span><span class="stat-l" data-fr="Hackathons gagnés" data-en="Hackathons won">Hackathons gagnés</span></div>
     <div class="stat"><span class="stat-v">∞</span><span class="stat-l" data-fr="Café" data-en="Coffee">Café</span></div>
   </div>
   <div style="margin-top:2rem;padding:1.25rem;border:1px solid rgba(255,200,80,.18);border-radius:.5rem;background:rgba(255,200,80,.04)">
     <div style="font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,200,80,.5);margin-bottom:.5rem" data-fr="🏆 Prix & Certifications" data-en="🏆 Awards & Certifications">🏆 Prix & Certifications</div>
+    <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
+         data-fr="Vainqueur — Hackathon H Company « Build The Future »" data-en="Winner — H Company Hackathon « Build The Future »">Vainqueur — Hackathon H Company « Build The Future »</div>
+    <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.85rem"
+         data-fr="Novembre 2026 · Projet Twiin — agent IA qui apprend une tâche montrée une fois et l'automatise, avec ou sans API. CTO d'une équipe de six."
+         data-en="November 2026 · Project Twiin — AI agent that learns a task shown once and automates it, with or without an API. CTO of a six-person team.">
+      Novembre 2026 · Projet Twiin — agent IA qui apprend une tâche montrée une fois et l'automatise, avec ou sans API. CTO d'une équipe de six.
+    </div>
+    <a href="projects/hackathon-twiin.html" onclick="sessionStorage.setItem('portfolioReturnState','projects')"
+       style="display:inline-flex;align-items:center;gap:.4rem;font-size:.75rem;font-weight:700;color:rgba(255,200,80,.7);text-decoration:none;border:1px solid rgba(255,200,80,.22);padding:.3rem .85rem;border-radius:.3rem;transition:color .2s,border-color .2s"
+       onmouseover="this.style.color='rgba(255,200,80,1)';this.style.borderColor='rgba(255,200,80,.5)'"
+       onmouseout="this.style.color='rgba(255,200,80,.7)';this.style.borderColor='rgba(255,200,80,.22)'">
+      ↗ <span data-fr="Voir le projet" data-en="View project">Voir le projet</span>
+    </a>
+    <!-- Certification Twiin : quand elle sera reçue, ajouter ici un lien « Voir le certificat » vers assets/downloads/ -->
+    <div style="height:1px;background:rgba(255,200,80,.12);margin:1.1rem 0"></div>
     <div style="font-size:.88rem;font-weight:700;color:rgba(255,255,255,.88);margin-bottom:.3rem"
          data-fr="Vainqueur — Hackathon « Build the Future »" data-en="Winner — Hackathon « Build the Future »">Vainqueur — Hackathon « Build the Future »</div>
     <div style="font-size:.82rem;color:rgba(255,255,255,.5);line-height:1.6;margin-bottom:.85rem"
@@ -866,8 +922,8 @@ const POS = {
 
 const LABELS = {
   main:    { fr: 'Lucas Fouquet',       en: 'Lucas Fouquet',    subfr: 'Étudiant Data & IA', suben: 'Data & AI Student' },
-  nebula:  { fr: 'Projets',             en: 'Projects',         subfr: '8 réalisations',     suben: '8 projects'       },
-  cluster: { fr: 'Compétences',         en: 'Skills',           subfr: '10 savoir-faire',    suben: '10 skills'        },
+  nebula:  { fr: 'Projets',             en: 'Projects',         subfr: '',                   suben: ''                 },
+  cluster: { fr: 'Compétences',         en: 'Skills',           subfr: '',                   suben: ''                 },
   pulsar:  { fr: 'À Propos · Contact',  en: 'About · Contact',  subfr: 'Signal reçu',        suben: 'Signal recv.'     },
   egg:     { fr: '???',                 en: '???',              subfr: 'Signal inconnu',     suben: 'Unknown signal'   },
 };
@@ -1089,20 +1145,26 @@ const PLANETS = [
       drawSphere(x, y, r, '#00c6ff', '#0072ff', '#003d99', '#001233');
     },
   },
+  {
+    id: 'twiin', fr: 'Hackathon Twiin', en: 'Twiin Hackathon',
+    subfr: 'Agents IA · n8n · Holo', suben: 'AI agents · n8n · Holo',
+    href: 'projects/hackathon-twiin.html',
+    oR: 216, sp: .000012, ph: 3.1, rad: 11, atmo: 'rgba(160,150,255,.42)',
+    draw(x, y, r) {
+      drawSphere(x, y, r, '#e6e0ff', '#8b9cff', '#4a3f9e', '#120c33');
+    },
+  },
 ];
 
-// ── Couleur unique par skill (ordre = ordre du tableau SKILLS) ──────────────
+// ── Couleur unique par famille de compétences (ordre = ordre du tableau SKILLS) ──
 const SKILL_COL = [
-  '#4db8ff', // Python       — bleu
-  '#fbbf24', // SQL          — ambre
-  '#10b981', // Supabase     — vert émeraude
-  '#a78bfa', // pandas       — violet
-  '#818cf8', // Tableau      — indigo
-  '#f472b6', // Vibe Coding  — rose
-  '#fb923c', // Dataiku      — orange
-  '#4ade80', // Excel        — lime
-  '#f97316', // Make         — orange foncé
-  '#22d3ee', // Dust.tt      — cyan
+  '#4db8ff', // Python & Data
+  '#10b981', // Bases de données
+  '#818cf8', // Data visualisation
+  '#22d3ee', // IA & Agents
+  '#f97316', // Automatisation
+  '#f472b6', // Vibe Coding
+  '#c084fc', // Développement web
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1110,143 +1172,131 @@ const SKILL_COL = [
 // ═══════════════════════════════════════════════════════════════════════════
 const SKILLS = [
   {
-    fr: 'Python', en: 'Python', subfr: 'Data · Script · ML', suben: 'Data · Script · ML',
-    a: 0.00, d: 72,
-    descfr: 'Langage central de ma pratique data. Je l\'utilise pour scraper, analyser, modéliser et construire des pipelines end-to-end.',
-    descen: 'Core language of my data practice. I use it to scrape, analyse, model and build end-to-end pipelines.',
+    fr: 'Python & Data', en: 'Python & Data', subfr: 'Python · pandas · Scraping', suben: 'Python · pandas · Scraping',
+    a: 5.16, d: 72,
+    descfr: 'Langage central de ma pratique data : je l\'utilise pour scraper, nettoyer, analyser et construire des pipelines de bout en bout.',
+    descen: 'Core language of my data practice: I use it to scrape, clean, analyse and build end-to-end pipelines.',
     projects: [
       { name: 'Discogs Scraper', href: 'projects/discogs.html',
-        fr: 'Extraction de milliers de vinyles via requests + BeautifulSoup, nettoyage avec pandas.',
-        en: 'Scraped thousands of vinyl records using requests + BeautifulSoup, cleaned with pandas.' },
+        fr: 'Extraction de milliers de vinyles avec requests et BeautifulSoup, nettoyage et export avec pandas.',
+        en: 'Scraped thousands of vinyl records with requests and BeautifulSoup, cleaned and exported with pandas.' },
       { name: 'Accidents de la route en France', href: 'projects/accidents.html',
-        fr: 'Analyse exploratoire d\'un dataset national, visualisations dynamiques avec Plotly.',
-        en: 'Exploratory analysis of a national dataset, dynamic visualisations with Plotly.' },
+        fr: 'Fusion de plusieurs CSV annuels, recodage des variables et visualisations dynamiques avec Plotly.',
+        en: 'Merged several annual CSVs, recoded variables and built dynamic Plotly visualisations.' },
       { name: 'Synapse', href: 'projects/synapse.html',
-        fr: 'Pipeline RAG complet : ingestion PDF, embeddings, orchestration LLM, interface Q&A.',
-        en: 'Full RAG pipeline: PDF ingestion, embeddings, LLM orchestration, Q&A interface.' },
+        fr: 'Pipeline RAG complet en Python : ingestion PDF, embeddings, recherche hybride et API FastAPI.',
+        en: 'Full Python RAG pipeline: PDF ingestion, embeddings, hybrid search and a FastAPI API.' },
     ],
   },
   {
-    fr: 'SQL', en: 'SQL', subfr: 'Bases de données', suben: 'Databases',
-    a: 0.63, d: 66,
-    descfr: 'Indispensable pour interroger et manipuler des données structurées, des jointures analytiques aux RPC PostgreSQL avancées.',
-    descen: 'Essential for querying structured data, from analytical joins to advanced PostgreSQL RPCs.',
+    fr: 'Bases de données', en: 'Databases', subfr: 'SQL · PostgreSQL · Supabase', suben: 'SQL · PostgreSQL · Supabase',
+    a: 6.06, d: 72,
+    descfr: 'Interroger et structurer des données, des jointures analytiques aux bases PostgreSQL hébergées sur Supabase avec authentification et règles d\'accès.',
+    descen: 'Querying and structuring data, from analytical joins to PostgreSQL databases hosted on Supabase with authentication and access rules.',
     projects: [
       { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Jointures multi-tables sur 100 000+ commandes pour reconstruire les parcours clients et calculer des KPIs.',
-        en: 'Multi-table joins on 100,000+ orders to reconstruct customer journeys and compute KPIs.' },
-      { name: 'Together', href: 'projects/together.html',
-        fr: 'Requêtes et mutations Supabase (PostgreSQL) pour la gestion des utilisateurs et événements.',
-        en: 'Supabase (PostgreSQL) queries and mutations for user and event management.' },
-      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
-        fr: '8 tables Supabase, RPC safe_query() pour NL2SQL sécurisé et get_oversells() pour la détection de ruptures.',
-        en: '8 Supabase tables, safe_query() RPC for secure NL2SQL and get_oversells() for stock-out detection.' },
-    ],
-  },
-  {
-    fr: 'Supabase', en: 'Supabase', subfr: 'PostgreSQL · Auth · BDD', suben: 'PostgreSQL · Auth · DB',
-    a: 1.26, d: 70,
-    descfr: 'Backend-as-a-service PostgreSQL utilisé pour la base de données, l\'authentification et les fonctions RPC dans mes projets web.',
-    descen: 'PostgreSQL backend-as-a-service used for database, authentication and RPC functions in my web projects.',
-    projects: [
-      { name: 'Together', href: 'projects/together.html',
-        fr: 'Auth Supabase, tables utilisateurs/événements/participations, queries temps réel.',
-        en: 'Supabase auth, users/events/participations tables, real-time queries.' },
-      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
-        fr: '8 tables, 2 RPC stockées (safe_query, get_oversells), polling automatique toutes les 30s.',
-        en: '8 tables, 2 stored RPCs (safe_query, get_oversells), automatic 30s polling.' },
-    ],
-  },
-  {
-    fr: 'pandas', en: 'pandas', subfr: 'Data Wrangling', suben: 'Data Wrangling',
-    a: 1.88, d: 62,
-    descfr: 'Bibliothèque incontournable pour le traitement de données tabulaires : nettoyage, transformation et agrégation.',
-    descen: 'Essential library for tabular data processing: cleaning, transforming and aggregating.',
-    projects: [
-      { name: 'Discogs Scraper', href: 'projects/discogs.html',
-        fr: 'Dédoublonnage, normalisation des formats (prix, dates, labels) et export CSV propre.',
-        en: 'Deduplication, format normalisation (prices, dates, labels) and clean CSV export.' },
+        fr: 'Jointures multi-tables sur plus de 100 000 commandes pour reconstruire les parcours clients et calculer les KPIs.',
+        en: 'Multi-table joins on 100,000+ orders to rebuild customer journeys and compute KPIs.' },
       { name: 'Accidents de la route en France', href: 'projects/accidents.html',
-        fr: 'Fusion de plusieurs CSV annuels, recodage des variables catégorielles et feature engineering.',
-        en: 'Merging multiple annual CSVs, recoding categorical variables and feature engineering.' },
-      { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Préparation et agrégation d\'un dataset de 100 000+ commandes avant intégration Tableau.',
-        en: 'Preparation and aggregation of a 100,000+ orders dataset before Tableau integration.' },
-    ],
-  },
-  {
-    fr: 'Tableau', en: 'Tableau', subfr: 'Data Viz · BI', suben: 'Data Viz · BI',
-    a: 2.51, d: 64,
-    descfr: 'Outil de référence pour la visualisation décisionnelle. Je l\'utilise pour créer des dashboards interactifs lisibles par des profils non-techniques.',
-    descen: 'Reference tool for business intelligence visualisation, building interactive dashboards for non-technical stakeholders.',
-    projects: [
-      { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Dashboard complet : performances vendeurs, délais de livraison, satisfaction client et géographie des ventes.',
-        en: 'Full dashboard: seller performance, delivery times, customer satisfaction and sales geography.' },
-    ],
-  },
-  {
-    fr: 'Vibe Coding', en: 'Vibe Coding', subfr: 'Claude · GPT · Cursor', suben: 'Claude · GPT · Cursor',
-    a: 3.14, d: 70,
-    descfr: 'Utiliser les LLMs comme co-pilotes de développement : génération de code, débogage et refactoring guidés par des prompts en langage naturel.',
-    descen: 'Using LLMs as development co-pilots: code generation, debugging and refactoring guided by natural language prompts.',
-    projects: [
+        fr: 'Requêtes SQL d\'analyse sur un jeu de données national.',
+        en: 'Analytical SQL queries on a national dataset.' },
       { name: 'Together', href: 'projects/together.html',
-        fr: 'Application Next.js construite intégralement avec Claude comme assistant de développement principal.',
-        en: 'Next.js application built entirely with Claude as the primary development assistant.' },
+        fr: 'Auth Supabase, tables utilisateurs, événements et participations, requêtes temps réel.',
+        en: 'Supabase auth, users, events and participations tables, real-time queries.' },
       { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
-        fr: 'Dashboard React 19 complet développé en 24h avec Claude Code pour itérer rapidement.',
-        en: 'Full React 19 dashboard built in 24h using Claude Code for rapid iteration.' },
+        fr: '8 tables Supabase et une fonction safe_query() pour transformer des questions en SQL sécurisé.',
+        en: '8 Supabase tables and a safe_query() function to turn questions into safe SQL.' },
+      { name: 'Hackathon Twiin', href: 'projects/hackathon-twiin.html',
+        fr: 'Comptes, tâches et automatisations stockés dans Supabase, chaque entreprise ne voyant que ses données.',
+        en: 'Accounts, tasks and automations stored in Supabase, each company seeing only its own data.' },
     ],
   },
   {
-    fr: 'Dataiku', en: 'Dataiku', subfr: 'ML · Pipelines visuels', suben: 'ML · Visual pipelines',
-    a: 3.77, d: 66,
-    descfr: 'Plateforme de data science end-to-end pour le prototypage visuel de pipelines ML et l\'analyse exploratoire sans code.',
-    descen: 'End-to-end data science platform for visual ML pipeline prototyping and no-code exploratory analysis.',
-    projects: [
-      { name: 'Accidents de la route en France', href: 'projects/accidents.html',
-        fr: 'Prototypage rapide du pipeline de traitement et visualisation des flux de données avant implémentation Python.',
-        en: 'Rapid pipeline prototyping and data flow visualisation before Python implementation.' },
-    ],
-  },
-  {
-    fr: 'Excel', en: 'Excel', subfr: 'Analyse · Sheets', suben: 'Analysis · Sheets',
-    a: 4.40, d: 62,
-    descfr: 'Outil d\'exploration rapide et de communication de résultats, des TCD aux modèles de suivi structurés.',
-    descen: 'Tool for quick exploration and results communication, from pivot tables to structured tracking models.',
+    fr: 'Data visualisation', en: 'Data visualisation', subfr: 'Tableau · Power BI · Dataiku · Excel', suben: 'Tableau · Power BI · Dataiku · Excel',
+    a: 0.67, d: 72,
+    descfr: 'Rendre les données lisibles pour des profils non techniques : dashboards interactifs, pipelines visuels et tableaux de suivi.',
+    descen: 'Making data readable for non-technical audiences: interactive dashboards, visual pipelines and tracking sheets.',
     projects: [
       { name: 'Analyse Olist', href: 'projects/olist.html',
-        fr: 'Exploration préliminaire du dataset et présentation des résultats via tableau croisé dynamique.',
-        en: 'Preliminary dataset exploration and results presentation via pivot tables.' },
+        fr: 'Dashboard Tableau complet : performances vendeurs, délais de livraison, satisfaction client et géographie des ventes.',
+        en: 'Full Tableau dashboard: seller performance, delivery times, customer satisfaction and sales geography.' },
+      { name: 'Accidents de la route en France', href: 'projects/accidents.html',
+        fr: 'Prototypage du pipeline dans Dataiku avant l\'implémentation en Python.',
+        en: 'Pipeline prototyped in Dataiku before the Python implementation.' },
       { name: 'Paris Sportifs', href: 'projects/paris-sportifs.html',
-        fr: 'Collecte et agrégation des résultats des 5 grands championnats pour identifier les patterns rentables.',
-        en: 'Collection and aggregation of results from 5 major leagues to identify profitable betting patterns.' },
+        fr: 'Collecte et agrégation des résultats des 5 grands championnats dans Excel pour repérer les tendances rentables.',
+        en: 'Collected and aggregated results from the 5 major leagues in Excel to spot profitable patterns.' },
     ],
   },
   {
-    fr: 'Make', en: 'Make', subfr: 'Automatisation no-code', suben: 'No-code automation',
-    a: 5.03, d: 68,
-    descfr: 'Plateforme no-code d\'automatisation de workflows. Je l\'utilise pour connecter des APIs et orchestrer des flux entre différents services.',
-    descen: 'No-code workflow automation platform. I use it to connect APIs and orchestrate flows between services.',
+    fr: 'IA & Agents', en: 'AI & Agents', subfr: 'RAG · AWS Bedrock · Copilot Studio · Holo', suben: 'RAG · AWS Bedrock · Copilot Studio · Holo',
+    a: 1.57, d: 72,
+    descfr: 'Construire des produits autour des LLM : recherche augmentée (RAG) avec LangChain et OpenAI, agents sur AWS Bedrock et Copilot Studio, et agents qui pilotent l\'écran.',
+    descen: 'Building products around LLMs: retrieval-augmented generation (RAG) with LangChain and OpenAI, agents on AWS Bedrock and Copilot Studio, and agents that drive the screen.',
     projects: [
-      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
-        fr: '3 scénarios chaînés : collecte RSS, extraction IA de mots-clés et injection dans Google Sheets.',
-        en: '3 chained scenarios: RSS collection, AI keyword extraction and injection into Google Sheets.' },
-    ],
-  },
-  {
-    fr: 'Dust.tt', en: 'Dust.tt', subfr: 'Agents IA · LLM', suben: 'AI Agents · LLM',
-    a: 5.65, d: 64,
-    descfr: 'Plateforme d\'agents IA avec streaming SSE. Je l\'utilise pour construire des workflows intelligents combinant LLM et données métier.',
-    descen: 'AI agent platform with SSE streaming. I use it to build intelligent workflows combining LLMs and business data.',
-    projects: [
-      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
-        fr: 'Agents Dust pour l\'analyse sémantique des mots-clés RH et la priorisation des opportunités SEO.',
-        en: 'Dust agents for semantic analysis of HR keywords and SEO opportunity prioritisation.' },
+      { name: 'Synapse', href: 'projects/synapse.html',
+        fr: 'Chatbot RAG sur des articles scientifiques avec LangChain, FAISS et OpenAI.',
+        en: 'RAG chatbot over scientific papers with LangChain, FAISS and OpenAI.' },
       { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
-        fr: '6 agents spécialisés avec routage automatique par mots-clés et réponses en streaming SSE temps réel.',
-        en: '6 specialised agents with automatic keyword routing and real-time SSE streaming responses.' },
+        fr: '6 agents spécialisés et un chat qui transforme les questions en requêtes avec GPT-4o.',
+        en: '6 specialised agents and a chat that turns questions into queries with GPT-4o.' },
+      { name: 'Hackathon Twiin', href: 'projects/hackathon-twiin.html',
+        fr: 'Agent qui apprend une tâche montrée une fois, puis la refait avec Holo, l\'agent de H Company.',
+        en: 'Agent that learns a task shown once, then redoes it with Holo, H Company\'s agent.' },
+      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
+        fr: 'Extraction de mots-clés et analyse sémantique avec GPT-4o-mini.',
+        en: 'Keyword extraction and semantic analysis with GPT-4o-mini.' },
+    ],
+  },
+  {
+    fr: 'Automatisation', en: 'Automation', subfr: 'Make · n8n · Power Automate', suben: 'Make · n8n · Power Automate',
+    a: 2.47, d: 72,
+    descfr: 'Enchaîner des étapes, brancher des API et faire tourner des tâches toutes seules, avec Make, n8n ou Power Automate dans l\'écosystème Microsoft.',
+    descen: 'Chaining steps, connecting APIs and running tasks on their own, with Make, n8n or Power Automate in the Microsoft ecosystem.',
+    projects: [
+      { name: 'Hackathon Twiin', href: 'projects/hackathon-twiin.html',
+        fr: 'Chaque tâche apprise devient un workflow n8n, rejoué et vérifié avant d\'être activé.',
+        en: 'Each learned task becomes an n8n workflow, replayed and checked before being switched on.' },
+      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
+        fr: '3 scénarios Make enchaînés : collecte RSS, extraction de mots-clés par IA et envoi dans Google Sheets.',
+        en: '3 chained Make scenarios: RSS collection, AI keyword extraction and export to Google Sheets.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: 'Sous-agents n8n lancés en parallèle par l\'Orchestrateur pour les questions transverses.',
+        en: 'n8n sub-agents run in parallel by the Orchestrator for cross-domain questions.' },
+    ],
+  },
+  {
+    fr: 'Vibe Coding', en: 'Vibe Coding', subfr: 'Claude · Cursor · Copilot · Dust', suben: 'Claude · Cursor · Copilot · Dust',
+    a: 3.37, d: 72,
+    descfr: 'Utiliser les LLM et les plateformes d\'agents comme co-pilotes (Claude, Cursor, Copilot, Dust) : génération de code, débogage et prototypes construits en quelques heures.',
+    descen: 'Using LLMs and agent platforms as co-pilots (Claude, Cursor, Copilot, Dust): code generation, debugging and prototypes built in a few hours.',
+    projects: [
+      { name: 'Together', href: 'projects/together.html',
+        fr: 'Application Next.js construite avec Claude comme assistant de développement principal.',
+        en: 'Next.js app built with Claude as the main development assistant.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: 'Dashboard React développé en 24 h avec Claude Code, et agents conçus dans Dust.',
+        en: 'React dashboard built in 24 h with Claude Code, and agents designed in Dust.' },
+      { name: 'Hackathon Payfit', href: 'projects/payfit-seo.html',
+        fr: 'Agents Dust pour l\'analyse des mots-clés RH et la priorisation des opportunités SEO.',
+        en: 'Dust agents to analyse HR keywords and prioritise SEO opportunities.' },
+    ],
+  },
+  {
+    fr: 'Développement web', en: 'Web development', subfr: 'Next.js · React · TypeScript', suben: 'Next.js · React · TypeScript',
+    a: 4.26, d: 72,
+    descfr: 'Transformer une idée en produit utilisable : interfaces web, applications mobiles et apps de bureau.',
+    descen: 'Turning an idea into a usable product: web interfaces, mobile apps and desktop apps.',
+    projects: [
+      { name: 'Together', href: 'projects/together.html',
+        fr: 'Application sociale en Next.js 14, TypeScript, Tailwind et shadcn/ui.',
+        en: 'Social app in Next.js 14, TypeScript, Tailwind and shadcn/ui.' },
+      { name: 'Hackathon Mirakl', href: 'projects/hackathon-mirakl.html',
+        fr: 'Dashboard React 19 et Vite, bilingue, avec graphiques et cartes.',
+        en: 'Bilingual React 19 and Vite dashboard with charts and maps.' },
+      { name: 'Hackathon Twiin', href: 'projects/hackathon-twiin.html',
+        fr: 'Produit disponible partout : app Mac, extension Chrome et page mobile.',
+        en: 'Product available everywhere: Mac app, Chrome extension and mobile page.' },
     ],
   },
 ];
@@ -1466,7 +1516,7 @@ function drawCluster() {
     ctx.beginPath(); ctx.arc(cs.x, cs.y, maxR * zf * .9 + 8, 0, Math.PI * 2); ctx.stroke();
   }
 
-  if (view === 'home') drawBodyLabel(cs, 'cluster', maxR * zf * .62 + 22 * zf);
+  if (view === 'home' || view === 'hub') drawBodyLabel(cs, 'cluster', maxR * zf * .62 + 22 * zf);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1534,7 +1584,7 @@ function drawNebula(t) {
     ctx.shadowBlur = 0;
   }
 
-  if (view === 'hub') drawBodyLabel(ns, 'nebula', 102 * zf + 14 * zf);
+  if (view === 'home' || view === 'hub') drawBodyLabel(ns, 'nebula', 102 * zf + 14 * zf);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1606,7 +1656,7 @@ function drawPulsar(t) {
   ctx.beginPath(); ctx.arc(ps.x, ps.y, r, 0, Math.PI * 2); ctx.fill();
   ctx.shadowBlur = 0;
 
-  if (view === 'home') drawBodyLabel(ps, 'pulsar', r * 5 + 18 * zf);
+  if (view === 'home' || view === 'hub') drawBodyLabel(ps, 'pulsar', r * 5 + 18 * zf);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1698,7 +1748,8 @@ function drawBodyLabel(s, id, yOffset) {
   ctx.shadowBlur = 0;
   ctx.font      = `500 ${Math.max(7, 9.5 * cam.zoom)}px 'Segoe UI',system-ui,sans-serif`;
   ctx.fillStyle = isHov ? 'rgba(255,255,255,.42)' : 'rgba(255,255,255,.2)';
-  ctx.fillText(L[lang === 'fr' ? 'subfr' : 'suben'], s.x, s.y + yOffset + Math.max(11, 14 * cam.zoom));
+  const sub = L[lang === 'fr' ? 'subfr' : 'suben'];
+  if (sub) ctx.fillText(sub, s.x, s.y + yOffset + Math.max(11, 14 * cam.zoom));
   ctx.restore();
 }
 
@@ -1834,18 +1885,19 @@ function drawSkillStars(t) {
     const lx = ss.x + Math.cos(sk.a) * labelDist;
     const ly = ss.y + Math.sin(sk.a) * labelDist;
     const ca = Math.cos(sk.a);
-    const tAlign = ca > 0.45 ? 'left' : ca < -0.45 ? 'right' : 'center';
+    const tAlign = ca > 0.25 ? 'left' : ca < -0.25 ? 'right' : 'center';
     const lineH  = Math.max(11, 14 * zf);
+    const lyTop  = Math.sin(sk.a) < -0.3 ? ly - lineH * 1.4 : ly; // étiquettes du haut : nom + sous-titre au-dessus de l'étoile
     ctx.save();
     ctx.textAlign  = tAlign;
     ctx.font       = `700 ${Math.max(10, 12.5 * zf)}px 'Segoe UI',system-ui,sans-serif`;
     ctx.fillStyle  = col;
     ctx.shadowBlur = 8; ctx.shadowColor = col + 'aa';
-    ctx.fillText(sk[lang === 'fr' ? 'fr' : 'en'], lx, ly + lineH * .35);
+    ctx.fillText(sk[lang === 'fr' ? 'fr' : 'en'], lx, lyTop + lineH * .35);
     ctx.shadowBlur = 0;
     ctx.font       = `500 ${Math.max(7, 9.5 * zf)}px 'Segoe UI',system-ui,sans-serif`;
     ctx.fillStyle  = 'rgba(255,255,255,.3)';
-    ctx.fillText(sk[lang === 'fr' ? 'subfr' : 'suben'], lx, ly + lineH * 1.35);
+    ctx.fillText(sk[lang === 'fr' ? 'subfr' : 'suben'], lx, lyTop + lineH * 1.35);
     ctx.restore();
   });
 }
@@ -1982,7 +2034,7 @@ function handleClick(mx, my) {
   } else if (view === 'hub') {
     const hit = hitTest(mx, my);
     if (hit === 'nebula')  { view = 'projects'; showOverlayWithWarp(); }
-    if (hit === 'cluster') zoomTo('cluster', 3.0, () => { view = 'skills';   });
+    if (hit === 'cluster') zoomTo('cluster', skillsZoom(), () => { view = 'skills';   });
     if (hit === 'pulsar')  triggerTransmission();
     if (hit === 'egg')     triggerEasterEgg();
   } else if (view === 'skills') {
@@ -2006,6 +2058,9 @@ function enterHub() {
     camT.x = 0; camT.y = 0; camT.zoom = 1.5;
   }, 900);
 }
+
+// Zoom de la vue Compétences adapté à l'écran, pour que les étiquettes ne sortent pas du cadre
+function skillsZoom() { return Math.min(3.0, W / 500, H / 330); }
 
 function zoomTo(id, targetZoom, cb) {
   const pos = POS[id];
@@ -2891,16 +2946,17 @@ resize();
 // ═══════════════════════════════════════════════════════════════════════════
 //  PLANET ORBIT ROTATION (HTML overlay)
 // ═══════════════════════════════════════════════════════════════════════════
-// Initial angles match the CSS positions (clockwise from top = -π/2)
+// Initial angles match the CSS positions (clockwise from top = -π/2, 9 planètes espacées de 40°)
 const PLANET_NODES = [
-  { id: 'node-payfit',    a0: -Math.PI / 2        },  // top
-  { id: 'node-together',  a0: -Math.PI / 4        },  // top-right
-  { id: 'node-mirakl',    a0:  0                  },  // right
-  { id: 'node-discogs',   a0:  Math.PI / 4        },  // bottom-right
-  { id: 'node-synapse',   a0:  Math.PI / 2        },  // bottom
-  { id: 'node-accidents', a0:  Math.PI * 3 / 4    },  // bottom-left
-  { id: 'node-olist',     a0:  Math.PI            },  // left
-  { id: 'node-sportifs',  a0: -Math.PI * 3 / 4   },  // top-left
+  { id: 'node-payfit',     a0: -Math.PI / 2 + 0 * 2 * Math.PI / 9 },
+  { id: 'node-together',   a0: -Math.PI / 2 + 1 * 2 * Math.PI / 9 },
+  { id: 'node-mirakl',     a0: -Math.PI / 2 + 2 * 2 * Math.PI / 9 },
+  { id: 'node-twiin',      a0: -Math.PI / 2 + 3 * 2 * Math.PI / 9 },
+  { id: 'node-discogs',    a0: -Math.PI / 2 + 4 * 2 * Math.PI / 9 },
+  { id: 'node-synapse',    a0: -Math.PI / 2 + 5 * 2 * Math.PI / 9 },
+  { id: 'node-accidents',  a0: -Math.PI / 2 + 6 * 2 * Math.PI / 9 },
+  { id: 'node-olist',      a0: -Math.PI / 2 + 7 * 2 * Math.PI / 9 },
+  { id: 'node-sportifs',   a0: -Math.PI / 2 + 8 * 2 * Math.PI / 9 },
 ].map(p => ({ ...p, el: document.getElementById(p.id) }));
 
 const ORBIT_RX   = 38;   // % of viewport width

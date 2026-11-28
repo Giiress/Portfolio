@@ -141,6 +141,8 @@ Chaque page projet (`projects/*.html`) est une page HTML autonome avec :
 | olist | Analyse Olist | Tableau · Data Viz |
 | paris-sportifs | Paris Sportifs | Excel · Analyse Sportive |
 | together | Together | Next.js · Supabase |
+| hackathon-mirakl | Hackathon Mirakl | React · Supabase · IA |
+| hackathon-twiin | Hackathon Twiin (Build The Future, vainqueur) | Agents IA · n8n · Holo |
 
 ---
 

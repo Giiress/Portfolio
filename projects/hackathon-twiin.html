@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Twiin — Hackathon Build The Future — Lucas Fouquet</title>
+  <meta name="description" content="Twiin, l'agent qui apprend une tâche montrée une fois et l'automatise, avec ou sans API. Projet vainqueur du hackathon Build The Future, novembre 2026."/>
+  <style>
+    :root {
+      --accent: #8b9cff;
+      --accent-2: #c9a7ff;
+      --accent-rgb: 139,156,255;
+      --accent-2-rgb: 201,167,255;
+      --muted: #6a7590;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { font-family: 'Segoe UI', system-ui, sans-serif; background: #02020e; color: #dde4f0; min-height: 100vh; line-height: 1.6; }
+    #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    .page { position: relative; z-index: 1; max-width: 1000px; margin: 0 auto; padding: 5.5rem 2rem 5rem; }
+
+    .nav-back { position: fixed; top: 1.5rem; left: 1.75rem; z-index: 100; display: flex; align-items: center; gap: .45rem; background: rgba(2,2,14,.8); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.1); border-radius: .35rem; color: rgba(255,255,255,.5); font-size: .75rem; font-weight: 700; padding: .38rem .9rem; text-decoration: none; letter-spacing: .05em; transition: color .2s, border-color .2s; }
+    .nav-back:hover { color: white; border-color: rgba(255,255,255,.3); }
+
+    .eyebrow { font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .6rem; }
+    .project-title { font-size: clamp(2rem,5vw,3rem); font-weight: 800; line-height: 1.1; margin-bottom: .4rem; }
+    .project-title span {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .tagline { font-size: 1.05rem; font-weight: 600; color: rgba(255,255,255,.75); margin-bottom: .2rem; }
+    .rule { width: 48px; height: 1px; background: rgba(255,255,255,.2); margin: .8rem 0 1.2rem; }
+    .project-sub { color: var(--muted); font-size: .95rem; max-width: 680px; margin-bottom: 1.5rem; }
+
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 2rem; }
+    .tag { padding: .2rem .65rem; border-radius: 999px; font-size: .7rem; font-weight: 600; letter-spacing: .04em; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.5); }
+
+    .badge-winner {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .75rem; font-weight: 700; letter-spacing: .05em;
+      color: rgba(255,200,80,.9); background: rgba(255,200,80,.08);
+      border: 1px solid rgba(255,200,80,.3); padding: .35rem .9rem;
+      border-radius: .35rem; margin-bottom: 2rem;
+    }
+
+    /* ── Organisateur & sponsors ── */
+    .sponsors { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; margin: -.8rem 0 2rem; }
+    .sp-label { font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+    .sp-logo { display: inline-flex; align-items: center; gap: .45rem; padding: .35rem .8rem; border-radius: .4rem; font-size: .82rem; font-weight: 700; color: rgba(255,255,255,.8); background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); }
+    .sp-logo.sp-main { font-size: .9rem; color: white; border-color: rgba(var(--accent-rgb),.4); background: rgba(var(--accent-rgb),.08); }
+    .sp-mark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 5px; background: white; color: #02020e; font-size: .72rem; font-weight: 900; }
+    .sp-sep { width: 1px; height: 22px; background: rgba(255,255,255,.12); }
+    @media (max-width: 640px) { .sp-sep { display: none; } }
+
+    /* ── Vidéo ── */
+    .video-wrap {
+      position: relative; border-radius: .5rem .5rem 0 0; overflow: hidden;
+      border: 1px solid rgba(var(--accent-rgb),.25); background: #000;
+      box-shadow: 0 8px 48px rgba(0,0,0,.6), 0 0 0 1px rgba(var(--accent-rgb),.08);
+      aspect-ratio: 16/9;
+    }
+    .video-wrap video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    .video-label {
+      display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap;
+      padding: .5rem 1rem; margin-bottom: 3.5rem;
+      background: rgba(var(--accent-rgb),.07); border: 1px solid rgba(var(--accent-rgb),.12);
+      border-top: none; border-radius: 0 0 .5rem .5rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(var(--accent-rgb),.75);
+    }
+    .video-label a { color: rgba(var(--accent-rgb),.75); text-decoration: none; }
+    .video-label a:hover { color: var(--accent); }
+    .video-label .vl-left { display: inline-flex; align-items: center; gap: .5rem; }
+
+    /* ── Sections ── */
+    .section { margin-bottom: 3rem; }
+    .section-eyebrow { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: .5rem; }
+    .section-title { font-size: 1.25rem; font-weight: 700; color: white; margin-bottom: 1rem; }
+    .section-text { color: var(--muted); font-size: .92rem; line-height: 1.75; margin-bottom: .8rem; }
+    .section-text strong { color: rgba(255,255,255,.75); font-weight: 600; }
+    hr.divider { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 2.5rem 0; }
+
+    /* ── Galerie ── */
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .shot { margin: 0; border-radius: .5rem; overflow: hidden; border: 1px solid rgba(var(--accent-rgb),.15); background: rgba(255,255,255,.02); cursor: zoom-in; transition: border-color .25s, transform .25s; }
+    .shot:hover { border-color: rgba(var(--accent-rgb),.4); transform: translateY(-3px); }
+    .shot img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+    .shot figcaption { padding: .55rem .85rem; font-size: .75rem; color: var(--muted); }
+    .shot.wide { grid-column: 1 / -1; width: 100%; max-width: 640px; justify-self: start; }
+    .shot.wide img { aspect-ratio: auto; height: auto; object-fit: contain; } /* photo source 800 px : affichée à 640 px max pour rester nette */
+    .visuals { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
+    .visual { width: 160px; border-radius: .4rem; overflow: hidden; border: 1px solid rgba(255,255,255,.08); cursor: zoom-in; transition: transform .25s, border-color .25s; }
+    .visual:hover { transform: translateY(-3px); border-color: rgba(var(--accent-rgb),.4); }
+    .visual img { display: block; width: 100%; height: auto; }
+
+    /* ── Feature cards ── */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .feature-card {
+      padding: 1.5rem; border-radius: .5rem;
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06);
+      position: relative; overflow: hidden;
+      transition: border-color .3s, background .3s, transform .3s;
+    }
+    .feature-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb),.7), transparent);
+      opacity: 0; transition: opacity .3s;
+    }
+    .feature-card:hover { border-color: rgba(var(--accent-rgb),.25); background: rgba(255,255,255,.035); transform: translateY(-3px); }
+    .feature-card:hover::before { opacity: 1; }
+    .feature-icon { width: 38px; height: 38px; border-radius: .4rem; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+    .fi-a { background: rgba(var(--accent-rgb),.13); color: var(--accent); }
+    .fi-b { background: rgba(var(--accent-2-rgb),.13); color: var(--accent-2); }
+    .feature-card h3 { font-size: .95rem; font-weight: 700; color: rgba(255,255,255,.88); margin-bottom: .4rem; }
+    .feature-card p  { font-size: .83rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── Pipeline ── */
+    .pipeline-steps { display: flex; flex-direction: column; position: relative; margin-top: 1.5rem; }
+    .pipeline-line { position: absolute; left: 18px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(180deg, rgba(var(--accent-rgb),.45), rgba(var(--accent-2-rgb),.45), rgba(var(--accent-rgb),.45)); }
+    .pipeline-step { display: flex; gap: 1.5rem; align-items: flex-start; padding: 1.1rem 0; }
+    .step-num {
+      width: 38px; height: 38px; min-width: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .88rem; font-weight: 700; z-index: 1;
+      background: #0b0b22; border: 1.5px solid rgba(var(--accent-rgb),.35);
+      color: var(--accent); transition: all .25s;
+    }
+    .pipeline-step:hover .step-num { background: rgba(var(--accent-rgb),.25); border-color: var(--accent); box-shadow: 0 0 16px rgba(var(--accent-rgb),.4); }
+    .step-body h3 { font-size: .92rem; font-weight: 700; color: rgba(255,255,255,.85); margin-bottom: .25rem; }
+    .step-body p  { font-size: .82rem; color: var(--muted); line-height: 1.6; }
+    .step-tag { display: inline-block; margin-top: .4rem; padding: .15rem .5rem; border-radius: .25rem; font-size: .68rem; font-weight: 600; background: rgba(var(--accent-2-rgb),.08); border: 1px solid rgba(var(--accent-2-rgb),.2); color: var(--accent-2); }
+
+    /* ── Chiffres ── */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: .8rem; margin-top: 1.5rem; }
+    .stat { padding: 1.1rem 1.2rem; border-radius: .5rem; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06); }
+    .stat-val { font-size: 1.6rem; font-weight: 800; line-height: 1.1; background: linear-gradient(135deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .stat-lbl { font-size: .76rem; color: var(--muted); margin-top: .35rem; line-height: 1.5; }
+    .rows { display: flex; flex-direction: column; gap: .6rem; margin-top: 1.5rem; }
+    .row {
+      display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: center;
+      padding: .85rem 1.1rem; border-radius: .4rem;
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06);
+      transition: border-color .2s, background .2s;
+    }
+    .row:hover { border-color: rgba(var(--accent-rgb),.2); background: rgba(var(--accent-rgb),.03); }
+    .row-name { font-size: .85rem; font-weight: 700; color: rgba(255,255,255,.8); }
+    .row-desc { font-size: .8rem; color: var(--muted); }
+    .row-val { font-size: .7rem; font-weight: 700; letter-spacing: .04em; color: var(--accent-2); background: rgba(var(--accent-2-rgb),.07); border: 1px solid rgba(var(--accent-2-rgb),.18); padding: .2rem .55rem; border-radius: .25rem; white-space: nowrap; }
+    .note { margin-top: 1rem; padding: .9rem 1.1rem; border-left: 2px solid rgba(255,200,80,.5); background: rgba(255,200,80,.04); border-radius: 0 .4rem .4rem 0; font-size: .82rem; color: rgba(255,255,255,.6); line-height: 1.65; }
+
+    /* ── Stack ── */
+    .tech-pills { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; }
+    .tech-pill { padding: .3rem .8rem; border-radius: 999px; font-size: .75rem; font-weight: 500; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09); color: rgba(255,255,255,.5); transition: all .2s; }
+    .tech-pill:hover { border-color: rgba(var(--accent-rgb),.35); color: rgba(255,255,255,.75); background: rgba(var(--accent-rgb),.07); }
+
+    /* ── Info block ── */
+    .info-block { border: 1px solid rgba(255,255,255,.07); border-radius: .5rem; overflow: hidden; }
+    .info-row { padding: 1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.05); display: grid; grid-template-columns: 160px 1fr; gap: 1rem; align-items: start; }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); padding-top: .1rem; }
+    .info-val { font-size: .88rem; color: rgba(255,255,255,.55); line-height: 1.6; }
+    .info-val a { color: var(--accent); text-decoration: none; }
+    .info-val a:hover { text-decoration: underline; }
+
+    /* ── Certification (à activer plus tard) ── */
+    .cert-wrap { display: grid; grid-template-columns: 220px 1fr; gap: 1.5rem; align-items: center; padding: 1.25rem; border-radius: .5rem; background: rgba(255,200,80,.04); border: 1px solid rgba(255,200,80,.2); }
+    .cert-wrap img { display: block; width: 100%; border-radius: .35rem; cursor: zoom-in; }
+
+    /* ── Liens ── */
+    .links { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+    .link-btn { display: inline-flex; align-items: center; gap: .45rem; padding: .5rem 1rem; border-radius: .4rem; font-size: .8rem; font-weight: 600; color: rgba(255,255,255,.75); text-decoration: none; background: rgba(var(--accent-rgb),.08); border: 1px solid rgba(var(--accent-rgb),.25); transition: all .2s; }
+    .link-btn:hover { color: white; border-color: var(--accent); background: rgba(var(--accent-rgb),.16); }
+
+    @media (max-width: 640px) {
+      .page { padding: 5rem 1.1rem 4rem; }
+      .info-row { grid-template-columns: 1fr; gap: .3rem; }
+      .row { grid-template-columns: 1fr; }
+      .row-val { justify-self: start; }
+      .cert-wrap { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: 1fr; }
+    }
+  </style>
+  <script src="../consent.js" defer></script>
+<style>/* a11y : focus visible + animations réduites */:focus-visible{outline:2px solid #7dd3fc!important;outline-offset:3px}@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}</style>
+</head>
+<body>
+<canvas id="starfield"></canvas>
+<a href="../index.html" class="nav-back" onclick="sessionStorage.setItem('portfolioReturnState','projects');location.href='../index.html'">← Portfolio</a>
+
+<div class="page">
+
+  <div class="eyebrow">Hackathon H Company · Build The Future · Agents IA</div>
+  <h1 class="project-title"><span>Twiin</span></h1>
+  <p class="tagline">Montrez une fois. Twiin le fait partout.</p>
+  <div class="rule"></div>
+  <p class="project-sub">Un agent qui apprend une tâche qu'on lui montre une seule fois, la rejoue, vérifie chaque valeur, puis l'automatise, avec ou sans API. Il s'appuie sur Holo, l'agent de H Company, qui voit l'écran et clique comme un humain. Projet vainqueur du hackathon Build The Future, du 16 au 20 novembre 2026.</p>
+
+  <div class="tags">
+    <span class="tag">Agents IA</span>
+    <span class="tag">H Company · Holo</span>
+    <span class="tag">Automatisation</span>
+    <span class="tag">n8n</span>
+    <span class="tag">Vidéo générée par IA</span>
+  </div>
+
+  <div class="badge-winner">🏆 Vainqueur · Hackathon « Build The Future » · Novembre 2026</div>
+
+  <div class="sponsors">
+    <span class="sp-label">Organisé par</span>
+    <span class="sp-logo sp-main"><span class="sp-mark" aria-hidden="true">H</span>H Company</span>
+    <span class="sp-sep" aria-hidden="true"></span>
+    <span class="sp-label">Sponsors</span>
+    <span class="sp-logo"><span aria-hidden="true">🤗</span>Hugging Face</span>
+    <span class="sp-logo"><svg width="14" height="12" viewBox="0 0 24 21" fill="currentColor" aria-hidden="true"><path d="M12 0l12 21H0z"/></svg>Vercel</span>
+  </div>
+
+  <!-- Vidéo de démo (version compressée 720p de la vidéo de l'équipe) -->
+  <div class="video-wrap">
+    <video controls preload="none" playsinline poster="../assets/img/twiin-poster.jpg" title="Twiin — vidéo de démo">
+      <source src="../assets/video/twiin-demo.mp4" type="video/mp4"/>
+    </video>
+  </div>
+  <div class="video-label">
+    <span class="vl-left">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+      Démo complète — le produit en 2 minutes
+    </span>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Description -->
+  <div class="section">
+    <div class="section-eyebrow">Description</div>
+    <div class="section-title">À propos du projet</div>
+    <p class="section-text">Dans une PME, chaque employé perd environ 3 heures par semaine sur des tâches répétitives, souvent dans des logiciels qui n'ont pas d'API, et sans DSI pour les automatiser. Les outils classiques ne suffisent pas : les RPA demandent un développeur et cassent dès que l'écran change, et Zapier ou Make ne fonctionnent qu'avec des API.</p>
+    <p class="section-text">Twiin part d'une idée simple : <strong>on lui montre la tâche une fois</strong>. Il la découpe en étapes, la rejoue pour <strong>prouver qu'elle tient</strong>, puis <strong>la fait à notre place</strong>, sur le Mac, dans le navigateur ou depuis le téléphone. Quand une API existe, Twiin passe par n8n ; quand il n'y en a pas, c'est Holo, l'agent de H Company, qui lit l'écran et clique.</p>
+    <p class="section-text">Nous l'avons construit à six en cinq jours, pour le hackathon Build The Future organisé par H Company, et nous l'avons remporté. Le dernier soir, on a dormi deux heures. Twiin, lui, n'a pas besoin de dormir.</p>
+
+    <div class="gallery">
+      <figure class="shot wide" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-equipe.jpg" alt="L'équipe Twiin et les participants du hackathon Build The Future"/>
+        <figcaption>Remise des prix du hackathon Build The Future, novembre 2026</figcaption>
+      </figure>
+    </div>
+    <div class="visuals">
+      <div class="visual" onclick="openLightbox(this.querySelector('img').src)"><img loading="lazy" decoding="async" src="../assets/img/twiin-visuel-jumeaux.png" alt="Visuel Twiin : les jumeaux Iris et Ilo"/></div>
+      <div class="visual" onclick="openLightbox(this.querySelector('img').src)"><img loading="lazy" decoding="async" src="../assets/img/twiin-visuel-etapes.png" alt="Visuel Twiin : vous montrez, Twiin refait, Twiin automatise"/></div>
+      <div class="visual" onclick="openLightbox(this.querySelector('img').src)"><img loading="lazy" decoding="async" src="../assets/img/twiin-visuel-victoire.png" alt="Visuel Twiin : on a gagné grâce à un agent qui clique"/></div>
+    </div>
+  </div>
+
+  <!-- ═══ CERTIFICATION — à activer quand elle sera reçue ═══
+       1. Déposer l'image dans assets/img/twiin-certification.jpg
+       2. Retirer les balises de commentaire autour du bloc ci-dessous
+  <hr class="divider"/>
+  <div class="section">
+    <div class="section-eyebrow">Certification</div>
+    <div class="section-title">Vainqueur du hackathon</div>
+    <div class="cert-wrap">
+      <img loading="lazy" decoding="async" src="../assets/img/twiin-certification.jpg" alt="Certification vainqueur du hackathon Build The Future" onclick="openLightbox(this.src)"/>
+      <p class="section-text">Certification remise à l'équipe Twiin, vainqueur du hackathon Build The Future 2026.</p>
+    </div>
+  </div>
+  ═══ FIN CERTIFICATION ═══ -->
+
+  <hr class="divider"/>
+
+  <!-- Parcours d'une tâche -->
+  <div class="section">
+    <div class="section-eyebrow">Fonctionnement</div>
+    <div class="section-title">Apprendre, prouver, faire : le parcours d'une tâche</div>
+    <div class="pipeline-steps">
+      <div class="pipeline-line"></div>
+      <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Observer</h3>
+          <p>L'employé fait la tâche une fois, sur son ordinateur ou dans son navigateur, ou la demande depuis son téléphone. Les informations sensibles restent sur le poste et aucune frappe au clavier n'est enregistrée.</p>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Comprendre</h3>
+          <p>Une IA découpe la tâche en étapes et note les valeurs à vérifier. Twiin demande ensuite « Ai-je bien compris ? » pour que l'employé corrige avant d'automatiser.</p>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Prouver</h3>
+          <p>Twiin transforme la tâche en automatisation, la rejoue et vérifie chaque valeur avant de l'activer. Une valeur douteuse est bloquée, jamais écrite.</p>
+        </div>
+      </div>
+      <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Agir</h3>
+          <p>Quand un logiciel n'a pas d'API, Holo, l'agent de H Company, prend la main : il voit l'écran et clique comme un humain, sur le Mac ou dans le cloud.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Partout -->
+  <div class="section">
+    <div class="section-eyebrow">Produit</div>
+    <div class="section-title">Twiin est partout où l'on travaille</div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon fi-a">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        </div>
+        <h3>App Mac</h3>
+        <p>Enregistre la tâche, l'exécute et guide l'employé à l'écran avec les jumeaux Iris et Ilo. Installation en un clic.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-b">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><line x1="12" y1="3" x2="12" y2="8.5"/><line x1="4.5" y1="16.5" x2="9" y2="14"/><line x1="19.5" y1="16.5" x2="15" y2="14"/></svg>
+        </div>
+        <h3>Extension Chrome</h3>
+        <p>Une bulle sur chaque page et un panneau latéral : la dernière tâche analysée, l'automatiser, créer la vidéo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-a">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        </div>
+        <h3>Depuis le téléphone</h3>
+        <p>Le dirigeant demande, le Mac le fait. Le téléphone passe par un relais et n'accède jamais directement au poste.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon fi-b">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="5" width="15" height="14" rx="2"/><path d="M17 10l5-3v10l-5-3z"/></svg>
+        </div>
+        <h3>Vidéos de formation</h3>
+        <p>Pour chaque tâche, une vidéo racontée par Iris et Ilo, aux couleurs de l'entreprise, pour que l'équipe comprenne ce que fait la machine.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Captures -->
+  <div class="section">
+    <div class="section-eyebrow">Captures</div>
+    <div class="section-title">Twiin en images</div>
+    <div class="gallery">
+      <figure class="shot" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-audit.jpg" alt="Twiin : audit du poste de travail"/>
+        <figcaption>L'audit du poste repère les tâches qui coûtent le plus d'heures</figcaption>
+      </figure>
+      <figure class="shot" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-telephone.jpg" alt="Twiin : une demande envoyée depuis le téléphone"/>
+        <figcaption>Depuis le téléphone : « envoie-moi la facture »</figcaption>
+      </figure>
+      <figure class="shot" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-holo-mac.jpg" alt="Holo pilote Gmail sur le Mac"/>
+        <figcaption>Holo prend la main sur le Mac et ouvre Gmail</figcaption>
+      </figure>
+      <figure class="shot" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-workflow-n8n.jpg" alt="Twiin : la liste des automatisations"/>
+        <figcaption>Chaque tâche devient un workflow, avec une branche par entreprise suivie</figcaption>
+      </figure>
+      <figure class="shot" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-marque.jpg" alt="Twiin : interface aux couleurs de l'entreprise"/>
+        <figcaption>Mise en service : toute l'interface prend la marque de l'entreprise</figcaption>
+      </figure>
+      <figure class="shot" onclick="openLightbox(this.querySelector('img').src)">
+        <img loading="lazy" decoding="async" src="../assets/img/twiin-architecture.jpg" alt="Twiin : le Mac, le cloud et le téléphone"/>
+        <figcaption>Trois endroits, une seule tâche : le Mac, le cloud et le téléphone</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Chiffres -->
+  <div class="section">
+    <div class="section-eyebrow">Résultats</div>
+    <div class="section-title">Mesuré pendant les tests</div>
+    <p class="section-text">Tous les tests ont été filmés de bout en bout la nuit du 19 au 20 novembre.</p>
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-val">47 s</div><div class="stat-lbl">pour recevoir une facture demandée depuis le téléphone</div></div>
+      <div class="stat"><div class="stat-val">28 s</div><div class="stat-lbl">pour une tâche web dans le cloud de H Company</div></div>
+      <div class="stat"><div class="stat-val">0,01 $</div><div class="stat-lbl">de coût d'agent pour cette tâche web</div></div>
+      <div class="stat"><div class="stat-val">1er essai</div><div class="stat-lbl">pour créer et tester une automatisation n8n</div></div>
+    </div>
+    <div class="rows">
+      <div class="row">
+        <div><div class="row-name">« Envoie-moi la facture »</div><div class="row-desc">Depuis le téléphone, Holo ouvre Gmail sur le Mac, télécharge le PDF et l'envoie</div></div>
+        <div class="row-val">≈ 47 s · 0,06 $</div>
+      </div>
+      <div class="row">
+        <div><div class="row-name">« Automatise cette tâche »</div><div class="row-desc">Workflow n8n créé, testé et réussi au premier essai</div></div>
+        <div class="row-val">≈ 1 min 30</div>
+      </div>
+      <div class="row">
+        <div><div class="row-name">« Crée la vidéo de formation »</div><div class="row-desc">Vidéo d'une minute racontée par Iris et Ilo, partagée avec l'équipe</div></div>
+        <div class="row-val">≈ 4 min</div>
+      </div>
+      <div class="row">
+        <div><div class="row-name">Taux euro-dollar de la BCE</div><div class="row-desc">Tâche web exécutée dans le cloud de H Company, vérifiée avant écriture</div></div>
+        <div class="row-val">28 s · 0,01 $</div>
+      </div>
+    </div>
+    <div class="note">Le premier essai sur le taux BCE a été bloqué par la vérification : l'agent avait lu « 1.0992 » au lieu de « 1,0992 ». Plutôt que d'écrire une valeur douteuse, Twiin s'est arrêté. Après correction, chaque lancement a réussi.</div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Stack -->
+  <div class="section">
+    <div class="section-eyebrow">Stack Technique</div>
+    <div class="section-title">Les outils derrière Twiin</div>
+    <div class="tech-pills">
+      <span class="tech-pill">Holo (H Company)</span>
+      <span class="tech-pill">n8n</span>
+      <span class="tech-pill">Qwen</span>
+      <span class="tech-pill">Supabase</span>
+      <span class="tech-pill">Vercel</span>
+      <span class="tech-pill">ElevenLabs</span>
+      <span class="tech-pill">Remotion</span>
+    </div>
+  </div>
+
+  <hr class="divider"/>
+
+  <!-- Équipe -->
+  <div class="section">
+    <div class="section-eyebrow">Équipe</div>
+    <div class="section-title">Team 10</div>
+    <div class="info-block">
+      <div class="info-row">
+        <div class="info-label">Équipe</div>
+        <div class="info-val">Hanine Bendiab · Lucas Fouquet · Jérémy Roman · Camil Alouasti · Louis Charpentier · Alexis Honnorat</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Mon rôle</div>
+        <div class="info-val">CTO de l'équipe</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Durée</div>
+        <div class="info-val">5 jours, du 16 au 20 novembre 2026</div>
+      </div>
+      <div class="info-row">
+        <div class="info-label">Jury</div>
+        <div class="info-val">H Company, Vercel et Eugenia School</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:2rem;">
+  <button onclick="closeLightbox()" aria-label="Fermer" style="position:fixed;top:1.5rem;right:2rem;color:rgba(255,255,255,.5);font-size:1.5rem;cursor:pointer;background:none;border:none;">✕</button>
+  <img id="lightbox-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;border-radius:.3rem;box-shadow:0 0 80px rgba(0,0,0,.8);"/>
+</div>
+
+<script src="../space.js"></script>
+<script>
+function openLightbox(src) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+<script type="application/json" id="i18n-en">{
+"Twiin — Hackathon Build The Future — Lucas Fouquet": "Twiin — Build The Future Hackathon — Lucas Fouquet",
+"Hackathon H Company · Build The Future · Agents IA": "H Company Hackathon · Build The Future · AI agents",
+"Montrez une fois. Twiin le fait partout.": "Show it once. Twiin does it everywhere.",
+"Un agent qui apprend une tâche qu'on lui montre une seule fois, la rejoue, vérifie chaque valeur, puis l'automatise, avec ou sans API. Il s'appuie sur Holo, l'agent de H Company, qui voit l'écran et clique comme un humain. Projet vainqueur du hackathon Build The Future, du 16 au 20 novembre 2026.": "An agent that learns a task you show it just once, replays it, checks every value, then automates it, with or without an API. It relies on Holo, H Company's agent, which sees the screen and clicks like a human. Winning project of the Build The Future hackathon, 16–20 November 2026.",
+"🏆 Vainqueur · Hackathon « Build The Future » · Novembre 2026": "🏆 Winner · “Build The Future” Hackathon · November 2026",
+"Twiin — vidéo de démo": "Twiin — demo video",
+"Démo complète — le produit en 2 minutes": "Full demo — the product in 2 minutes",
+"À propos du projet": "About the project",
+"Dans une PME, chaque employé perd environ 3 heures par semaine sur des tâches répétitives, souvent dans des logiciels qui n'ont pas d'API, et sans DSI pour les automatiser. Les outils classiques ne suffisent pas : les RPA demandent un développeur et cassent dès que l'écran change, et Zapier ou Make ne fonctionnent qu'avec des API.": "In a small business, each employee loses about 3 hours a week on repetitive tasks, often in software with no API, and with no IT department to automate them. Classic tools fall short: RPA needs a developer and breaks as soon as the screen changes, and Zapier or Make only work with APIs.",
+"Twiin part d'une idée simple :": "Twiin starts from a simple idea:",
+"on lui montre la tâche une fois": "you show it the task once",
+". Il la découpe en étapes, la rejoue pour": ". It breaks it into steps, replays it to",
+"prouver qu'elle tient": "prove it holds",
+", puis": ", then",
+"la fait à notre place": "does it for you",
+", sur le Mac, dans le navigateur ou depuis le téléphone. Quand une API existe, Twiin passe par n8n ; quand il n'y en a pas, c'est Holo, l'agent de H Company, qui lit l'écran et clique.": ", on the Mac, in the browser or from your phone. When an API exists, Twiin goes through n8n; when there isn't one, Holo, H Company's agent, reads the screen and clicks.",
+"Nous l'avons construit à six en cinq jours, pour le hackathon Build The Future organisé par H Company, et nous l'avons remporté. Le dernier soir, on a dormi deux heures. Twiin, lui, n'a pas besoin de dormir.": "The six of us built it in five days for the Build The Future hackathon organised by H Company, and we won it. On the last night we slept two hours. Twiin doesn't need to sleep.",
+"L'équipe Twiin et les participants du hackathon Build The Future": "The Twiin team and the Build The Future hackathon participants",
+"Remise des prix du hackathon Build The Future, novembre 2026": "Build The Future hackathon awards, November 2026",
+"Visuel Twiin : les jumeaux Iris et Ilo": "Twiin visual: the twins Iris and Ilo",
+"Visuel Twiin : vous montrez, Twiin refait, Twiin automatise": "Twiin visual: you show, Twiin redoes, Twiin automates",
+"Visuel Twiin : on a gagné grâce à un agent qui clique": "Twiin visual: we won thanks to an agent that clicks",
+"Fonctionnement": "How it works",
+"Apprendre, prouver, faire : le parcours d'une tâche": "Learn, prove, do: a task's journey",
+"Observer": "Observe",
+"L'employé fait la tâche une fois, sur son ordinateur ou dans son navigateur, ou la demande depuis son téléphone. Les informations sensibles restent sur le poste et aucune frappe au clavier n'est enregistrée.": "The employee does the task once, on their computer or in their browser, or asks for it from their phone. Sensitive information stays on the computer and no keystroke is ever recorded.",
+"Comprendre": "Understand",
+"Une IA découpe la tâche en étapes et note les valeurs à vérifier. Twiin demande ensuite « Ai-je bien compris ? » pour que l'employé corrige avant d'automatiser.": "An AI breaks the task into steps and notes the values to check. Twiin then asks “Did I get it right?” so the employee can correct it before automating.",
+"Prouver": "Prove",
+"Twiin transforme la tâche en automatisation, la rejoue et vérifie chaque valeur avant de l'activer. Une valeur douteuse est bloquée, jamais écrite.": "Twiin turns the task into an automation, replays it and checks every value before switching it on. A doubtful value is blocked, never written.",
+"Agir": "Act",
+"Quand un logiciel n'a pas d'API, Holo, l'agent de H Company, prend la main : il voit l'écran et clique comme un humain, sur le Mac ou dans le cloud.": "When a piece of software has no API, Holo, H Company's agent, takes over: it sees the screen and clicks like a human, on the Mac or in the cloud.",
+"Produit": "Product",
+"Twiin est partout où l'on travaille": "Twiin is wherever you work",
+"App Mac": "Mac app",
+"Enregistre la tâche, l'exécute et guide l'employé à l'écran avec les jumeaux Iris et Ilo. Installation en un clic.": "Records the task, runs it and guides the employee on screen with the twins Iris and Ilo. One-click install.",
+"Extension Chrome": "Chrome extension",
+"Une bulle sur chaque page et un panneau latéral : la dernière tâche analysée, l'automatiser, créer la vidéo.": "A bubble on every page and a side panel: the last analysed task, automate it, create the video.",
+"Depuis le téléphone": "From your phone",
+"Le dirigeant demande, le Mac le fait. Le téléphone passe par un relais et n'accède jamais directement au poste.": "The manager asks, the Mac does it. The phone goes through a relay and never accesses the computer directly.",
+"Vidéos de formation": "Training videos",
+"Pour chaque tâche, une vidéo racontée par Iris et Ilo, aux couleurs de l'entreprise, pour que l'équipe comprenne ce que fait la machine.": "For every task, a video narrated by Iris and Ilo, in the company's branding, so the team understands what the machine does.",
+"Captures": "Screenshots",
+"Twiin en images": "Twiin in pictures",
+"Twiin : audit du poste de travail": "Twiin: workstation audit",
+"L'audit du poste repère les tâches qui coûtent le plus d'heures": "The workstation audit finds the tasks that cost the most hours",
+"Twiin : une demande envoyée depuis le téléphone": "Twiin: a request sent from the phone",
+"Depuis le téléphone : « envoie-moi la facture »": "From the phone: “send me the invoice”",
+"Holo pilote Gmail sur le Mac": "Holo drives Gmail on the Mac",
+"Holo prend la main sur le Mac et ouvre Gmail": "Holo takes over the Mac and opens Gmail",
+"Twiin : la liste des automatisations": "Twiin: the list of automations",
+"Chaque tâche devient un workflow, avec une branche par entreprise suivie": "Each task becomes a workflow, with one branch per tracked company",
+"Twiin : interface aux couleurs de l'entreprise": "Twiin: interface in the company's branding",
+"Mise en service : toute l'interface prend la marque de l'entreprise": "Onboarding: the whole interface takes on the company's brand",
+"Twiin : le Mac, le cloud et le téléphone": "Twiin: the Mac, the cloud and the phone",
+"Trois endroits, une seule tâche : le Mac, le cloud et le téléphone": "Three places, one task: the Mac, the cloud and the phone",
+"Résultats": "Results",
+"Mesuré pendant les tests": "Measured during testing",
+"Tous les tests ont été filmés de bout en bout la nuit du 19 au 20 novembre.": "All tests were filmed end to end on the night of 19–20 November.",
+"pour recevoir une facture demandée depuis le téléphone": "to receive an invoice requested from the phone",
+"pour une tâche web dans le cloud de H Company": "for a web task in H Company's cloud",
+"0,01 $": "$0.01",
+"de coût d'agent pour cette tâche web": "agent cost for that web task",
+"1er essai": "1st try",
+"pour créer et tester une automatisation n8n": "to create and test an n8n automation",
+"« Envoie-moi la facture »": "“Send me the invoice”",
+"Depuis le téléphone, Holo ouvre Gmail sur le Mac, télécharge le PDF et l'envoie": "From the phone, Holo opens Gmail on the Mac, downloads the PDF and sends it",
+"≈ 47 s · 0,06 $": "≈ 47 s · $0.06",
+"« Automatise cette tâche »": "“Automate this task”",
+"Workflow n8n créé, testé et réussi au premier essai": "n8n workflow created, tested and successful on the first try",
+"« Crée la vidéo de formation »": "“Create the training video”",
+"Vidéo d'une minute racontée par Iris et Ilo, partagée avec l'équipe": "One-minute video narrated by Iris and Ilo, shared with the team",
+"Taux euro-dollar de la BCE": "ECB euro-dollar rate",
+"Tâche web exécutée dans le cloud de H Company, vérifiée avant écriture": "Web task run in H Company's cloud, checked before writing",
+"28 s · 0,01 $": "28 s · $0.01",
+"Le premier essai sur le taux BCE a été bloqué par la vérification : l'agent avait lu « 1.0992 » au lieu de « 1,0992 ». Plutôt que d'écrire une valeur douteuse, Twiin s'est arrêté. Après correction, chaque lancement a réussi.": "The first ECB rate run was blocked by the check: the agent had read “1.0992” instead of “1,0992”. Rather than write a doubtful value, Twiin stopped. After the fix, every run succeeded.",
+"Stack Technique": "Tech Stack",
+"Les outils derrière Twiin": "The tools behind Twiin",
+"Équipe": "Team",
+"Mon rôle": "My role",
+"CTO de l'équipe": "Team CTO",
+"Durée": "Duration",
+"5 jours, du 16 au 20 novembre 2026": "5 days, 16–20 November 2026",
+"H Company, Vercel et Eugenia School": "H Company, Vercel and Eugenia School",
+"Agents IA": "AI agents",
+"Automatisation": "Automation",
+"Vidéo générée par IA": "AI-generated video",
+"Organisé par": "Organised by",
+"Fermer": "Close"
+}</script>
+<script src="../i18n.js" defer></script>
+</body>
+</html>
